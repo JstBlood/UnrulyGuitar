@@ -5,7 +5,8 @@ This information can be added throughout the course, except for the names of the
 Add your own name (do not add the names for others!) to the section below.
 
 ## Description of project
-
+ yo
+ 
 ## Group members
 
 | Profile Picture | Name | Email |
