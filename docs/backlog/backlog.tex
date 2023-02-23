@@ -1,0 +1,164 @@
+\documentclass{article}
+
+% Like they did in the days of the old
+\usepackage{fontspec}
+\usepackage{OldStandard}
+
+\usepackage{glossaries}
+
+\makeglossaries
+
+\newglossaryentry{board}
+{
+    name=Board,
+    description={Refers to the main screen of our application, contains lists which in turn contain entries.}
+}
+
+\newglossaryentry{list}
+{
+    name=List,
+    description={Are on the horizontal axis encapsulate entries.}
+}
+
+\newglossaryentry{entry}
+{
+    name=Entry,
+    description={Refers to a task added to the board, organised on the vertical axis under a specific list.}
+}
+
+\usepackage{nopageno}
+
+\usepackage{array}
+
+\usepackage{svg}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{fancybox}
+\usepackage{xltxtra}
+
+\usepackage[
+  a4paper,
+  right = 30mm,
+  left = 30mm,
+  bottom = 25mm,
+  top = 30mm
+]{geometry}
+
+\usepackage{fancyhdr}
+\usepackage{multicol}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\emph{Uruly Guitar}}
+\rhead{Backlog}
+\chead{CSE1105 Object-oriented Programming Project}
+\rfoot{\thepage}
+
+
+
+\begin{document}
+	\vfill
+
+	\begin{center}
+    	\Large{Backlog - requirement engineering}
+	\end{center}
+
+	\section{Stakeholders}
+
+	\begin{itemize}
+    	\item \emph{User} - All users of our application, they are able to create a board using an id/key and modify it.
+    	\item \emph{Admin} - A user that can unlock password protected boards, remove or add boards, and restart the server.
+	\end{itemize}
+
+	\section{Terminology}
+	\vspace{-0.5cm}
+	\printglossary[title={}]
+
+	\section{The objective}
+
+	We are building, as an overview, a personal task list organizer which is a board that contains lists and these lists in turn contain cards that can be moved between the lists and added/removed.
+
+	\vfill
+	\begin{center} \LARGE \textcolor{black!50!red!50!white}{\scshape INTENTIONALLY LEFT BLANK} \end{center}
+	\vfill
+
+
+	\clearpage
+
+	\section{Requirements}
+
+	\subsection{Mandatory for passing}
+
+	\begin{enumerate}
+		\item Create a Client-Server Application (Spring Boot + JavaFX)
+		\item The boards must persist in a database, so the server should be connected to a database.
+		\item The ability to create a new board.
+		\item The ability to join a board created by another user.
+		\item The ability to add/remove/edit cards and lists.
+		\item The ability to pick a username before entering the project (no registration needed).
+		\item A intuitive interface, options, and buttons (summarize titles + extra simple description where needed).
+		\item The ability to have the tasks arbitrary ordered.
+		\item The ability that the progress between all players is synchronized, so everybody sees the same stuff at the same time.
+		\item The ability to drag and drop tasks.
+		\item The ability to have the tasks easily recognizable based on the title.
+	\end{enumerate}
+
+	\subsection{Should be implemented}
+
+	\begin{enumerate}
+		\item The ability to join multiple boards using a key and a password and have them show up on the main page.
+		\item The ability to specific the server I want to connect to.
+		\item Password protected boards (will need to implement some hashing).
+		\item The ability to change a board from a public one to a password protected board.
+		\item Generation of SHA-1 identifiers for boards.
+		\item To have details on cards such as a description.
+		\item A nested task list.
+		\item The ability to add different tags to an entry to classify the task.
+		\item The ability customize boards and cards (Add a background, add colors for tags, choose font color and size).
+		\item Easy keyboard shortcuts to facilitate use of the application.
+		\item The ability to add sub tasks for tasks.
+		\item The ability to add media to cards (Pictures, icons, and attachments).
+		\item Easy edition of multiple tasks by virtue of the "tab" key.
+		\item Editing tasks and sub tasks directly from the board an to have them highlighted when editing
+		\item Different modes that a board can be set to (read-only, read-write).
+	\end{enumerate}
+
+	\subsection{Could be implemented}
+
+	\begin{enumerate}
+		\item A list of all boards.
+		\item Board analytics such as: cards created, activity per week, users connected.
+		\item Optional deadlines and progress bars on tasks.
+		\item Filtering the tasks based on names and/or tags (optionally using fuzzy searching).
+		\item Board history to see how a board has changed over time, with the authors of these changes.
+	\end{enumerate}
+
+	\subsection{Do not implement}
+	 
+	 \begin{enumerate}
+	 	\item User management.
+	 	\item Race condition remedies.
+	 \end{enumerate}
+
+	 \section{Mocks}
+
+	 \vspace{0.5cm}
+
+	 \begin{center}
+	 	 \shadowbox{
+	 	 	 \includegraphics[width=10cm]{mock1}}
+	 	 \captionof{figure}{A mock task}
+	 \end{center}
+	 
+	 \begin{center}
+	 	 \shadowbox{
+	 	 	 \includegraphics[width=10cm]{mock}}
+	 	 \captionof{figure}{A mock of the board}
+	 \end{center}
+
+
+	 \lfoot{\small \XeLaTeX \hspace{0.1cm} 3.14}
+	 
+\end{document}
