@@ -39,3 +39,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### LaTeX ###
+*.out
+*.log
+*.aux
+*.gls
+*.ist
+*.glo
+*.glg
