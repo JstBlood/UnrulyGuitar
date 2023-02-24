@@ -9,11 +9,11 @@ Add your own name (do not add the names for others!) to the section below.
 ## Group members
 
 
-| Profile Picture | Name | Email |
-|---|---|---|
-| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Mikołaj Gazeel | m.j.gazeel@student.tudelft.nl |
+| Profile Picture | Name | Email                            |
+|---|---|----------------------------------|
+| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Mikołaj Gazeel | m.j.gazeel@student.tudelft.nl    |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Madeline | m.e.sebastian@student.tudelft.nl |
-| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Berzins Matiss | M.Berzins@student.tudelft.nl |
+| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Berzins Matiss | M.Berzins-1@student.tudelft.nl   |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Dragutoiu Vlad-Ioan | V.Dragutoiu-1@student.tudelft.nl |
 
 <!-- Instructions (remove once assignment has been completed -->
