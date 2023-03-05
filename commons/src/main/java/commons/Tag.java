@@ -6,31 +6,31 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-@Entity
+@Entity(name = "Tag")
+@Table(name = "tag", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Tag {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public long id;
+    @Column(nullable = false)
     public String name;
-    public String colour;
+    public String color;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    public Board parent;
-
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    public List<Entry> entries;
+    @ManyToMany(mappedBy = "tags")
+    public Set<Board> boards = new HashSet<>();
 
     @SuppressWarnings("unused")
-    protected Tag() {
+    protected Tag() {}
 
-    }
-
-    public Tag(String name, String colour, Board parent) {
-        this.colour = colour;
+    public Tag(String name, String color) {
+        this.color = color;
         this.name = name;
-        this.parent = parent;
     }
 
     @Override

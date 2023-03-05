@@ -5,56 +5,57 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import javax.swing.text.html.Option;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-@Entity
+@Entity(name = "Entry")
+@Table(name = "entry")
 public class Entry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-
-    public String title;
-    public String colour;
-    public String description;
+    public int index;
+    @Column(nullable = false)
+    public String text;
+    public String textColor;
     public int fontSize;
     public String fontDecoration;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    public CardList parent;
+    @JoinColumn(name = "card_id",
+            nullable = false)
+    public Card parentCard;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    public List<Entry> subentry;
+    @OneToMany(mappedBy = "parentEntry",
+            cascade = CascadeType.ALL)
+    public List<Entry> subEntries;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    public Entry subparent;
-
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    public List<Tag> tags;
+    @JoinColumn(name = "entry_id")
+    public Entry parentEntry;
 
     @SuppressWarnings("unused")
-    protected Entry() {
+    private Entry() {}
 
-    }
-
-    public Entry(String title, String colour, String description, int fontSize, String fontDecoration, CardList parent,
-                 List<Tag> tags) {
-        this.colour = colour;
-        this.title = title;
-        this.description = description;
+    /**
+     * @param text The entry's text.
+     * @param textColor The entry's textColor.
+     * @param fontSize The entry's fontSize.
+     * @param fontDecoration The entry's fontDecoration.
+     * @param parentCard The entry's parentCard.
+     */
+    public Entry(String text, String textColor, int fontSize, String fontDecoration, Card parentCard) {
+        this.text = text;
+        this.textColor = textColor;
         this.fontSize = fontSize;
         this.fontDecoration = fontDecoration;
-        this.parent = parent;
-        this.subentry = new ArrayList<>();
-        this.tags = tags;
-    }
-
-    public void addSubentry(Entry e) {
-        subentry.add(e);
-        e.subparent = this;
+        this.parentCard = parentCard;
+        index = parentCard.entries.size();
     }
 
     @Override
