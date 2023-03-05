@@ -40,7 +40,7 @@ public class Quote {
     public String quote;
 
     @SuppressWarnings("unused")
-    private Quote() {
+    protected Quote() {
         // for object mappers
     }
 
