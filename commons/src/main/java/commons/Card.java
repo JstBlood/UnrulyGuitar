@@ -1,14 +1,14 @@
 package commons;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-
-import java.util.List;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity(name = "Card")
 @Table(name = "card")
@@ -31,7 +31,7 @@ public class Card {
 
     @OneToMany(mappedBy = "parentCard",
             cascade = CascadeType.ALL)
-    public List<Entry> entries;
+    public List<Entry> entries = new ArrayList<>();
 
     @SuppressWarnings("unused")
     private Card() {}
@@ -48,6 +48,10 @@ public class Card {
         this.description = description;
         this.parentBoard = parentBoard;
         index = parentBoard.cards.size();
+    }
+
+    public void addEntry(Entry newEntry) {
+        entries.add(newEntry);
     }
 
     @Override

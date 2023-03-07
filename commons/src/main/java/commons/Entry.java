@@ -2,6 +2,8 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -18,7 +20,7 @@ public class Entry {
     public int index;
     @Column(nullable = false)
     public String text;
-    public String textColor;
+    public Color textColor;
     public int fontSize;
     public String fontDecoration;
 
@@ -29,11 +31,8 @@ public class Entry {
 
     @OneToMany(mappedBy = "parentEntry",
             cascade = CascadeType.ALL)
-    public List<Entry> subEntries;
+    public List<Subentry> subEntries = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "entry_id")
-    public Entry parentEntry;
 
     @SuppressWarnings("unused")
     private Entry() {}
@@ -45,13 +44,17 @@ public class Entry {
      * @param fontDecoration The entry's fontDecoration.
      * @param parentCard The entry's parentCard.
      */
-    public Entry(String text, String textColor, int fontSize, String fontDecoration, Card parentCard) {
+    public Entry(String text, Color textColor, int fontSize, String fontDecoration, Card parentCard) {
         this.text = text;
         this.textColor = textColor;
         this.fontSize = fontSize;
         this.fontDecoration = fontDecoration;
         this.parentCard = parentCard;
         index = parentCard.entries.size();
+    }
+
+    public void addSubentry(Subentry newSubentry) {
+        subEntries.add(newSubentry);
     }
 
     @Override

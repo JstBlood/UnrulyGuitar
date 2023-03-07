@@ -2,6 +2,7 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,11 +25,14 @@ public class Board {
     public boolean isPasswordProtected;
     public String title;
     public String description;
-    public String backgroundColor;
+    public Color backgroundColor;
 
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL)
     public List<Card> cards = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "boards")
+    public Set<User> users = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "board_tag",
@@ -46,11 +50,23 @@ public class Board {
      * @param description The board's description
      * @param backgroundColor The board's background color.
      */
-    public Board(String key, String title, String description, String backgroundColor) {
+    public Board(String key, String title, String description, Color backgroundColor) {
         this.key = key;
         this.title = title;
         this.description = description;
         this.backgroundColor = backgroundColor;
+    }
+
+    public void addCard(Card newCard) {
+        cards.add(newCard);
+    }
+
+    public void addUser(User newUser) {
+        users.add(newUser);
+    }
+
+    public void addTag(Tag newTag) {
+        tags.add(newTag);
     }
 
     /**
@@ -66,7 +82,7 @@ public class Board {
      * Make the board password-free by removing the password.
      */
     public void deletePassword() {
-        passwordHash = "";
+        passwordHash = null;
         isPasswordProtected = false;
     }
 

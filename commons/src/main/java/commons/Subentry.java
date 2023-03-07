@@ -2,38 +2,37 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@Entity(name = "Tag")
-@Table(name = "tag", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-public class Tag {
+@Entity(name = "Subentry")
+@Table(name = "subentry")
+public class Subentry {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
+    public int index;
+
     @Column(nullable = false)
-    public String name;
-    public Color color;
+    public String text;
 
-    @ManyToMany(mappedBy = "tags")
-    public Set<Board> boards = new HashSet<>();
-
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "card_id",
+            nullable = false)
+    public Entry parentEntry;
     @SuppressWarnings("unused")
-    protected Tag() {}
+    private Subentry() {}
 
-    public Tag(String name, Color color) {
-        this.color = color;
-        this.name = name;
-    }
-
-    public void addBoard(Board newBoard) {
-        boards.add(newBoard);
+    /**
+     * @param text The subentry's text.
+     * @param parentEntry The subentry's parent entry.
+     */
+    public Subentry(String text, Entry parentEntry) {
+        this.text = text;
+        this.parentEntry = parentEntry;
     }
 
     @Override
@@ -50,5 +49,4 @@ public class Tag {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
-
 }
