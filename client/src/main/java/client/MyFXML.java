@@ -40,6 +40,7 @@ public class MyFXML {
     public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
         try {
             var loader = new FXMLLoader(getLocation(parts), null, null, new MyFactory(), StandardCharsets.UTF_8);
+            System.out.println(getLocation(parts));
             Parent parent = loader.load();
             T ctrl = loader.getController();
             return new Pair<>(ctrl, parent);

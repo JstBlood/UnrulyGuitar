@@ -15,30 +15,35 @@
  */
 package client.scenes;
 
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.util.Pair;
+import com.google.inject.Inject;
 
-public class MainCtrl {
+import client.utils.ServerUtils;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
-    private Stage primaryStage;
+public class LogonCtrl {
 
-    private LogonCtrl logonCtrl;
-    private Scene logon;
+    private final ServerUtils server;
+    private final MainCtrl mainCtrl;
 
+    @FXML
+    private TextField ip;
 
-    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon) {
-        this.primaryStage = primaryStage;
-        this.logonCtrl = logon.getKey();
-        this.logon = new Scene(logon.getValue());
+    @FXML
+    private TextField uname;
 
-        showOverview();
-        primaryStage.show();
+    @FXML
+    private Button submit;
+
+    @Inject
+    public LogonCtrl(ServerUtils server, MainCtrl mainCtrl) {
+        this.mainCtrl = mainCtrl;
+        this.server = server;
+
     }
 
-    public void showOverview() {
-        primaryStage.setTitle("Server Connection");
-        primaryStage.setScene(logon);
+    public void tryLogon() {
+        System.out.println("Websocket connectring to the server!");
     }
 }

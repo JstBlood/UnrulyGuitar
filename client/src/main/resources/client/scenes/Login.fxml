@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.LogonCtrl">
+   <children>
+      <Button fx:id="submit" layoutX="171.0" layoutY="157.0" mnemonicParsing="false" onAction="#tryLogon" text="Logon!" textAlignment="CENTER" textFill="#153618" AnchorPane.bottomAnchor="20.0" />
+      <TextField fx:id="ip" layoutX="119.0" layoutY="56.0" promptText="eg. 1.1.1.1" text="localhost" AnchorPane.topAnchor="56.0" />
+      <Label layoutX="174.0" layoutY="34.0" text="Server IP" AnchorPane.topAnchor="34.0" />
+      <TextField fx:id="uname" layoutX="118.0" layoutY="111.0" promptText="eg. tdavidson" text="test" AnchorPane.bottomAnchor="66.0" />
+      <Label layoutX="174.0" layoutY="93.0" text="Username" AnchorPane.bottomAnchor="92.0" />
+   </children>
+</AnchorPane>
