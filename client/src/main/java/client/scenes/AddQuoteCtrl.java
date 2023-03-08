@@ -15,9 +15,8 @@
  */
 package client.scenes;
 
-import com.google.inject.Inject;
-
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Person;
 import commons.Quote;
 import jakarta.ws.rs.WebApplicationException;
@@ -55,7 +54,7 @@ public class AddQuoteCtrl {
 
     public void ok() {
         try {
-            server.addQuote(getQuote());
+            server.send("/app/quotes", getQuote());
         } catch (WebApplicationException e) {
 
             var alert = new Alert(Alert.AlertType.ERROR);
