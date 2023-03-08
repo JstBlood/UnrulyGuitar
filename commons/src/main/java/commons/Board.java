@@ -14,13 +14,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Board")
-@Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"key"}))
+@Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-    @Column(nullable = false)
-    public String key;
     public String passwordHash;
     public boolean isPasswordProtected;
     public String title;
@@ -41,7 +39,7 @@ public class Board {
     public Set<Tag> tags = new HashSet<>();
 
     @SuppressWarnings("unused")
-    private Board() {
+    protected Board() {
     }
 
     /**
@@ -50,8 +48,8 @@ public class Board {
      * @param description The board's description
      * @param backgroundColor The board's background color.
      */
-    public Board(String key, String title, String description, Color backgroundColor) {
-        this.key = key;
+    public Board(Long id, String title, String description, Color backgroundColor) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.backgroundColor = backgroundColor;

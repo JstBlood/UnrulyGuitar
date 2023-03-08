@@ -69,14 +69,27 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
-    private StompSession session = connect("ws://localhost:8080/websocket");
+    public String getUrl() {
+        return url;
+    }
 
-    private StompSession connect(String url) {
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    private static String url = null;
+
+    private StompSession session;
+
+    public void connect() {
+        if(url == null)
+            throw new RuntimeException("No address provided");
+
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
         try {
-            return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
+            session = stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }

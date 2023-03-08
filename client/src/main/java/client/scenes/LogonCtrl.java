@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 
 import client.utils.ServerUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -44,6 +45,18 @@ public class LogonCtrl {
     }
 
     public void tryLogon() {
-        System.out.println("Websocket connectring to the server!");
+        server.setUrl("ws://" + ip.getText() + "/websocket");
+
+        try {
+            server.connect();
+        } catch (Exception e) {
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setHeaderText("Connection failed");
+            err.setContentText(e.getMessage());
+            err.showAndWait();
+            return;
+        }
+
+        mainCtrl.showBoards();
     }
 }
