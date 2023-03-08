@@ -18,9 +18,8 @@ package client.scenes;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.google.inject.Inject;
-
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Quote;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -57,6 +56,10 @@ public class QuoteOverviewCtrl implements Initializable {
         colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
         colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
         colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+
+        server.registerForMessages("/topic/quotes", Quote.class, q -> {
+            data.add(q);
+        });
     }
 
 

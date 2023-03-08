@@ -20,7 +20,7 @@ public class Subentry {
     public String text;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "card_id",
+    @JoinColumn(name = "entry_id",
             nullable = false)
     public Entry parentEntry;
     @SuppressWarnings("unused")

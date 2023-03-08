@@ -21,11 +21,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.util.Random;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import commons.Person;
 import commons.Quote;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class QuoteControllerTest {
 
@@ -39,7 +38,7 @@ public class QuoteControllerTest {
     public void setup() {
         random = new MyRandom();
         repo = new TestQuoteRepository();
-        sut = new QuoteController(random, repo);
+        sut = new QuoteController(random, repo, null);
     }
 
     @Test
