@@ -18,8 +18,6 @@ package server.database;
 import commons.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface BoardsRepository extends JpaRepository<Board, Long> {
-    public List<Board> findByKeyEquals(String key);
+    public Board findByKeyEquals(String key);
 }

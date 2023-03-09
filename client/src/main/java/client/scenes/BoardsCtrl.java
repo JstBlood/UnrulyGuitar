@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
+import jakarta.ws.rs.BadRequestException;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -26,12 +27,19 @@ public class BoardsCtrl {
     }
 
     public void join() {
-        Board recv = server.joinBoard(bid.getText());
+        if(bid.getText() == "" || bid.getText() == null) {
+            UIUtils.showError("The board id mustn't be empty");
+            return;
+        }
 
-        if(recv == null)
+        try {
+            Board recv = server.joinBoard(bid.getText());
+            System.out.println("[DEBUG] Received board: " + recv);
+        } catch (BadRequestException e) {
             UIUtils.showError("This board has not been found");
-
-        System.out.println("[DEBUG] Received board: " + recv);
+        } catch (Exception e) {
+            UIUtils.showError("An unexpected error occurred");
+        }
     }
 
     public void create() {
