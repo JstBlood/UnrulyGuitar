@@ -30,6 +30,13 @@
     -fx-border-color: -fx-col-0 transparent -fx-col-0 transparent;
 }
 
+.submit {
+    -fx-text-fill: white;
+    -fx-background-color: -fx-col-1;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
 .add-subtask-label {
     -fx-background-color: transparent;
     -fx-text-fill: -fx-col-0;

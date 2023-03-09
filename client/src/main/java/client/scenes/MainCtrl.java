@@ -46,8 +46,6 @@ public class MainCtrl {
 
         this.addCardCtrl = addCard.getKey();
         this.addCard = new Scene(addCard.getValue());
-//        String css = this.getClass().getResource("dfghfghd").toExternalForm();
-//        this.addCard.getStylesheets().add(css);
 
         showAddCard();
         primaryStage.show();
