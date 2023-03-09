@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.glassfish.hk2.utilities.binding.ScopedNamedBindingBuilder;
 
 public class MainCtrl {
 
@@ -30,19 +31,31 @@ public class MainCtrl {
     private AddQuoteCtrl addCtrl;
     private Scene add;
 
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-            Pair<AddQuoteCtrl, Parent> add) {
+            Pair<AddQuoteCtrl, Parent> add, Pair<AddCardCtrl, Parent> addCard) {
         this.primaryStage = primaryStage;
+
         this.overviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
 
         this.addCtrl = add.getKey();
         this.add = new Scene(add.getValue());
 
-        showOverview();
+        this.addCardCtrl = addCard.getKey();
+        this.addCard = new Scene(addCard.getValue());
+//        String css = this.getClass().getResource("dfghfghd").toExternalForm();
+//        this.addCard.getStylesheets().add(css);
+
+        showAddCard();
         primaryStage.show();
     }
-
+    public void showAddCard(){
+        primaryStage.setTitle("Adding Card");
+        primaryStage.setScene(addCard);
+    }
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
