@@ -14,25 +14,30 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Board")
-@Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
+@Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"key"}))
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
+
+    public String key;
     public String passwordHash;
     public boolean isPasswordProtected;
     public String title;
     public String description;
-    public Color backgroundColor;
+    public int backgroundColorR;
+    public int backgroundColorG;
+    public int backgroundColorB;
 
     @OneToMany(mappedBy = "parentBoard",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     public List<Card> cards = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "boards")
+    @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -43,16 +48,18 @@ public class Board {
     }
 
     /**
-     * @param key The key set when creating the board, used to join the board. (is UNIQUE)
+     * @param bid The key set when creating the board, used to join the board. (is UNIQUE)
      * @param title The board's title.
      * @param description The board's description
      * @param backgroundColor The board's background color.
      */
-    public Board(Long id, String title, String description, Color backgroundColor) {
-        this.id = id;
+    public Board(String bid, String title, String description, Color backgroundColor) {
+        this.key = bid;
         this.title = title;
         this.description = description;
-        this.backgroundColor = backgroundColor;
+        this.backgroundColorR = backgroundColor.getRed();
+        this.backgroundColorG = backgroundColor.getGreen();
+        this.backgroundColorB = backgroundColor.getBlue();
     }
 
     public void addCard(Card newCard) {
@@ -83,6 +90,7 @@ public class Board {
         passwordHash = null;
         isPasswordProtected = false;
     }
+
 
     @Override
     public boolean equals(Object obj) {

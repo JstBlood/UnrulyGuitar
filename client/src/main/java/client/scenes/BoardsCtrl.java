@@ -1,13 +1,11 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
-import java.util.Optional;
 
 public class BoardsCtrl {
 
@@ -25,19 +23,19 @@ public class BoardsCtrl {
 
     public void prepare() {
         server.connect();
-        server.registerForMessages("/topic/board", Optional.class, (x) -> handleIncoming(x));
     }
 
     public void join() {
-        server.send("/app/board/join", Long.parseLong(bid.getText()));
+        Board recv = server.joinBoard(bid.getText());
+
+        if(recv == null)
+            UIUtils.showError("This board has not been found");
+
+        System.out.println("[DEBUG] Received board: " + recv);
     }
 
     public void create() {
-        server.send("/app/board/create", 0);
-    }
-
-    private void handleIncoming(Optional<Board> msg) {
-        System.out.println("board: " + msg);
+        System.out.println("[DEBUG] Received board: " + server.createBoard());
     }
 
 }

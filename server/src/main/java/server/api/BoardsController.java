@@ -16,21 +16,15 @@
 package server.api;
 
 import commons.Board;
-import commons.Quote;
-import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardsRepository;
-import server.database.QuoteRepository;
 
 import java.awt.*;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @RestController
+@RequestMapping("/api/boards")
 public class BoardsController {
     private final Random random;
     private final BoardsRepository repo;
@@ -42,24 +36,20 @@ public class BoardsController {
         this.messages = messages;
     }
 
-    @MessageMapping("/board/join")
-    @SendTo("/topic/board")
-    public Optional<Board> joinBoard(Long bid) {
-        if(!repo.existsById(bid)) {
-            System.out.println("not found");
-            return Optional.empty();
+    @PostMapping("join")
+    public Board joinBoard(@RequestBody String bid) {
+        System.out.println(bid);
+        if(repo.findByKeyEquals(bid).isEmpty()) {
+            return null;
         }
 
-        System.out.println("joined " + bid);
-        return Optional.of(repo.getById(bid));
+        return repo.findByKeyEquals(bid).stream().findFirst().get();
     }
 
-    @MessageMapping("/board/create")
-    @SendTo("/topic/board")
-    public Board createBoard(int i) {
-        System.out.println("Creating board!");
+    @GetMapping("create")
+    public Board createBoard() {
         // TODO: Change this to actual id generation
-        Board created = new Board(random.nextLong(), "New board", "", new Color(12));
+        Board created = new Board(Long.toString(random.nextLong()), "New board", "", new Color(12,12,12,12));
 
         repo.save(created);
         return created;

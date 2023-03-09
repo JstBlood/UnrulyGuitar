@@ -15,11 +15,11 @@
  */
 package client.scenes;
 
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 
 import client.utils.ServerUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -45,15 +45,12 @@ public class LogonCtrl {
     }
 
     public void tryLogon() {
-        server.setUrl("ws://" + ip.getText() + "/websocket");
+        server.setUrl(ip.getText());
 
         try {
             server.connect();
         } catch (Exception e) {
-            Alert err = new Alert(Alert.AlertType.ERROR);
-            err.setHeaderText("Connection failed");
-            err.setContentText(e.getMessage());
-            err.showAndWait();
+            UIUtils.showError(e.getMessage());
             return;
         }
 

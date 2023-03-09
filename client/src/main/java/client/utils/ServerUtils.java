@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import commons.Board;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -38,6 +39,9 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
 
 public class ServerUtils {
 
@@ -69,6 +73,22 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
+    public Board joinBoard(String bid) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target("http://" + url).path("api/boards/join") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(bid, APPLICATION_JSON), Board.class);
+    }
+
+    public Board createBoard() {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target("http://" + url).path("api/boards/create") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(Board.class);
+    }
+
     public String getUrl() {
         return url;
     }
@@ -76,6 +96,8 @@ public class ServerUtils {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    private final static int MLIMIT = 1024 * 1024;
 
     private static String url = null;
 
@@ -85,11 +107,17 @@ public class ServerUtils {
         if(url == null)
             throw new RuntimeException("No address provided");
 
-        var client = new StandardWebSocketClient();
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        container.setDefaultMaxBinaryMessageBufferSize(MLIMIT);
+        container.setDefaultMaxTextMessageBufferSize(MLIMIT);
+
+        var client = new StandardWebSocketClient(container);
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        stomp.setInboundMessageSizeLimit(MLIMIT);
+
         try {
-            session = stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
+            session = stomp.connect("ws://" + url + "/websocket", new StompSessionHandlerAdapter() {}).get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
