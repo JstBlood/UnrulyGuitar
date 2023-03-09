@@ -15,35 +15,35 @@
  */
 package server.api;
 
+import java.awt.*;
+import java.util.Random;
+
 import commons.Board;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardsRepository;
-
-import java.awt.*;
-import java.util.Random;
+import server.database.BoardRepository;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardsController {
     private final Random random;
-    private final BoardsRepository repo;
+    private final BoardRepository repo;
     private SimpMessagingTemplate messages;
 
-    public BoardsController(Random rng, BoardsRepository repo, SimpMessagingTemplate messages) {
+    public BoardsController(Random rng, BoardRepository repo, SimpMessagingTemplate messages) {
         this.random = rng;
         this.repo = repo;
         this.messages = messages;
     }
 
     @PostMapping("join")
-    public ResponseEntity<Board> joinBoard(@RequestBody String bid) {
-        if(repo.findByKeyEquals(bid) == null) {
+    public ResponseEntity<Board> joinBoard(@RequestBody String key) {
+        if(repo.findByKey(key) == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(repo.findByKeyEquals(bid));
+        return ResponseEntity.ok(repo.findByKey(key));
     }
 
     @GetMapping("create")
