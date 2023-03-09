@@ -15,10 +15,9 @@
  */
 package client.scenes;
 
+import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
-
-import client.utils.ServerUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -32,7 +31,7 @@ public class LogonCtrl {
     private TextField ip;
 
     @FXML
-    private TextField uname;
+    private TextField username;
 
     @FXML
     private Button submit;

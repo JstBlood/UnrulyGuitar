@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
 
 import commons.Board;
 import commons.Quote;
@@ -40,12 +42,13 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-import javax.websocket.ContainerProvider;
-import javax.websocket.WebSocketContainer;
-
 public class ServerUtils {
 
     private static final String SERVER = "http://localhost:8080/";
+    private final static int MLIMIT = 1024 * 1024;
+    private static String url = null;
+    private StompSession session;
+
 
     public void getQuotesTheHardWay() throws IOException {
         var url = new URL("http://localhost:8080/api/quotes");
@@ -73,12 +76,12 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
-    public Board joinBoard(String bid) {
+    public Board joinBoard(String key) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target("http://" + url).path("api/boards/join") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(bid, APPLICATION_JSON), Board.class);
+                .post(Entity.entity(key, APPLICATION_JSON), Board.class);
     }
 
     public Board createBoard() {
@@ -89,19 +92,7 @@ public class ServerUtils {
                 .get(Board.class);
     }
 
-    public String getUrl() {
-        return url;
-    }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    private final static int MLIMIT = 1024 * 1024;
-
-    private static String url = null;
-
-    private StompSession session;
 
     public void connect() {
         if(url == null)
@@ -139,5 +130,11 @@ public class ServerUtils {
 
     public void send(String dest, Object o) {
         session.send(dest, o);
+    }
+    public String getUrl() {
+        return url;
+    }
+    public void setUrl(String url) {
+        ServerUtils.url = url;
     }
 }

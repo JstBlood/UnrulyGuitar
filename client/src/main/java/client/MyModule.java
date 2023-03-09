@@ -15,16 +15,19 @@
  */
 package client;
 
+import client.scenes.BoardsCtrl;
+import client.scenes.LogonCtrl;
+import client.scenes.MainCtrl;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-
-import client.scenes.MainCtrl;
 
 public class MyModule implements Module {
 
     @Override
     public void configure(Binder binder) {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
     }
 }

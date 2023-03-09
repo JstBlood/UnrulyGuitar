@@ -24,6 +24,7 @@ public class MainCtrl {
 
     private Stage primaryStage;
 
+    private LogonCtrl logonCtrl;
     private Scene logon;
 
     private BoardsCtrl boardsCtrl;
@@ -32,9 +33,12 @@ public class MainCtrl {
 
     public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards) {
         this.primaryStage = primaryStage;
+
+        this.logonCtrl = logon.getKey();
         this.logon = new Scene(logon.getValue());
-        this.boards = new Scene(boards.getValue());
+
         this.boardsCtrl = boards.getKey();
+        this.boards = new Scene(boards.getValue());
 
         showLogon();
         primaryStage.show();
