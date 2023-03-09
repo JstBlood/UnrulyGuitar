@@ -61,7 +61,6 @@ public class MainCtrl {
         primaryStage.setScene(logon);
     }
 
-
     public void showBoards() {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
