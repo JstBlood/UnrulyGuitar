@@ -25,9 +25,9 @@ public class Board {
     public boolean isPasswordProtected;
     public String title;
     public String description;
-    public int backgroundColorR;
-    public int backgroundColorG;
-    public int backgroundColorB;
+    public int backgroundColorR = 0;
+    public int backgroundColorG = 0;
+    public int backgroundColorB = 0;
 
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL,
@@ -57,9 +57,11 @@ public class Board {
         this.key = bid;
         this.title = title;
         this.description = description;
-        this.backgroundColorR = backgroundColor.getRed();
-        this.backgroundColorG = backgroundColor.getGreen();
-        this.backgroundColorB = backgroundColor.getBlue();
+        if(backgroundColor != null) {
+            this.backgroundColorR = backgroundColor.getRed();
+            this.backgroundColorG = backgroundColor.getGreen();
+            this.backgroundColorB = backgroundColor.getBlue();
+        }
     }
 
     public void addCard(Card newCard) {
