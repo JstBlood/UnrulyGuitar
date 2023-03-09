@@ -16,6 +16,7 @@
 package server.api;
 
 import commons.Board;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardsRepository;
@@ -37,13 +38,12 @@ public class BoardsController {
     }
 
     @PostMapping("join")
-    public Board joinBoard(@RequestBody String bid) {
-        System.out.println(bid);
-        if(repo.findByKeyEquals(bid).isEmpty()) {
-            return null;
+    public ResponseEntity<Board> joinBoard(@RequestBody String bid) {
+        if(repo.findByKeyEquals(bid) == null) {
+            return ResponseEntity.badRequest().build();
         }
 
-        return repo.findByKeyEquals(bid).stream().findFirst().get();
+        return ResponseEntity.ok(repo.findByKeyEquals(bid));
     }
 
     @GetMapping("create")
