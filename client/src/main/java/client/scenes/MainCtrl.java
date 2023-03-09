@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.glassfish.hk2.utilities.binding.ScopedNamedBindingBuilder;
 
 public class MainCtrl {
 
@@ -32,9 +33,14 @@ public class MainCtrl {
 
     private CardListCtrl listCtrl;
     private Scene list;
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+    private QuoteOverviewCtrl overviewCtrl;
+    private Scene overview;
 
-
-    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards,
+    public void initialize(Stage primaryStage,
+                           Pair<LogonCtrl, Parent> logon,
+                           Pair<BoardsCtrl, Parent> boards,
                            Pair<CardListCtrl, Parent> list) {
         this.primaryStage = primaryStage;
 
@@ -59,6 +65,16 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+        primaryStage.show();
+    }
+    public void showAddCard(){
+        primaryStage.setTitle("Adding Card");
+        primaryStage.setScene(addCard);
+    }
+    public void showOverview() {
+        primaryStage.setTitle("Quotes: Overview");
+        primaryStage.setScene(overview);
+        overviewCtrl.refresh();
     }
 
     public void showList(){

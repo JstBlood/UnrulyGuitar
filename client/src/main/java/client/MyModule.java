@@ -19,6 +19,7 @@ import client.scenes.BoardsCtrl;
 import client.scenes.LogonCtrl;
 import client.scenes.CardListCtrl;
 import client.scenes.MainCtrl;
+import client.scenes.AddCardCtrl;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;

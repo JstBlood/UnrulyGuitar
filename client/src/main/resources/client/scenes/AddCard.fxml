@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<?import java.net.URL?>
+<AnchorPane prefHeight="400.0"
+            prefWidth="600.0"
+            styleClass="anchor-plane"
+            xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.scenes.AddCardCtrl">
+   <stylesheets>
+      <URL value="@client/scenes/AddCardStyle.css" />
+   </stylesheets>
+   <children>
+      <BorderPane focusTraversable="true" prefHeight="61.0" prefWidth="609.0">
+         <left>
+            <ImageView fitHeight="50.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../assets/bracket.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </left>
+         <right>
+            <ImageView fitHeight="50.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../assets/bracket.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets right="20.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </right>
+         <center>
+            <TextField fx:id="title" alignment="CENTER" prefHeight="61.0" prefWidth="600.0" promptText="Add Card Title" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <styleClass>
+                  <String fx:value="title" />
+                  <String fx:value="text-0" />
+               </styleClass>
+            </TextField>
+         </center>
+      </BorderPane>
+      <ButtonBar layoutX="3.0" layoutY="61.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="604.0">
+        <buttons>
+            <MenuButton fx:id="addTag" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white;" text="Add Tag">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+               <styleClass>
+                  <String fx:value="tag" />
+                  <String fx:value="text-1" />
+               </styleClass>
+            </MenuButton>
+            <ToggleButton mnemonicParsing="false" style="-fx-background-color: red;" text="Tag 1">
+               <styleClass>
+                  <String fx:value="tag" />
+                  <String fx:value="text-1" />
+               </styleClass>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" style="-fx-background-color: yellow;" text="Tag 2">
+               <styleClass>
+                  <String fx:value="tag" />
+                  <String fx:value="text-1" />
+               </styleClass>
+            </ToggleButton>
+        </buttons>
+         <styleClass>
+            <String fx:value="plane-0" />
+            <String fx:value="tags" />
+         </styleClass>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </ButtonBar>
+      <BorderPane layoutY="106.0" prefHeight="47.0" prefWidth="604.0">
+         <left>
+            <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../assets/location_icon.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </left>
+         <center>
+            <TextField promptText="Add Location" styleClass="text-1" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="20.0" right="20.0" />
+               </BorderPane.margin>
+            </TextField>
+         </center>
+      </BorderPane>
+      <BorderPane layoutY="166.0" prefHeight="40.0" prefWidth="604.0">
+         <center>
+            <TextField promptText="Add Date and Time" styleClass="text-1" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="20.0" right="20.0" />
+               </BorderPane.margin>
+            </TextField>
+         </center>
+         <left>
+            <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../assets/time_icon.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </left>
+      </BorderPane>
+      <TextArea fx:id="description" layoutX="-1.0" layoutY="221.0" prefHeight="127.0" prefWidth="609.0" promptText="Add a description">
+         <styleClass>
+            <String fx:value="plane-0" />
+            <String fx:value="text-1" />
+            <String fx:value="description" />
+         </styleClass>
+         <effect>
+            <InnerShadow />
+         </effect>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets></TextArea>
+      <BorderPane layoutY="353.0" prefHeight="47.0" prefWidth="609.0">
+         <left>
+            <ImageView fitHeight="21.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@../../../assets/plus_icon.png" />
+               </image>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
+            </ImageView>
+         </left>
+         <center>
+            <Label prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
