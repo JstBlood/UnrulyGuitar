@@ -34,7 +34,7 @@ public class AddCardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Board parentBoard;
-    private Card parentCard;
+    private CardList parentCard;
 
     @FXML
     private AnchorPane root;
@@ -58,7 +58,7 @@ public class AddCardCtrl implements Initializable {
     private TextField subtaskTitle;
     @FXML
     private TextArea subtaskDescription;
-    private List<Subentry> subtasks;
+    private List<Task> subtasks;
 
     // temporary variable, because the Board class wasn't yet sufficiently implemented at the time of this commit.
     // replace with parentboard.tags, and set the value in MainCtrl when the Board is sufficiently implemented.
@@ -105,7 +105,7 @@ public class AddCardCtrl implements Initializable {
         this.parentBoard = parentBoard;
     }
 
-    public void setParentCard(Card parentCard) {
+    public void setParentCard(CardList parentCard) {
         this.parentCard = parentCard;
     }
 
@@ -117,7 +117,7 @@ public class AddCardCtrl implements Initializable {
             this.submit.setStyle("-fx-text-fill: red;");
             return;
         }
-        this.parentCard.addEntry(new Entry(this.title.getText(), Color.BLACK, 20, "none", this.parentCard));
+        this.parentCard.addCard(new Card(this.title.getText(), description.getText(), this.parentCard));
         this.subtaskPane.setVisible(true);
         System.out.println("Grid: " + this.subtaskPane.toString());
 
@@ -155,4 +155,3 @@ public class AddCardCtrl implements Initializable {
         }
     }
 }
-

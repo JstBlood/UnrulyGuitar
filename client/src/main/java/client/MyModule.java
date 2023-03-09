@@ -15,11 +15,7 @@
  */
 package client;
 
-import client.scenes.BoardsCtrl;
-import client.scenes.LogonCtrl;
-import client.scenes.CardListCtrl;
-import client.scenes.MainCtrl;
-import client.scenes.AddCardCtrl;
+import client.scenes.*;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -32,5 +28,8 @@ public class MyModule implements Module {
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
         binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(AddQuoteCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(AddCardCtrl.class).in(Scopes.SINGLETON);
     }
 }
