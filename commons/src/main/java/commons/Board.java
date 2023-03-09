@@ -19,42 +19,49 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-    @Column(nullable = false)
+
     public String key;
     public String passwordHash;
     public boolean isPasswordProtected;
     public String title;
     public String description;
-    public Color backgroundColor;
+    public int backgroundColorR = 0;
+    public int backgroundColorG = 0;
+    public int backgroundColorB = 0;
 
     @OneToMany(mappedBy = "parentBoard",
-            cascade = CascadeType.ALL)
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     public List<Card> cards = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "boards")
+    @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     public Set<Tag> tags = new HashSet<>();
 
     @SuppressWarnings("unused")
-    private Board() {
+    protected Board() {
     }
 
     /**
-     * @param key The key set when creating the board, used to join the board. (is UNIQUE)
+     * @param bid The key set when creating the board, used to join the board. (is UNIQUE)
      * @param title The board's title.
      * @param description The board's description
      * @param backgroundColor The board's background color.
      */
-    public Board(String key, String title, String description, Color backgroundColor) {
-        this.key = key;
+    public Board(String bid, String title, String description, Color backgroundColor) {
+        this.key = bid;
         this.title = title;
         this.description = description;
-        this.backgroundColor = backgroundColor;
+        if(backgroundColor != null) {
+            this.backgroundColorR = backgroundColor.getRed();
+            this.backgroundColorG = backgroundColor.getGreen();
+            this.backgroundColorB = backgroundColor.getBlue();
+        }
     }
 
     public void addCard(Card newCard) {
@@ -85,6 +92,7 @@ public class Board {
         passwordHash = null;
         isPasswordProtected = false;
     }
+
 
     @Override
     public boolean equals(Object obj) {

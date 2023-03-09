@@ -17,7 +17,7 @@ public class BoardTest {
         assertEquals("myBoard", b.key);
         assertEquals("work", b.title);
         assertEquals("Nothing yet", b.description);
-        assertEquals(Color.blue, b.backgroundColor);
+        assertEquals(255, b.backgroundColorB);
     }
 
     @Test

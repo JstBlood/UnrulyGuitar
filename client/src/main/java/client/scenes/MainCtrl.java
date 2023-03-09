@@ -24,34 +24,30 @@ public class MainCtrl {
 
     private Stage primaryStage;
 
-    private QuoteOverviewCtrl overviewCtrl;
-    private Scene overview;
+    private Scene logon;
 
-    private AddQuoteCtrl addCtrl;
-    private Scene add;
+    private BoardsCtrl boardsCtrl;
+    private Scene boards;
 
-    public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-            Pair<AddQuoteCtrl, Parent> add) {
+
+    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards) {
         this.primaryStage = primaryStage;
-        this.overviewCtrl = overview.getKey();
-        this.overview = new Scene(overview.getValue());
+        this.logon = new Scene(logon.getValue());
+        this.boards = new Scene(boards.getValue());
+        this.boardsCtrl = boards.getKey();
 
-        this.addCtrl = add.getKey();
-        this.add = new Scene(add.getValue());
-
-        showOverview();
+        showLogon();
         primaryStage.show();
     }
 
-    public void showOverview() {
-        primaryStage.setTitle("Quotes: Overview");
-        primaryStage.setScene(overview);
-        overviewCtrl.refresh();
+    public void showLogon() {
+        primaryStage.setTitle("Server Connection");
+        primaryStage.setScene(logon);
     }
 
-    public void showAdd() {
-        primaryStage.setTitle("Quotes: Adding Quote");
-        primaryStage.setScene(add);
-        add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
+    public void showBoards() {
+        boardsCtrl.prepare();
+        primaryStage.setTitle("Pick a board");
+        primaryStage.setScene(boards);
     }
 }

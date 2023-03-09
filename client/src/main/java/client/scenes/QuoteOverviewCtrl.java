@@ -62,9 +62,6 @@ public class QuoteOverviewCtrl implements Initializable {
         });
     }
 
-    public void addQuote() {
-        mainCtrl.showAdd();
-    }
 
     public void refresh() {
         var quotes = server.getQuotes();

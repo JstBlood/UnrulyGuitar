@@ -49,7 +49,6 @@ public class AddQuoteCtrl {
 
     public void cancel() {
         clearFields();
-        mainCtrl.showOverview();
     }
 
     public void ok() {
@@ -65,7 +64,6 @@ public class AddQuoteCtrl {
         }
 
         clearFields();
-        mainCtrl.showOverview();
     }
 
     private Quote getQuote() {
