@@ -10,29 +10,30 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Subentry")
 @Table(name = "subentry")
-public class Subentry {
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
     public int index;
 
     @Column(nullable = false)
-    public String text;
+    public String title;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "entry_id",
+    @JoinColumn(name = "card_id",
             nullable = false)
-    public Entry parentEntry;
+    public Card parentCard;
     @SuppressWarnings("unused")
-    private Subentry() {}
+    private Task() {}
 
     /**
-     * @param text The subentry's text.
-     * @param parentEntry The subentry's parent entry.
+     * @param title The subentry's text.
+     * @param parentCard The subentry's parent entry.
      */
-    public Subentry(String text, Entry parentEntry) {
-        this.text = text;
-        this.parentEntry = parentEntry;
+    public Task(String title, Card parentCard) {
+        this.title = title;
+        this.parentCard = parentCard;
+        index = parentCard.tasks.size();
     }
 
     @Override

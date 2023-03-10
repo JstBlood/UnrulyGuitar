@@ -9,31 +9,29 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 
 public class BoardTest {
-    private static final Board SOME_BOARD = new Board("board", "myBoard", "Nothing yet", Color.BLUE);
+    private static final Board SOME_BOARD = new Board("board", "myBoard");
 
     @Test
     public void checkConstructor() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
+        var b = new Board("myBoard", "work");
         assertEquals("myBoard", b.key);
         assertEquals("work", b.title);
-        assertEquals("Nothing yet", b.description);
-        assertEquals(255, b.backgroundColorB);
     }
 
     @Test
     public void addCard() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
-        Card testCard1 = new Card("testCard", "Nothing yet", SOME_BOARD);
-        Card testCard2 = new Card("myCard", "Nothing yet", SOME_BOARD);
-        List<Card> SOME_CARDS = new ArrayList<>(Arrays.asList(testCard1, testCard2));
-        b.addCard(testCard1);
-        b.addCard(testCard2);
-        assertEquals(SOME_CARDS, b.cards);
+        var b = new Board("myBoard", "work");
+        CardList testCardList1 = new CardList("testCard", SOME_BOARD);
+        CardList testCardList2 = new CardList("myCard", SOME_BOARD);
+        List<CardList> SOME_CARDLISTS = new ArrayList<>(Arrays.asList(testCardList1, testCardList2));
+        b.addCard(testCardList1);
+        b.addCard(testCardList2);
+        assertEquals(SOME_CARDLISTS, b.cardLists);
     }
 
     @Test
     public void addUser() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
+        var b = new Board("myBoard", "work");
         User testUser1 = new User("Mickey Mouse");
         User testUser2 = new User("Spiderman");
         Set<User> SOME_USERS = new HashSet<>(Arrays.asList(testUser1, testUser2));
@@ -44,7 +42,7 @@ public class BoardTest {
 
     @Test
     public void addTag() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
+        var b = new Board("myBoard", "work");
         Tag testTag1 = new Tag("urgent", Color.BLACK);
         Tag testTag2 = new Tag("mandatory", Color.BLACK);
         Set<Tag> SOME_TAGS = new HashSet<>(Arrays.asList(testTag1, testTag2));
@@ -54,43 +52,26 @@ public class BoardTest {
     }
 
     @Test
-    public void setPassword() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
-        b.setPassword("abc123");
-        assertEquals("abc123", b.passwordHash);
-        assertTrue(b.isPasswordProtected);
-    }
-
-    @Test
-    public void deletePassword() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
-        b.setPassword("abc123");
-        b.deletePassword();
-        assertNull(b.passwordHash);
-        assertFalse(b.isPasswordProtected);
-    }
-
-    @Test
     public void EqualsHashCode() {
-        var a = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
+        var a = new Board("myBoard", "work");
+        var b = new Board("myBoard", "work");
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void notEqualsHashCode() {
-        var a = new Board("myBoard", "work", "Nothing yet", Color.BLUE);
-        var b = new Board("yourBoard", "home", "Nothing yet", Color.BLUE);
+        var a = new Board("myBoard", "work");
+        var b = new Board("yourBoard", "home");
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void hasToString() {
-        var b = new Board("myBoard", "work", "Nothing yet", Color.BLUE).toString();
+        var b = new Board("myBoard", "work").toString();
         assertTrue(b.contains(Board.class.getSimpleName()));
         assertTrue(b.contains("\n"));
-        assertTrue(b.contains("cards"));
+        assertTrue(b.contains("cardLists"));
     }
 }

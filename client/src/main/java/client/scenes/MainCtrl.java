@@ -30,8 +30,12 @@ public class MainCtrl {
     private BoardsCtrl boardsCtrl;
     private Scene boards;
 
+    private CardListCtrl listCtrl;
+    private Scene list;
 
-    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards) {
+
+    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards,
+                           Pair<CardListCtrl, Parent> list) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -40,6 +44,8 @@ public class MainCtrl {
         this.boardsCtrl = boards.getKey();
         this.boards = new Scene(boards.getValue());
 
+        this.listCtrl= list.getKey();
+        this.list=new Scene(list.getValue());
         showLogon();
         primaryStage.show();
     }
@@ -53,5 +59,10 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+    }
+
+    public void showList(){
+        primaryStage.setTitle("Lists");
+        primaryStage.setScene(list);
     }
 }
