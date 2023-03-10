@@ -46,8 +46,7 @@ public class BoardsCtrl {
         System.out.println("[DEBUG] Received board: " + server.createBoard());
     }
 
-    public void back() {
-
+    public void list(){
+        mainCtrl.showList();
     }
-
 }

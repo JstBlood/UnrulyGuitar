@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="609.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
+   <children>
+      <ListView fx:id="listView" layoutY="27.0" prefHeight="582.0" prefWidth="339.0" />
+      <Button layoutX="170.0" layoutY="2.0" mnemonicParsing="false" onAction="#addCard" text="Add a card " />
+      <Text layoutX="14.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="List name" wrappingWidth="86.93673706054688" />
+      <Button layoutX="279.0" layoutY="1.0" mnemonicParsing="false" onAction="#removeCard" text="Remove" />
+   </children>
+</AnchorPane>
