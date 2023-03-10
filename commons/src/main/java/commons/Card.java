@@ -69,4 +69,11 @@ public class Card {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
