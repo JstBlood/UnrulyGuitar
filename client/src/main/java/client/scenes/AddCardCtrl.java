@@ -1,19 +1,24 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import commons.Board;
-import commons.Card;
-import commons.Entry;
-import commons.Tag;
+import commons.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -32,6 +37,8 @@ public class AddCardCtrl implements Initializable {
     private Card parentCard;
 
     @FXML
+    private AnchorPane root;
+    @FXML
     private TextField title;
     @FXML
     private ButtonBar tagsBar;
@@ -41,6 +48,17 @@ public class AddCardCtrl implements Initializable {
     private TextArea description;
     @FXML
     private Button submit;
+    @FXML
+    private ImageView addSubtask;
+    @FXML
+    private Label addSubtaskLabel;
+    @FXML
+    private GridPane subtaskPane;
+    @FXML
+    private TextField subtaskTitle;
+    @FXML
+    private TextArea subtaskDescription;
+    private List<Subentry> subtasks;
 
     // temporary variable, because the Board class wasn't yet sufficiently implemented at the time of this commit.
     // replace with parentboard.tags, and set the value in MainCtrl when the Board is sufficiently implemented.
@@ -79,6 +97,8 @@ public class AddCardCtrl implements Initializable {
             mi.setOnAction(addTagEvent);
             this.addTag.getItems().add(mi);
         }
+
+        this.subtaskPane.setVisible(false);
     }
 
     public void setParentBoard(Board parentBoard) {
@@ -90,11 +110,49 @@ public class AddCardCtrl implements Initializable {
     }
 
     public void submitCard(){
+
+        // communicate it to the parent Card
         if (this.title.getText().equals("")){
             this.submit.setText("Please provide a title!");
             this.submit.setStyle("-fx-text-fill: red;");
             return;
         }
         this.parentCard.addEntry(new Entry(this.title.getText(), Color.BLACK, 20, "none", this.parentCard));
+        this.subtaskPane.setVisible(true);
+        System.out.println("Grid: " + this.subtaskPane.toString());
+
+        // communicate it to the server
+
+    }
+
+    public void addSubtask(){
+
+        System.out.println("Grid: " + this.subtaskPane.toString());
+
+
+        ImageView iv = new ImageView("file:/G:/My%20Drive/My_documents/MADDY_uni/Y1%20Q3/OOPP/oopp-team-22/client/assets/trashcan_icon.png");
+        iv.setFitHeight(50);
+        iv.setFitWidth(50);
+        TextField subtaskTitle = new TextField();
+        subtaskTitle.setPrefWidth(300);
+        subtaskTitle.setPrefHeight(50);
+        subtaskTitle.setStyle("-fx-background-color: yellow;");
+        subtaskTitle.setPromptText("Add subtask title...");
+        TextArea subtaskDescription = new TextArea();
+        subtaskDescription.setPrefWidth(300);
+        subtaskDescription.setPrefHeight(100);
+        subtaskDescription.setStyle("-fx-background-color: red;");
+        subtaskDescription.setPromptText("Add description...");
+
+        this.subtaskPane.add(new Text("SHOW URSELF"), 0, 0);
+        this.subtaskPane.add(subtaskTitle, 1, 0);
+        this.subtaskPane.add(new Text("PLEASE"), 0, 1);
+        this.subtaskPane.add(subtaskDescription, 1, 1);
+
+        System.out.println("Grid is now: " + this.subtaskPane.getRowCount() + " by " + this.subtaskPane.getColumnCount());
+        for (Node child : this.subtaskPane.getChildren()) {
+            System.out.println(child.toString());
+        }
     }
 }
+

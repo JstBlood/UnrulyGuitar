@@ -10,6 +10,7 @@
 }
 .title {
     -fx-background-color: transparent;
+    -fx-alignment: CENTER;
 }
 .plane-0 {
     -fx-background-color: rgba(255, 255, 255, 0.3);
@@ -36,12 +37,19 @@
     -fx-background-radius: 20px;
     -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
 }
-
 .add-subtask-label {
     -fx-background-color: transparent;
     -fx-text-fill: -fx-col-0;
     -fx-font-size: 12px;
     -fx-font-style: italic;
+}
+
+.subtask-pane {
+    -fx-background-color: transparent;
+    -fx-pref-width: 600;
+    -fx-pref-height: 400;
+
+    -fx-border-color: -fx-col-0 transparent transparent transparent;
 }
 
 .text-0 {
