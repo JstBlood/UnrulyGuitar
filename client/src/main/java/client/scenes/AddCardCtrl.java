@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.*;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,20 +12,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 import javax.inject.Inject;
-import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -34,7 +31,7 @@ public class AddCardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Board parentBoard;
-    private CardList parentCard;
+    private CardList parentCardList;
 
     @FXML
     private AnchorPane root;
@@ -104,8 +101,8 @@ public class AddCardCtrl implements Initializable {
         this.parentBoard = parentBoard;
     }
 
-    public void setParentCard(CardList parentCard) {
-        this.parentCard = parentCard;
+    public void setParentCardList(CardList parentCardList) {
+        this.parentCardList = parentCardList;
     }
 
     public void submitCard(){
@@ -116,12 +113,20 @@ public class AddCardCtrl implements Initializable {
             this.submit.setStyle("-fx-text-fill: red;");
             return;
         }
-        this.parentCard.addCard(new Card(this.title.getText(), description.getText(), this.parentCard));
+        this.parentCardList.addCard(new Card(this.title.getText(), description.getText(), this.parentCardList));
         this.subtaskPane.setVisible(true);
         System.out.println("Grid: " + this.subtaskPane.toString());
 
         // communicate it to the server
+        try {
+            server.send("/app/cards", new Card(title.getText(), description.getText(), parentCardList));
+        } catch (WebApplicationException e) {
 
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     public void addSubtask(){
