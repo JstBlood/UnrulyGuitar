@@ -104,7 +104,6 @@ public class AddCardCtrl implements Initializable {
         this.parentBoard = parentBoard;
     }
 
-
     public void setParentCard(CardList parentCard) {
         this.parentCard = parentCard;
     }
