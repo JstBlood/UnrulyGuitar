@@ -14,7 +14,7 @@ public class BoardsCtrl {
     private final MainCtrl mainCtrl;
 
     @FXML
-    private TextField bid;
+    private TextField key;
 
     @Inject
     public BoardsCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -27,14 +27,14 @@ public class BoardsCtrl {
     }
 
     public void join() {
-        if(bid.getText() == "" || bid.getText() == null) {
-            UIUtils.showError("The board id mustn't be empty");
+        if(UIUtils.isNullOrEmpty(key.getText())) {
+            UIUtils.showError("The board key must not be empty");
             return;
         }
 
         try {
-            Board recv = server.joinBoard(bid.getText());
-            System.out.println("[DEBUG] Received board: " + recv);
+            Board recievedBoard = server.joinBoard(key.getText());
+            System.out.println("[DEBUG] Received board: " + recievedBoard);
         } catch (BadRequestException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {

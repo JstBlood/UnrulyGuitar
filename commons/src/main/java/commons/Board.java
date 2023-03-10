@@ -48,13 +48,13 @@ public class Board {
     }
 
     /**
-     * @param bid The key set when creating the board, used to join the board. (is UNIQUE)
+     * @param key The key set when creating the board, used to join the board. (is UNIQUE)
      * @param title The board's title.
      * @param description The board's description
      * @param backgroundColor The board's background color.
      */
-    public Board(String bid, String title, String description, Color backgroundColor) {
-        this.key = bid;
+    public Board(String key, String title, String description, Color backgroundColor) {
+        this.key = key;
         this.title = title;
         this.description = description;
         if(backgroundColor != null) {
