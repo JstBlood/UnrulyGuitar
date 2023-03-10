@@ -32,7 +32,6 @@ public class MyModule implements Module {
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
         binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
         binder.bind(ShowBoardCtrl.class).in(Scopes.SINGLETON);
     }
 }
