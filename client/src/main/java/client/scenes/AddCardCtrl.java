@@ -38,7 +38,6 @@ public class AddCardCtrl implements Initializable {
 
     @FXML
     private AnchorPane root;
-
     @FXML
     private TextField title;
     @FXML
@@ -111,6 +110,8 @@ public class AddCardCtrl implements Initializable {
     }
 
     public void submitCard(){
+
+        // communicate it to the parent Card
         if (this.title.getText().equals("")){
             this.submit.setText("Please provide a title!");
             this.submit.setStyle("-fx-text-fill: red;");
@@ -154,3 +155,4 @@ public class AddCardCtrl implements Initializable {
         }
     }
 }
+
