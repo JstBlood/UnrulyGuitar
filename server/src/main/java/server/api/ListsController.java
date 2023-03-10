@@ -16,12 +16,12 @@
 package server.api;
 import commons.Board;
 import commons.Card;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.ListRepository;
 
-import java.awt.*;
 import java.util.Random;
 
 @RestController
@@ -40,32 +40,34 @@ public class ListsController {
         this.boardRepo = boardRepo;
     }
 
-    @GetMapping("/{bid}/create")
-    public Card createLists(@PathVariable("bid") String bid) {
-        Board pBoard = boardRepo.findByKey(bid);
-        Card created = new Card("add Title", "add Description", pBoard);
-        pBoard.addCard(created);
+    @PostMapping("/{bid}/create")
+    public ResponseEntity<Card> createList(@PathVariable("bid") long boardId, Board parentBoard) {
+        if (!boardRepo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Card created = new Card("add title", "add description", parentBoard);
+        parentBoard.addCard(created);
         listRepo.save(created);
-        return created;
+        return ResponseEntity.ok(created);
     }
 
-    @GetMapping("/{bid}/delete")
-    public void deleteLists(long i, @PathVariable("bid") String bid) {
-        Board pBoard = boardRepo.findByKey(bid);
-        Card other = listRepo.getById(i);
-        listRepo.delete(other);
-        pBoard.cards.remove(other);
+    @PostMapping("/{bid}/delete")
+    public ResponseEntity<Card> deleteList(@PathVariable("bid") long boardId,
+                                           long listId, Board parentBoard ) {
+        if (!boardRepo.existsById(boardId) || listRepo.existsById(listId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        Card toDelete = listRepo.getById(listId);
+        listRepo.deleteById(listId);
+        parentBoard.cards.remove(toDelete);
+        return ResponseEntity.ok(toDelete);
     }
 
-    @GetMapping("/{bid}/update")
-    public void updateLists(Card card, String title, String description) {
+    @PostMapping("/{bid}/update")
+    public void updateList(Card card, String title, String description) {
         card.setTitle(title);
         card.setDescription(description);
+        listRepo.saveAndFlush(card);
     }
-
-
-
-
-
 
 }
