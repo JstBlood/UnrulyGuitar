@@ -8,7 +8,8 @@
 <AnchorPane prefHeight="608.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.ListCtrl">
    <children>
       <ListView fx:id="listView" layoutY="27.0" prefHeight="581.0" prefWidth="600.0" />
-      <Button layoutX="535.0" layoutY="1.0" mnemonicParsing="false" onAction="#click" text="Add Task" />
+      <Button layoutX="443.0" layoutY="2.0" mnemonicParsing="false" onAction="#addTask" text="Add Task" />
       <Text layoutX="14.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="List name" wrappingWidth="86.93673706054688" />
+      <Button layoutX="534.0" layoutY="2.0" mnemonicParsing="false" onAction="#removeTask" text="Remove" />
    </children>
 </AnchorPane>
