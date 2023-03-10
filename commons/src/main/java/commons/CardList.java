@@ -10,44 +10,42 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@Entity(name = "Entry")
-@Table(name = "entry")
-public class Card {
+@Entity(name = "CardList")
+@Table(name = "cardList")
+public class CardList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
     public int index;
     @Column(nullable = false)
     public String title;
-    public String description;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "cardList_id",
+    @JoinColumn(name = "board_id",
             nullable = false)
-    public CardList parentCardList;
+    public Board parentBoard;
 
-    @OneToMany(mappedBy = "parentCard",
+    @OneToMany(mappedBy = "parentCardList",
             cascade = CascadeType.ALL)
-    public List<Task> tasks = new ArrayList<>();
-
+    public List<Card> cards = new ArrayList<>();
 
     @SuppressWarnings("unused")
-    private Card() {}
+    private CardList() {}
 
     /**
-     * @param title The entry's text.
-     * @param description The entry's description
-     * @param parentCardList The entry's parentCard.
+     * @param title The card's title.
+     * @param parentBoard The card's parent board.
+     * The index field is initialized with the number of cards already on the board,
+     * since this card is added at the end of the card list
      */
-    public Card(String title, String description, CardList parentCardList) {
+    public CardList(String title, Board parentBoard) {
         this.title = title;
-        this.description = description;
-        this.parentCardList = parentCardList;
-        index = parentCardList.cards.size();
+        this.parentBoard = parentBoard;
+        index = parentBoard.cardLists.size();
     }
 
-    public void addTask(Task newTask) {
-        tasks.add(newTask);
+    public void addCard(Card newCard) {
+        cards.add(newCard);
     }
 
     @Override

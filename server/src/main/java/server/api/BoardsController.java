@@ -15,7 +15,6 @@
  */
 package server.api;
 
-import java.awt.*;
 import java.util.Random;
 
 import commons.Board;
@@ -49,7 +48,7 @@ public class BoardsController {
     @GetMapping("create")
     public Board createBoard() {
         // TODO: Change this to actual id generation
-        Board created = new Board(Long.toString(random.nextLong()), "New board", "", new Color(12,12,12,12));
+        Board created = new Board(Long.toString(random.nextLong()), "New board");
 
         repo.save(created);
         return created;

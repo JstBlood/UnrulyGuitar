@@ -2,7 +2,6 @@ package commons;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,9 +25,9 @@ public class UserTest {
     @Test
     public void checkBoards() {
         var u = new User("Mickey Mouse");
-        Board testBoard1 = new Board("board1", "myBoard", "Nothing yet", null);
-        Board testBoard2 = new Board("board2", "testBoard", "Nothing yet", Color.BLUE);
-        Board testBoard3 = new Board("board3", "mainBoard", "Nothing yet", Color.RED);
+        Board testBoard1 = new Board("board1", "myBoard");
+        Board testBoard2 = new Board("board2", "testBoard");
+        Board testBoard3 = new Board("board3", "mainBoard");
         Set<Board> SOME_BOARDS = new HashSet<>(Arrays.asList(testBoard1, testBoard2, testBoard3));
         u.boards.add(testBoard1);
         u.boards.add(testBoard2);
