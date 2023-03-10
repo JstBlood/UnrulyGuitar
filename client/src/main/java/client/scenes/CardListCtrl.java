@@ -5,16 +5,16 @@ import javafx.fxml.FXML;
 
 import javafx.scene.control.ListView;
 
-public class ListCtrl {
+public class CardListCtrl {
     @FXML
     public ListView<String> listView;
     private int i=0;
     @Inject
-    public ListCtrl(ListView<String> listView){
+    public CardListCtrl(ListView<String> listView){
         this.listView=listView;
     }
     @FXML
-    public void addTask(){
+    public void addCard(){
         /*
         new TitledPane("Dummy Card "+i,new Label("The subtasks of the card should be here"))
         We could display the tasks like this, but the selection mode works poorly with it
@@ -23,7 +23,7 @@ public class ListCtrl {
         i++;
     }
     @FXML
-    public void removeTask(){
+    public void removeCard(){
         int id=listView.getSelectionModel().getSelectedIndex();
         listView.getItems().remove(id);
     }

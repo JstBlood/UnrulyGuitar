@@ -30,12 +30,12 @@ public class MainCtrl {
     private BoardsCtrl boardsCtrl;
     private Scene boards;
 
-    private ListCtrl listCtrl;
+    private CardListCtrl listCtrl;
     private Scene list;
 
 
     public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards,
-                           Pair<ListCtrl, Parent> list) {
+                           Pair<CardListCtrl, Parent> list) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();

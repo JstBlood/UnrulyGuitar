@@ -17,7 +17,7 @@ package client;
 
 import client.scenes.BoardsCtrl;
 import client.scenes.LogonCtrl;
-import client.scenes.ListCtrl;
+import client.scenes.CardListCtrl;
 import client.scenes.MainCtrl;
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -30,6 +30,6 @@ public class MyModule implements Module {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(ListCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
     }
 }
