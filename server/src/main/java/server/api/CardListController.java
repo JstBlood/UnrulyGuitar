@@ -19,7 +19,6 @@ import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
 import server.database.CardListRepository;
 
 import java.util.Random;
