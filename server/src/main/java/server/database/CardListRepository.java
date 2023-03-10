@@ -15,9 +15,9 @@
  */
 package server.database;
 
-import commons.Card;
+import commons.CardList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ListRepository extends JpaRepository<Card, Long> {
+public interface CardListRepository extends JpaRepository<CardList, Long> {
 
 }

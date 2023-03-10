@@ -15,24 +15,24 @@
  */
 package server.api;
 import commons.Board;
-import commons.Card;
+import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
-import server.database.ListRepository;
+import server.database.CardListRepository;
 
 import java.util.Random;
 
 @RestController
-@RequestMapping("/api/list")
-public class ListsController {
+@RequestMapping("/api/cardList")
+public class CardListController {
     private final Random random;
-    private final ListRepository listRepo;
+    private final CardListRepository listRepo;
     private final BoardRepository boardRepo;
     private SimpMessagingTemplate messages;
 
-    public ListsController(Random rng, ListRepository listRepo,
+    public CardListController(Random rng, CardListRepository listRepo,
                            BoardRepository boardRepo, SimpMessagingTemplate messages) {
         this.random = rng;
         this.messages = messages;
@@ -40,34 +40,32 @@ public class ListsController {
         this.boardRepo = boardRepo;
     }
 
-    @PostMapping("/{bid}/create")
-    public ResponseEntity<Card> createList(@PathVariable("bid") long boardId, Board parentBoard) {
-        if (!boardRepo.existsById(boardId)) {
+    @PostMapping(path = {"/add"})
+    public ResponseEntity<CardList> add(@RequestBody CardList cardList, Board parentBoard) {
+        if (cardList == null || cardList.title == null || parentBoard == null) {
             return ResponseEntity.badRequest().build();
         }
-        Card created = new Card("add title", "add description", parentBoard);
-        parentBoard.addCard(created);
-        listRepo.save(created);
+        CardList created = listRepo.save(cardList);
         return ResponseEntity.ok(created);
     }
 
-    @PostMapping("/{bid}/delete")
-    public ResponseEntity<Card> deleteList(@PathVariable("bid") long boardId,
-                                           long listId, Board parentBoard ) {
-        if (!boardRepo.existsById(boardId) || listRepo.existsById(listId)) {
+    @PostMapping(path = {"/delete"})
+    public ResponseEntity<CardList> delete(@RequestBody CardList cardList) {
+        if (cardList == null || cardList.parentBoard == null) {
             return ResponseEntity.badRequest().build();
         }
-        Card toDelete = listRepo.getById(listId);
-        listRepo.deleteById(listId);
-        parentBoard.cards.remove(toDelete);
-        return ResponseEntity.ok(toDelete);
+        listRepo.deleteById(cardList.id);
+        return ResponseEntity.ok(cardList);
     }
 
-    @PostMapping("/{bid}/update")
-    public void updateList(Card card, String title, String description) {
-        card.setTitle(title);
-        card.setDescription(description);
-        listRepo.saveAndFlush(card);
+    @PostMapping(path = {"/update"})
+    public ResponseEntity<CardList> update(@RequestBody CardList cardList) {
+        if (cardList == null || cardList.title == null || cardList.parentBoard == null){
+            return ResponseEntity.badRequest().build();
+        }
+        listRepo.saveAndFlush(cardList);
+        return ResponseEntity.ok(cardList);
+
     }
 
 }
