@@ -11,16 +11,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "CardList")
-@Table(name = "cardList")
+@Table(name = "cardlist")
 public class CardList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
     public int index;
+
     @Column(nullable = false)
     public String title;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "board_id",
             nullable = false)
     public Board parentBoard;
@@ -30,7 +31,7 @@ public class CardList {
     public List<Card> cards = new ArrayList<>();
 
     @SuppressWarnings("unused")
-    private CardList() {}
+    protected CardList() {}
 
     /**
      * @param title The card's title.
@@ -41,7 +42,7 @@ public class CardList {
     public CardList(String title, Board parentBoard) {
         this.title = title;
         this.parentBoard = parentBoard;
-        index = parentBoard.cardLists.size();
+        if(parentBoard != null) index = parentBoard.cardLists.size();
     }
 
     public void addCard(Card newCard) {

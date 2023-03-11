@@ -30,14 +30,13 @@ public class AddCardListCtrl {
 
     }
 
-    public void cancel() {
-        clearFields();
-        mainCtrl.showBoardOverview();
+    public void prepare() {
+        server.connect();
     }
 
     public void ok() {
         try {
-            //server.send("/app/cardList", getCardList());
+            server.send("/app/cardlists/add", getCardList());
         } catch (WebApplicationException e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -47,9 +46,13 @@ public class AddCardListCtrl {
         }
         clearFields();
     }
-
     private CardList getCardList() {
         return new CardList(title.getText(), parentBoard);
+    }
+
+    public void cancel() {
+        clearFields();
+        mainCtrl.showBoardOverview();
     }
 
     private void clearFields() {

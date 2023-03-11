@@ -29,6 +29,7 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import commons.Board;
+import commons.CardList;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -84,15 +85,21 @@ public class ServerUtils {
                 .post(Entity.entity(key, APPLICATION_JSON), Board.class);
     }
 
-    public Board createBoard() {
+    public Board addBoard(Board board) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target("http://" + url).path("api/boards/create") //
+                .target(SERVER).path("api/boards/create") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(Board.class);
+                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
     }
 
-
+    public CardList addCardList(CardList cardList) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/cardlists/add") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(cardList, APPLICATION_JSON), CardList.class);
+    }
 
     public void connect() {
         if(url == null)
@@ -113,7 +120,6 @@ public class ServerUtils {
             throw new RuntimeException(e);
         }
     }
-
     public <T> void registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
         session.subscribe(dest, new StompFrameHandler() {
             @Override
@@ -127,10 +133,10 @@ public class ServerUtils {
             }
         });
     }
-
     public void send(String dest, Object o) {
         session.send(dest, o);
     }
+
     public String getUrl() {
         return url;
     }

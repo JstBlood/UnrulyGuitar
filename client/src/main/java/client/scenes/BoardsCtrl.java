@@ -1,5 +1,7 @@
 package client.scenes;
 
+import java.util.Random;
+
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
@@ -41,8 +43,13 @@ public class BoardsCtrl {
         }
 
         try {
-            Board recievedBoard = server.joinBoard(key.getText());
-            System.out.println("[DEBUG] Received board: " + recievedBoard);
+            Board receivedBoard = server.joinBoard(key.getText());
+
+            System.out.println("[DEBUG] Received board: " + receivedBoard);
+
+            mainCtrl.setCurrentBoard(receivedBoard);
+            mainCtrl.showBoardOverview();
+
         } catch (BadRequestException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {
@@ -51,7 +58,10 @@ public class BoardsCtrl {
     }
 
     public void create() {
-        System.out.println("[DEBUG] Received board: " + server.createBoard());
+        Random rng = new Random();
+        Board created = new Board(Long.toString(rng.nextLong()), "New board");
+        server.addBoard(created);
+        System.out.println("[DEBUG] Received board: " + created);
     }
 
 }

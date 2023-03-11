@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import commons.Board;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -62,7 +63,7 @@ public class MainCtrl {
         this.addCardListCtrl= addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
-        showBoardOverview();
+        showLogon();
         primaryStage.show();
     }
 
@@ -83,6 +84,7 @@ public class MainCtrl {
     }
 
     public void showAddCardList() {
+        addCardListCtrl.prepare();
         addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
         primaryStage.setTitle("Add new CardList");
         primaryStage.setScene(addCardList);
@@ -93,5 +95,7 @@ public class MainCtrl {
         primaryStage.setScene(cardList);
     }
 
-
+    public void setCurrentBoard(Board board) {
+        boardOverviewCtrl.setBoard(board);
+    }
 }

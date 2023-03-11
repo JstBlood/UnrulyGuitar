@@ -30,7 +30,8 @@ public class Board {
     @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
