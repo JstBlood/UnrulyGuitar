@@ -16,15 +16,14 @@
 package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.util.Random;
 
-import commons.*;
+import commons.Board;
+import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.CardListRepository;
 
 public class CardListControllerTest {
 
@@ -44,13 +43,13 @@ public class CardListControllerTest {
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getCardList(null), pBoard);
+        var actual = sut.add(getCardList(null));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullParentBoard() {
-        var actual = sut.add(getCardList("title"), null);
+        var actual = sut.add(new CardList("title", null));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -68,14 +67,14 @@ public class CardListControllerTest {
 
     @Test
     public void databaseIsUsedAdd() {
-        sut.add(getCardList("q1"), pBoard);
+        sut.add(getCardList("q1"));
         repo.calledMethods.contains("save");
     }
 
     @Test
     public void databaseIsUsedDelete() {
         CardList cardList = getCardList("q1");
-        sut.add(cardList, pBoard);
+        sut.add(cardList);
         sut.delete(cardList);
         repo.calledMethods.contains("deleteById");
     }
@@ -83,7 +82,7 @@ public class CardListControllerTest {
     @Test
     public void databaseIsUsedUpdate() {
         CardList cardList = getCardList("q1");
-        sut.add(cardList, pBoard);
+        sut.add(cardList);
         sut.update(cardList);
         repo.calledMethods.contains("saveAndFlush");
     }
