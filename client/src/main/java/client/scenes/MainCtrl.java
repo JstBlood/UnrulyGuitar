@@ -30,17 +30,21 @@ public class MainCtrl {
     private BoardsCtrl boardsCtrl;
     private Scene boards;
 
+    private BoardOverviewCtrl boardOverviewCtrl;
+    private Scene boardOverview;
+
     private CardListCtrl cardListCtrl;
     private Scene cardList;
 
-    private BoardOverviewCtrl boardOverviewCtrl;
-    private Scene boardOverview;
+    private AddCardListCtrl addCardListCtrl;
+    private Scene addCardList;
 
     public void initialize(Stage primaryStage,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
-                           Pair<CardListCtrl, Parent> cardList) {
+                           Pair<CardListCtrl, Parent> cardList,
+                           Pair<AddCardListCtrl, Parent> addCardList) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -53,9 +57,12 @@ public class MainCtrl {
         this.boardOverview = new Scene(boardOverview.getValue());
 
         this.cardListCtrl= cardList.getKey();
-        this.cardList=new Scene(cardList.getValue());
+        this.cardList = new Scene(cardList.getValue());
 
-        showLogon();
+        this.addCardListCtrl= addCardList.getKey();
+        this.addCardList = new Scene(addCardList.getValue());
+
+        showBoardOverview();
         primaryStage.show();
     }
 
@@ -70,8 +77,21 @@ public class MainCtrl {
         primaryStage.setScene(boards);
     }
 
+    public void showBoardOverview() {
+        primaryStage.setTitle("Current board");
+        primaryStage.setScene(boardOverview);
+    }
+
+    public void showAddCardList() {
+        addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
+        primaryStage.setTitle("Add new CardList");
+        primaryStage.setScene(addCardList);
+    }
+
     public void showCardList() {
         primaryStage.setTitle("Lists");
         primaryStage.setScene(cardList);
     }
+
+
 }

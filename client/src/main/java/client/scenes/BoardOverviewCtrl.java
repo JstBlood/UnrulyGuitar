@@ -25,18 +25,17 @@ public class BoardOverviewCtrl implements Initializable {
         this.server = server;
     }
 
-    public void editBoard() {
-
-    }
-
-
-    /**
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    public void addCardList() {
+        mainCtrl.showAddCardList();
+    }
+
+    public void editBoard() {}
+
+    public Board getBoard() {
+        return board;
     }
 }

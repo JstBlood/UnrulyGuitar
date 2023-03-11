@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardsCtrl">
    <children>
       <SplitPane dividerPositions="0.4797979797979798" layoutX="129.0" layoutY="20.0" prefHeight="200.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -17,7 +16,7 @@
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
                   <Label layoutX="43.0" layoutY="26.0" text="Or create a new one" AnchorPane.bottomAnchor="157.0" />
-                  <Button layoutX="50.0" layoutY="99.0" mnemonicParsing="false" onAction="#list" text="Create a board" />
+                  <Button layoutX="50.0" layoutY="99.0" mnemonicParsing="false" onAction="#create" text="Create a board" />
                </children></AnchorPane>
         </items>
       </SplitPane>
