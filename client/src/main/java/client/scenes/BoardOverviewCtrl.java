@@ -1,21 +1,26 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import javafx.fxml.Initializable;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+/**
+ * This class is the controller of the BoardOverview scene,
+ * which is an overview of the board the client is currently on.
+ */
 
-public class ShowBoardCtrl implements Initializable {
+public class BoardOverviewCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Board board;
 
     @Inject
-    public ShowBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
     }

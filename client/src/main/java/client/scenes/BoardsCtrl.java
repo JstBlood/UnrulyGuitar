@@ -8,6 +8,14 @@ import jakarta.ws.rs.BadRequestException;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+/**
+ * This class is the controller of the Boards scene,
+ * which is basically a menu where the user can either:
+ * 1. join a new board
+ * 2. create a new board
+ * 3. choose a board from the list of previously joined boards
+ */
+
 public class BoardsCtrl {
 
     private final ServerUtils server;
@@ -46,7 +54,4 @@ public class BoardsCtrl {
         System.out.println("[DEBUG] Received board: " + server.createBoard());
     }
 
-    public void list(){
-        mainCtrl.showList();
-    }
 }

@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 
 import client.scenes.*;
 import com.google.inject.Injector;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -37,12 +36,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        var login = FXML.load(LogonCtrl.class, "client", "scenes", "Login.fxml");
+        var login = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
-        var lists = FXML.load(CardListCtrl.class, "client", "scenes", "List.fxml");
-        var showBoard = FXML.load(ShowBoardCtrl.class, "client", "scenes", "ShowBoard.fxml");
+        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var cardList = FXML.load(CardListCtrl.class, "client", "scenes", "CardList.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, login, boards, lists, showBoard);
+        mainCtrl.initialize(primaryStage,
+                login,
+                boards,
+                boardOverview,
+                cardList);
     }
 }
