@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import client.scenes.CardListCtrl;
 import client.scenes.BoardsCtrl;
 import client.scenes.LogonCtrl;
-import client.scenes.AddCardCtrl;
 import com.google.inject.Injector;
 
 import client.scenes.MainCtrl;

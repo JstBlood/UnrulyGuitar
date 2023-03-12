@@ -59,7 +59,9 @@ public class AddCardCtrl implements Initializable {
 
     // temporary variable, because the Board class wasn't yet sufficiently implemented at the time of this commit.
     // replace with parentboard.tags, and set the value in MainCtrl when the Board is sufficiently implemented.
-    private final Set<Tag> PARENTBOARD_DOT_TAGS = new HashSet<Tag>(List.of(new Tag("Tag 1", Color.BLUE), new Tag("Tag 2", Color.RED)));
+    private final Set<Tag> parentboardDotTags = new HashSet<Tag>(List.of(
+            new Tag("Tag 1", Color.BLUE),
+            new Tag("Tag 2", Color.RED)));
 
     @Inject
     public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -79,7 +81,7 @@ public class AddCardCtrl implements Initializable {
                     b -> (b instanceof ToggleButton) && ((ToggleButton) b).getText().equals(tagName)))
                 return;
 
-            Tag tag = PARENTBOARD_DOT_TAGS.stream().filter(t -> t.name.equals(tagName)).findFirst().orElse(null);
+            Tag tag = parentboardDotTags.stream().filter(t -> t.name.equals(tagName)).findFirst().orElse(null);
             ToggleButton tagButton = new ToggleButton(tagName);
             tagButton.setStyle(String.format("-fx-background-color: rgb(%d, %d, %d);",
                     tag.color.getRed(), tag.color.getGreen(), tag.color.getBlue()));
@@ -89,7 +91,7 @@ public class AddCardCtrl implements Initializable {
 
             tagsBar.getButtons().add(tagButton);
         };
-        for(Tag tag : PARENTBOARD_DOT_TAGS){
+        for(Tag tag : parentboardDotTags){
             MenuItem mi = new MenuItem(tag.name);
             mi.setOnAction(addTagEvent);
             this.addTag.getItems().add(mi);
@@ -132,9 +134,7 @@ public class AddCardCtrl implements Initializable {
     public void addSubtask(){
 
         System.out.println("Grid: " + this.subtaskPane.toString());
-
-
-        ImageView iv = new ImageView("file:/G:/My%20Drive/My_documents/MADDY_uni/Y1%20Q3/OOPP/oopp-team-22/client/assets/trashcan_icon.png");
+        ImageView iv = new ImageView("file:/client/assets/trashcan_icon.png");
         iv.setFitHeight(50);
         iv.setFitWidth(50);
         TextField subtaskTitle = new TextField();
@@ -153,7 +153,10 @@ public class AddCardCtrl implements Initializable {
         this.subtaskPane.add(new Text("PLEASE"), 0, 1);
         this.subtaskPane.add(subtaskDescription, 1, 1);
 
-        System.out.println("Grid is now: " + this.subtaskPane.getRowCount() + " by " + this.subtaskPane.getColumnCount());
+        System.out.println("Grid is now: "
+                + this.subtaskPane.getRowCount()
+                + " by "
+                + this.subtaskPane.getColumnCount());
         for (Node child : this.subtaskPane.getChildren()) {
             System.out.println(child.toString());
         }

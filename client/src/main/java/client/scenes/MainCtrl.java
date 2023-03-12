@@ -19,7 +19,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.glassfish.hk2.utilities.binding.ScopedNamedBindingBuilder;
 
 public class MainCtrl {
 
