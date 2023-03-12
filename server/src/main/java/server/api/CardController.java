@@ -19,7 +19,10 @@ public class CardController {
     private final BoardRepository boardRepository;
     private SimpMessagingTemplate messageTemplate;
 
-    public CardController(CardRepository cardRepository, CardListRepository cardListRepository, BoardRepository boardRepository, SimpMessagingTemplate messageTemplate) {
+    public CardController(CardRepository cardRepository,
+                          CardListRepository cardListRepository,
+                          BoardRepository boardRepository,
+                          SimpMessagingTemplate messageTemplate) {
         this.cardRepository = cardRepository;
         this.cardListRepository = cardListRepository;
         this.boardRepository = boardRepository;
