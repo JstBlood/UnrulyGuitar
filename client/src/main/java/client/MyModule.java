@@ -28,8 +28,7 @@ public class MyModule implements Module {
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
         binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AddQuoteCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AddCardCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(ShowBoardCtrl.class).in(Scopes.SINGLETON);
     }
 }
