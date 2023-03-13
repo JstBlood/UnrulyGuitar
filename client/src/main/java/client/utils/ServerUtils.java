@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import javax.websocket.ContainerProvider;
@@ -30,9 +31,11 @@ import javax.websocket.WebSocketContainer;
 
 import commons.Board;
 import commons.Quote;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import javafx.util.Pair;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -47,33 +50,27 @@ public class ServerUtils {
     private static final String SERVER = "http://localhost:8080/";
     private final static int MLIMIT = 1024 * 1024;
     private static String url = null;
+    private static String adminPass = null;
+    private static String username = null;
     private StompSession session;
 
+    public List<Board> getBoards() {
+        if(!isAdmin())
+            throw new ForbiddenException();
 
-    public void getQuotesTheHardWay() throws IOException {
-        var url = new URL("http://localhost:8080/api/quotes");
-        var is = url.openConnection().getInputStream();
-        var br = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
-    }
-
-    public List<Quote> getQuotes() {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
+                .target(SERVER).path("api/boards/list") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Quote>>() {});
+                .post(Entity.entity(adminPass, APPLICATION_JSON), new GenericType<List<Board>>() {});
     }
 
-    public Quote addQuote(Quote quote) {
+    public Set<Board> getPrevious() {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
+                .target(SERVER).path("api/boards/previous") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+                .post(Entity.entity(username, APPLICATION_JSON), new GenericType<Set<Board>>() {});
     }
 
     public Board joinBoard(String key) {
@@ -81,7 +78,7 @@ public class ServerUtils {
                 .target("http://" + url).path("api/boards/join") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(key, APPLICATION_JSON), Board.class);
+                .post(Entity.entity(new Pair<>(username, key), APPLICATION_JSON), Board.class);
     }
 
     public Board createBoard() {
@@ -89,9 +86,8 @@ public class ServerUtils {
                 .target("http://" + url).path("api/boards/create") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(Board.class);
+                .post(Entity.entity(username, APPLICATION_JSON), Board.class);
     }
-
 
 
     public void connect() {
@@ -136,5 +132,17 @@ public class ServerUtils {
     }
     public void setUrl(String url) {
         ServerUtils.url = url;
+    }
+
+    public void setAdminPass(String pass) {
+        ServerUtils.adminPass = pass;
+    }
+
+    public void setUsername(String username) {
+        ServerUtils.username = username;
+    }
+
+    public boolean isAdmin() {
+        return ServerUtils.adminPass != null;
     }
 }

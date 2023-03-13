@@ -20,6 +20,8 @@ public class User {
     public String username;
     public int index;
 
+    public String passwd = null;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -27,7 +29,7 @@ public class User {
     public Set<Board> boards = new HashSet<>();
 
     @SuppressWarnings("unused")
-    private User() {}
+    protected User() {}
 
     /**
      * @param username The user's username (UNIQUE)

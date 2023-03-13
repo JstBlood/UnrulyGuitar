@@ -61,11 +61,4 @@ public class QuoteOverviewCtrl implements Initializable {
             data.add(q);
         });
     }
-
-
-    public void refresh() {
-        var quotes = server.getQuotes();
-        data = FXCollections.observableList(quotes);
-        table.setItems(data);
-    }
 }
