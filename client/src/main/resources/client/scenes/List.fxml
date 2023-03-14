@@ -4,12 +4,8 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
-<?import java.net.URL?>
 
 <AnchorPane prefHeight="609.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
-   <stylesheets>
-      <URL value="@client/scenes/mainStyle.css" />
-   </stylesheets>
    <children>
       <ListView fx:id="listView" layoutY="27.0" prefHeight="582.0" prefWidth="339.0" />
       <Button layoutX="170.0" layoutY="2.0" mnemonicParsing="false" onAction="#addCard" text="Add a card " />
