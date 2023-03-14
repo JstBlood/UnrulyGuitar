@@ -1,0 +1,19 @@
+* {
+    -fx-col-0: rgb(255, 0, 181);
+    -fx-col-1: rgb(5, 0, 255);
+    -fx-col-2: rgb(0, 255, 255);
+}
+
+.text-0 {
+    -fx-text-fill: -fx-col-2;
+    -fx-font-size: 24px;
+}
+
+.text-1 {
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+}
+
+.line-0 {
+    -fx-stroke: -fx-col-1;
+}

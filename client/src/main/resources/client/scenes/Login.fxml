@@ -2,7 +2,11 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 <AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.LogonCtrl">
+   <stylesheets>
+      <URL value="@client/scenes/mainStyle.css" />
+   </stylesheets>
    <children>
       <Button fx:id="submit" layoutX="171.0" layoutY="157.0" mnemonicParsing="false" onAction="#tryLogon" text="Log on!" textAlignment="CENTER" textFill="#153618" AnchorPane.bottomAnchor="20.0" />
       <TextField fx:id="ip" layoutX="119.0" layoutY="56.0" promptText="eg. 1.1.1.1" text="localhost:8080" AnchorPane.topAnchor="56.0" />
