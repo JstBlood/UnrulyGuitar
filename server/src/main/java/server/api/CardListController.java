@@ -61,7 +61,6 @@ public class CardListController {
         }
         listRepo.saveAndFlush(cardList);
         return ResponseEntity.ok(cardList);
-
     }
 
 }

@@ -32,12 +32,18 @@ public class MainCtrl {
 
     private CardListCtrl listCtrl;
     private Scene list;
-
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+    private QuoteOverviewCtrl overviewCtrl;
+    private Scene overview;
     private ShowBoardCtrl showBoardCtrl;
     private Scene showBoard;
 
-    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards,
-                           Pair<CardListCtrl, Parent> list, Pair<ShowBoardCtrl, Parent> showBoard) {
+    public void initialize(Stage primaryStage,
+                           Pair<LogonCtrl, Parent> logon,
+                           Pair<BoardsCtrl, Parent> boards,
+                           Pair<CardListCtrl, Parent> list,
+                           Pair<ShowBoardCtrl, Parent> showBoard) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -65,6 +71,16 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+        primaryStage.show();
+    }
+    public void showAddCard(){
+        primaryStage.setTitle("Adding Card");
+        primaryStage.setScene(addCard);
+    }
+    public void showOverview() {
+        primaryStage.setTitle("Quotes: Overview");
+        primaryStage.setScene(overview);
+        overviewCtrl.refresh();
     }
 
     public void showList() {
