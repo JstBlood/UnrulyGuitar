@@ -1,10 +1,3 @@
-.button-0 {
-    -fx-text-fill: white;
-    -fx-background-color: -fx-col-1;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
-}
-
 .logo {
     -fx-background-image: url('../images/trashcan_icon.png');
     -fx-background-repeat: stretch;
