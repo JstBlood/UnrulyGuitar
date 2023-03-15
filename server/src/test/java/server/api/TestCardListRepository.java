@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import commons.Board;
 import commons.CardList;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-
 import server.database.CardListRepository;
 
 
@@ -215,6 +215,11 @@ public class TestCardListRepository implements CardListRepository {
     @Override
     public <S extends CardList, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<CardList> findByParentBoard(Board parentBoard) {
         return null;
     }
 }

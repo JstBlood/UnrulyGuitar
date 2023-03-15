@@ -47,8 +47,8 @@ public class ServerUtils {
 
     private static final String SERVER = "http://localhost:8080/";
     private final static int MLIMIT = 1024 * 1024;
-    private static String url = null;
-    private StompSession session;
+    private static String url = "localhost:8080";
+    private StompSession session ;
 
 
     public void getQuotesTheHardWay() throws IOException {
@@ -77,7 +77,7 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
-    public Board joinBoard(String key) {
+    public Board getBoard(String key) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target("http://" + url).path("api/boards/join") //
                 .request(APPLICATION_JSON) //
@@ -99,6 +99,13 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(cardList, APPLICATION_JSON), CardList.class);
+    }
+    public List<CardList> getCardLists(Board board) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/cardlists/get/all") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(board, APPLICATION_JSON), new GenericType<List<CardList>>() {});
     }
 
     public void connect() {

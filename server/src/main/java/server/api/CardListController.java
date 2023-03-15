@@ -15,8 +15,10 @@
  */
 package server.api;
 
+import java.util.List;
 import java.util.Random;
 
+import commons.Board;
 import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -38,10 +40,25 @@ public class CardListController {
         this.listRepo = listRepo;
     }
 
+    @PostMapping("/get/all")
+    public ResponseEntity<List<CardList>> getAll(@RequestBody Board board) {
+        if (board == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(listRepo.findByParentBoard(board));
+    }
+
     @MessageMapping("/cardlists/add")
     @SendTo("/topic/cardlists")
     public CardList addMessage(CardList cardList) {
         add(cardList);
+        return cardList;
+    }
+
+    @MessageMapping("/cardlists/edit/title")
+    @SendTo("/topic/cardlists")
+    public CardList editTitleMessage(CardList cardList) {
+        update(cardList);
         return cardList;
     }
 

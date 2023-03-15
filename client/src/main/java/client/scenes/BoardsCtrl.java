@@ -43,7 +43,7 @@ public class BoardsCtrl {
         }
 
         try {
-            Board receivedBoard = server.joinBoard(key.getText());
+            Board receivedBoard = server.getBoard(key.getText());
 
             System.out.println("[DEBUG] Received board: " + receivedBoard);
 

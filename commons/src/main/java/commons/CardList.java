@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -28,6 +29,7 @@ public class CardList {
 
     @OneToMany(mappedBy = "parentCardList",
             cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<Card> cards = new ArrayList<>();
 
     @SuppressWarnings("unused")
