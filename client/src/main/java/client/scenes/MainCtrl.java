@@ -40,6 +40,9 @@ public class MainCtrl {
     private AddCardListCtrl addCardListCtrl;
     private Scene addCardList;
 
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+
     public void initialize(Stage primaryStage,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
@@ -81,11 +84,6 @@ public class MainCtrl {
     public void showAddCard(){
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(addCard);
-    }
-    public void showOverview() {
-        primaryStage.setTitle("Quotes: Overview");
-        primaryStage.setScene(overview);
-        overviewCtrl.refresh();
     }
 
     public void showBoardOverview() {
