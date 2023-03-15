@@ -15,8 +15,6 @@ import server.database.CardRepository;
 public class CardController {
 
     private final CardRepository cardRepository;
-    private final CardListRepository cardListRepository;
-    private final BoardRepository boardRepository;
     private SimpMessagingTemplate messageTemplate;
 
     public CardController(CardRepository cardRepository,
@@ -24,16 +22,6 @@ public class CardController {
                           BoardRepository boardRepository,
                           SimpMessagingTemplate messageTemplate) {
         this.cardRepository = cardRepository;
-        this.cardListRepository = cardListRepository;
-        this.boardRepository = boardRepository;
         this.messageTemplate = messageTemplate;
-    }
-
-    @PostMapping(path = {"/add"})
-    public ResponseEntity<Card> add(@RequestBody Card card, CardList cardList, Board parentBoard) {
-
-        // TODO: implement this
-
-        return ResponseEntity.ok(card);
     }
 }
