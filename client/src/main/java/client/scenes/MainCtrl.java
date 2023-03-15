@@ -76,6 +76,16 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+        primaryStage.show();
+    }
+    public void showAddCard(){
+        primaryStage.setTitle("Adding Card");
+        primaryStage.setScene(addCard);
+    }
+    public void showOverview() {
+        primaryStage.setTitle("Quotes: Overview");
+        primaryStage.setScene(overview);
+        overviewCtrl.refresh();
     }
 
     public void showBoardOverview() {
