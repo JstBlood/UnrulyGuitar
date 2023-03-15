@@ -65,6 +65,7 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+        primaryStage.setFullScreen(true);
     }
 
     public void showList() {

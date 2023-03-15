@@ -1,0 +1,36 @@
+* {
+    -fx-col-0: rgb(255, 0, 181);
+    -fx-col-1: rgb(5, 0, 255);
+    -fx-col-2: rgb(0, 255, 255);
+}
+
+.root {
+    -fx-background-image: url('../images/bg_0.png');
+    -fx-border-color: -fx-col-0;
+    -fx-border-insets: 5px;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5;
+}
+
+.text-0 {
+    -fx-text-fill: -fx-col-2;
+    -fx-font-size: 20px;
+}
+
+.text-1 {
+    -fx-text-fill: black;
+    -fx-font-size: 15px;
+}
+
+.line-0 {
+    -fx-stroke: -fx-col-1;
+}
+
+.title {
+    -fx-alignment: CENTER;
+    -fx-text-fill: -fx-col-1;
+    -fx-font-size: 40px;
+    -fx-border-color: -fx-col-1 transparent -fx-col-1 transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
