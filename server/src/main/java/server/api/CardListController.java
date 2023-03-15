@@ -19,7 +19,6 @@ import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
 import server.database.CardListRepository;
 
 import java.util.Random;
@@ -29,15 +28,12 @@ import java.util.Random;
 public class CardListController {
     private final Random random;
     private final CardListRepository listRepo;
-    private final BoardRepository boardRepo;
     private SimpMessagingTemplate messages;
 
-    public CardListController(Random rng, CardListRepository listRepo,
-                           BoardRepository boardRepo, SimpMessagingTemplate messages) {
+    public CardListController(Random rng, CardListRepository listRepo, SimpMessagingTemplate messages) {
         this.random = rng;
         this.messages = messages;
         this.listRepo = listRepo;
-        this.boardRepo = boardRepo;
     }
 
     @PostMapping(path = {"/add"})
