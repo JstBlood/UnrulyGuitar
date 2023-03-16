@@ -22,6 +22,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+/**
+ * This class is the controller of the Logon scene,
+ * which is the starting view as the user opens the client
+ * and it's functionalities are:
+ * 1. connect the user to a server
+ * 2. the user can choose a username
+ */
+
 public class LogonCtrl {
 
     private final ServerUtils server;

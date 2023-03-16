@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import commons.Board;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -30,14 +31,24 @@ public class MainCtrl {
     private BoardsCtrl boardsCtrl;
     private Scene boards;
 
-    private CardListCtrl listCtrl;
-    private Scene list;
+    private BoardOverviewCtrl boardOverviewCtrl;
+    private Scene boardOverview;
 
-    private ShowBoardCtrl showBoardCtrl;
-    private Scene showBoard;
+    private CardListCtrl cardListCtrl;
+    private Scene cardList;
 
-    public void initialize(Stage primaryStage, Pair<LogonCtrl, Parent> logon, Pair<BoardsCtrl, Parent> boards,
-                           Pair<CardListCtrl, Parent> list, Pair<ShowBoardCtrl, Parent> showBoard) {
+    private AddCardListCtrl addCardListCtrl;
+    private Scene addCardList;
+
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+
+    public void initialize(Stage primaryStage,
+                           Pair<LogonCtrl, Parent> logon,
+                           Pair<BoardsCtrl, Parent> boards,
+                           Pair<BoardOverviewCtrl, Parent> boardOverview,
+                           Pair<CardListCtrl, Parent> cardList,
+                           Pair<AddCardListCtrl, Parent> addCardList) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -46,11 +57,14 @@ public class MainCtrl {
         this.boardsCtrl = boards.getKey();
         this.boards = new Scene(boards.getValue());
 
-        this.listCtrl= list.getKey();
-        this.list=new Scene(list.getValue());
+        this.boardOverviewCtrl = boardOverview.getKey();
+        this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.showBoardCtrl = showBoard.getKey();
-        this.showBoard = new Scene(showBoard.getValue());
+        this.cardListCtrl= cardList.getKey();
+        this.cardList = new Scene(cardList.getValue());
+
+        this.addCardListCtrl= addCardList.getKey();
+        this.addCardList = new Scene(addCardList.getValue());
 
         showBoard();
         primaryStage.show();
@@ -65,16 +79,36 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
+        primaryStage.show();
+    }
+    public void showAddCard(){
+        primaryStage.setTitle("Adding Card");
+        primaryStage.setScene(addCard);
     }
 
-    public void showList() {
+    public void showBoardOverview() {
+        primaryStage.setTitle("Current board");
+        primaryStage.setScene(boardOverview);
+        boardOverviewCtrl.refresh();
+    }
+
+    public void showAddCardList() {
+        addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
+        primaryStage.setTitle("Add new CardList");
+        primaryStage.setScene(addCardList);
+    }
+
+    public void showCardList() {
         primaryStage.setTitle("Lists");
-        primaryStage.setScene(list);
+        primaryStage.setScene(cardList);
     }
 
     public void showBoard() {
         primaryStage.setTitle("BOARD NAME");
-        primaryStage.setScene(showBoard);
+        primaryStage.setScene(boardOverview);
         primaryStage.setFullScreen(true);
+    }
+    public void setCurrentBoard(Board board) {
+        boardOverviewCtrl.setBoard(board);
     }
 }

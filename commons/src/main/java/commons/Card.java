@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@Entity(name = "Entry")
-@Table(name = "entry")
+@Entity(name = "Card")
+@Table(name = "card")
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,13 +22,14 @@ public class Card {
     public String title;
     public String description;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "cardList_id",
             nullable = false)
     public CardList parentCardList;
 
     @OneToMany(mappedBy = "parentCard",
             cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<Task> tasks = new ArrayList<>();
 
 
@@ -43,7 +45,7 @@ public class Card {
         this.title = title;
         this.description = description;
         this.parentCardList = parentCardList;
-        index = parentCardList.cards.size();
+        if(parentCardList != null) index = parentCardList.cards.size();
     }
 
     public void addTask(Task newTask) {

@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 package server.api;
+
+import java.util.List;
+import java.util.Random;
+
 import commons.Board;
 import commons.CardList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardListRepository;
 
-import java.util.Random;
-
 @RestController
-@RequestMapping("/api/cardList")
+@RequestMapping("/api/cardlists")
 public class CardListController {
     private final Random random;
     private final CardListRepository listRepo;
@@ -36,13 +40,35 @@ public class CardListController {
         this.listRepo = listRepo;
     }
 
-    @PostMapping(path = {"/add"})
-    public ResponseEntity<CardList> add(@RequestBody CardList cardList, Board parentBoard) {
-        if (cardList == null || cardList.title == null || parentBoard == null) {
+    @PostMapping("/get/all")
+    public ResponseEntity<List<CardList>> getAll(@RequestBody Board board) {
+        if (board == null) {
             return ResponseEntity.badRequest().build();
         }
-        CardList created = listRepo.save(cardList);
-        return ResponseEntity.ok(created);
+        return ResponseEntity.ok(listRepo.findByParentBoard(board));
+    }
+
+    @MessageMapping("/cardlists/add")
+    @SendTo("/topic/cardlists")
+    public CardList addMessage(CardList cardList) {
+        add(cardList);
+        return cardList;
+    }
+
+    @MessageMapping("/cardlists/edit/title")
+    @SendTo("/topic/cardlists")
+    public CardList editTitleMessage(CardList cardList) {
+        update(cardList);
+        return cardList;
+    }
+
+    @PostMapping(path = {"/add"})
+    public ResponseEntity<CardList> add(@RequestBody CardList cardList) {
+        if (cardList == null || isNullOrEmpty(cardList.title) || cardList.parentBoard == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        CardList saved = listRepo.save(cardList);
+        return ResponseEntity.ok(saved);
     }
 
     @PostMapping(path = {"/delete"})
@@ -54,14 +80,16 @@ public class CardListController {
         return ResponseEntity.ok(cardList);
     }
 
-    @PostMapping(path = {"/update"})
+    @PutMapping(path = {"/update"})
     public ResponseEntity<CardList> update(@RequestBody CardList cardList) {
         if (cardList == null || cardList.title == null || cardList.parentBoard == null){
             return ResponseEntity.badRequest().build();
         }
         listRepo.saveAndFlush(cardList);
         return ResponseEntity.ok(cardList);
-
     }
 
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
 }

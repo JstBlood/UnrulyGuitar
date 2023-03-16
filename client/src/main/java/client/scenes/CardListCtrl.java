@@ -2,8 +2,19 @@ package client.scenes;
 
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
-
 import javafx.scene.control.ListView;
+
+/**
+ * This class is the controller of the CardList scene,
+ * which is an overview of the current CardList the user is editing
+ * (will probably be accessed by an "Edit" button the the CardList)
+ * and the user can:
+ * 1. edit the list:
+ *      - change the list's attributes
+ *      - add new cards
+ *      - remove cards
+ * 2. delete the list
+ */
 
 public class CardListCtrl {
     @FXML
