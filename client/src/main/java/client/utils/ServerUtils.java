@@ -30,6 +30,7 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import commons.Board;
+import commons.CardList;
 import commons.Quote;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -47,19 +48,26 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
     private final static int MLIMIT = 1024 * 1024;
     private static String url = null;
     private static String adminPass = null;
     private static String username = null;
     private StompSession session;
 
+    private String getServer() {
+        return "http://" + url + "/";
+    }
+
+    private String getSocket() {
+        return "ws://" + url + "/websocket";
+    }
+
     public List<Board> getBoards() {
         if(!isAdmin())
             throw new ForbiddenException();
 
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/boards/list") //
+                .target(getServer()).path("api/boards/list") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(adminPass, APPLICATION_JSON), new GenericType<List<Board>>() {});
@@ -67,13 +75,13 @@ public class ServerUtils {
 
     public Set<Board> getPrevious() {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/boards/previous") //
+                .target(getServer()).path("api/boards/previous") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(username, APPLICATION_JSON), new GenericType<Set<Board>>() {});
     }
 
-    public Board joinBoard(String key) {
+    public Board getBoard(String key) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target("http://" + url).path("api/boards/join") //
                 .request(APPLICATION_JSON) //
@@ -81,14 +89,28 @@ public class ServerUtils {
                 .post(Entity.entity(new Pair<>(username, key), APPLICATION_JSON), Board.class);
     }
 
-    public Board createBoard() {
+    public Board addBoard(Board board) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target("http://" + url).path("api/boards/create") //
+                .target(getServer()).path("api/boards/create") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(username, APPLICATION_JSON), Board.class);
+                .post(Entity.entity(new Pair<>(username, board), APPLICATION_JSON), Board.class);
     }
 
+    public CardList addCardList(CardList cardList) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path("api/cardlists/add") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(cardList, APPLICATION_JSON), CardList.class);
+    }
+    public List<CardList> getCardLists(Board board) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path("api/cardlists/get/all") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(board, APPLICATION_JSON), new GenericType<List<CardList>>() {});
+    }
 
     public void connect() {
         if(url == null)
@@ -104,12 +126,11 @@ public class ServerUtils {
         stomp.setInboundMessageSizeLimit(MLIMIT);
 
         try {
-            session = stomp.connect("ws://" + url + "/websocket", new StompSessionHandlerAdapter() {}).get();
+            session = stomp.connect(getSocket(), new StompSessionHandlerAdapter() {}).get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
-
     public <T> void registerForMessages(String dest, Class<T> type, Consumer<T> consumer) {
         session.subscribe(dest, new StompFrameHandler() {
             @Override
@@ -123,12 +144,8 @@ public class ServerUtils {
             }
         });
     }
-
     public void send(String dest, Object o) {
         session.send(dest, o);
-    }
-    public String getUrl() {
-        return url;
     }
     public void setUrl(String url) {
         ServerUtils.url = url;

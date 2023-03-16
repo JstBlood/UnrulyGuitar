@@ -25,6 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.Config;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import server.database.BoardRepository;
 import server.database.UserRepository;
 
@@ -67,21 +71,23 @@ public class BoardsController {
         return ResponseEntity.ok(joined);
     }
 
-    @PostMapping("create")
-    public Board createBoard(@RequestBody String uname) {
+    @PostMapping(path = "/create")
+    public ResponseEntity<Board> addBoard(@RequestBody Pair<String, Board> pair) {
+        var board = pair.getValue();
+        var uname = pair.getKey();
+
+        if(board == null || isNullOrEmpty(board.key)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         User usr = handleUser(uname);
 
+        usr.boards.add(board);
 
-        // TODO: Change this to actual id generation
-        Board created = new Board(Long.toString(random.nextLong()), "New board");
+        userRepo.save(usr);
+        repo.save(board);
 
-        System.out.println(usr.boards.add(created));
-
-        System.out.println(usr.boards);
-        System.out.println(usr);
-
-        repo.save(created);
-        return created;
+        return ResponseEntity.ok(board);
     }
 
     @PostMapping("list")
@@ -101,5 +107,9 @@ public class BoardsController {
         System.out.println(usr.boards.toString());
 
         return usr.boards;
+    }
+
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 }
