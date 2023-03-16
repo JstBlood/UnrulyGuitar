@@ -52,7 +52,7 @@ public class MainCtrl {
         this.showBoardCtrl = showBoard.getKey();
         this.showBoard = new Scene(showBoard.getValue());
 
-        showLogon();
+        showBoard();
         primaryStage.show();
     }
 

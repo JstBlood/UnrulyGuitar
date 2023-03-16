@@ -6,10 +6,14 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
-
 <?import java.net.URL?>
+
 <SplitPane dividerPositions="0.5" prefHeight="477.0" prefWidth="675.0" styleClass="root" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardsCtrl">
-  <items>
+    <stylesheets>
+        <URL value="@/client/css/mainStyle.css" />
+        <URL value="@/client/css/BoardsStyle.css" />
+    </stylesheets>
+    <items>
       <VBox alignment="TOP_CENTER" fillWidth="false" spacing="20.0" styleClass="section">
          <children>
             <Label styleClass="subtitle" text="Join a board..." />
@@ -37,8 +41,4 @@
          </children>
       </VBox>
   </items>
-    <stylesheets>
-        <URL value="@/client/css/mainStyle.css" />
-        <URL value="@/client/css/BoardsStyle.css" />
-    </stylesheets>
 </SplitPane>
