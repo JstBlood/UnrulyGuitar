@@ -15,9 +15,12 @@
  */
 package server.database;
 
+import java.util.List;
+
+import commons.Board;
 import commons.CardList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CardListRepository extends JpaRepository<CardList, Long> {
-
+    public List<CardList> findByParentBoard(Board parentBoard);
 }

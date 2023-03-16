@@ -20,7 +20,10 @@ import java.util.Random;
 import commons.Board;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import server.database.BoardRepository;
 
 @RestController
@@ -36,7 +39,7 @@ public class BoardsController {
         this.messages = messages;
     }
 
-    @PostMapping("join")
+    @PostMapping("/join")
     public ResponseEntity<Board> joinBoard(@RequestBody String key) {
         if(repo.findByKey(key) == null) {
             return ResponseEntity.badRequest().build();
@@ -45,12 +48,19 @@ public class BoardsController {
         return ResponseEntity.ok(repo.findByKey(key));
     }
 
-    @GetMapping("create")
-    public Board createBoard() {
-        // TODO: Change this to actual id generation
-        Board created = new Board(Long.toString(random.nextLong()), "New board");
+    @PostMapping(path = "/create")
+    public ResponseEntity<Board> addBoard(@RequestBody Board board) {
+        if(board == null || isNullOrEmpty(board.key)) {
+            return  ResponseEntity.badRequest().build();
+        }
 
-        repo.save(created);
-        return created;
+        Board saved = repo.save(board);
+
+        return ResponseEntity.ok(saved);
     }
+
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+
 }

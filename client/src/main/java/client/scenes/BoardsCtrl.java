@@ -1,5 +1,7 @@
 package client.scenes;
 
+import java.util.Random;
+
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
@@ -7,6 +9,14 @@ import commons.Board;
 import jakarta.ws.rs.BadRequestException;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+
+/**
+ * This class is the controller of the Boards scene,
+ * which is basically a menu where the user can either:
+ * 1. join a new board
+ * 2. create a new board
+ * 3. choose a board from the list of previously joined boards
+ */
 
 public class BoardsCtrl {
 
@@ -33,8 +43,13 @@ public class BoardsCtrl {
         }
 
         try {
-            Board recievedBoard = server.joinBoard(key.getText());
-            System.out.println("[DEBUG] Received board: " + recievedBoard);
+            Board receivedBoard = server.getBoard(key.getText());
+
+            System.out.println("[DEBUG] Received board: " + receivedBoard);
+
+            mainCtrl.setCurrentBoard(receivedBoard);
+            mainCtrl.showBoardOverview();
+
         } catch (BadRequestException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {
@@ -43,10 +58,10 @@ public class BoardsCtrl {
     }
 
     public void create() {
-        System.out.println("[DEBUG] Received board: " + server.createBoard());
+        Random rng = new Random();
+        Board created = new Board(Long.toString(rng.nextLong()), "New board");
+        server.addBoard(created);
+        System.out.println("[DEBUG] Received board: " + created);
     }
 
-    public void list(){
-        mainCtrl.showList();
-    }
 }

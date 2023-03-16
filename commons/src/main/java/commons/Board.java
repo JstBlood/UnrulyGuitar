@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,12 +26,14 @@ public class Board {
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
+    @JsonIgnore
     public List<CardList> cardLists = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER)
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

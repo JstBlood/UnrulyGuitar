@@ -8,8 +8,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@Entity(name = "Subentry")
-@Table(name = "subentry")
+@Entity(name = "Task")
+@Table(name = "task")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,7 +19,7 @@ public class Task {
     @Column(nullable = false)
     public String title;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "card_id",
             nullable = false)
     public Card parentCard;
@@ -33,7 +33,7 @@ public class Task {
     public Task(String title, Card parentCard) {
         this.title = title;
         this.parentCard = parentCard;
-        index = parentCard.tasks.size();
+        if(parentCard != null) index = parentCard.tasks.size();
     }
 
     @Override
