@@ -1,0 +1,10 @@
+.text-0 {
+    -fx-border-color: transparent transparent -fx-col-1 transparent;
+    -fx-border-insets: 10px;
+}
+
+.card-list-separator *.line {
+    -fx-border-color: -fx-col-0;
+    -fx-border-style: solid;
+    -fx-border-width: 1px;
+}

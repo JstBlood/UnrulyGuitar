@@ -65,7 +65,6 @@ public class MainCtrl {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
         primaryStage.setScene(boards);
-        primaryStage.setFullScreen(true);
     }
 
     public void showList() {
@@ -76,5 +75,6 @@ public class MainCtrl {
     public void showBoard() {
         primaryStage.setTitle("BOARD NAME");
         primaryStage.setScene(showBoard);
+        primaryStage.setFullScreen(true);
     }
 }
