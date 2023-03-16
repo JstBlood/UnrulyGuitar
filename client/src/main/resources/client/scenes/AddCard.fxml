@@ -24,14 +24,14 @@
    <content>
       <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" styleClass="anchor-plane">
          <stylesheets>
-            <URL value="@client/scenes/AddCardStyle.css" />
+            <URL value="@/client/css/AddCardStyle.css" />
          </stylesheets>
          <children>
             <BorderPane focusTraversable="true" prefHeight="61.0" prefWidth="609.0">
                <left>
                   <ImageView fitHeight="50.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
-                        <Image url="@../../../assets/bracket.png" />
+                        <Image url="@/client/images/bracket.png" />
                      </image>
                      <BorderPane.margin>
                         <Insets left="20.0" />
@@ -41,7 +41,7 @@
                <right>
                   <ImageView fitHeight="50.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0" BorderPane.alignment="CENTER">
                      <image>
-                        <Image url="@../../../assets/bracket.png" />
+                        <Image url="@/client/images/bracket.png" />
                      </image>
                      <BorderPane.margin>
                         <Insets right="20.0" />
@@ -81,7 +81,7 @@
                <left>
                   <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
-                        <Image url="@../../../assets/location_icon.png" />
+                        <Image url="@/client/images/location_icon.png" />
                      </image>
                      <BorderPane.margin>
                         <Insets left="20.0" />
@@ -107,7 +107,7 @@
                <left>
                   <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
-                        <Image url="@../../../assets/time_icon.png" />
+                        <Image url="@/client/images/time_icon.png" />
                      </image>
                      <BorderPane.margin>
                         <Insets left="20.0" />
@@ -140,7 +140,7 @@
                      <left>
                         <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                            <image>
-                              <Image url="@../../../assets/plus_icon.png" />
+                              <Image url="@/client/images/plus_icon.png" />
                            </image>
                            <BorderPane.margin>
                               <Insets left="20.0" />
