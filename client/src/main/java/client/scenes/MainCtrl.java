@@ -60,13 +60,13 @@ public class MainCtrl {
         this.boardOverviewCtrl = boardOverview.getKey();
         this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.cardListCtrl= cardList.getKey();
+        this.cardListCtrl = cardList.getKey();
         this.cardList = new Scene(cardList.getValue());
 
-        this.addCardListCtrl= addCardList.getKey();
+        this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
-        showBoard();
+        showLogon();
         primaryStage.show();
     }
 
@@ -81,7 +81,8 @@ public class MainCtrl {
         primaryStage.setScene(boards);
         primaryStage.show();
     }
-    public void showAddCard(){
+
+    public void showAddCard() {
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(addCard);
     }
@@ -90,12 +91,6 @@ public class MainCtrl {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
         boardOverviewCtrl.refresh();
-    }
-
-    public void showAddCardList() {
-        addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
-        primaryStage.setTitle("Add new CardList");
-        primaryStage.setScene(addCardList);
     }
 
     public void showCardList() {
@@ -108,6 +103,7 @@ public class MainCtrl {
         primaryStage.setScene(boardOverview);
         primaryStage.setFullScreen(true);
     }
+
     public void setCurrentBoard(Board board) {
         boardOverviewCtrl.setBoard(board);
     }

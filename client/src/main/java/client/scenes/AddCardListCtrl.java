@@ -36,6 +36,7 @@ public class AddCardListCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         server.connect();
+        this.title.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
     }
 
     public void ok() {
@@ -49,7 +50,6 @@ public class AddCardListCtrl implements Initializable {
             return;
         }
         clearFields();
-        mainCtrl.showBoardOverview();
     }
     private CardList getCardList() {
         return new CardList(title.getText(), parentBoard);
@@ -57,7 +57,6 @@ public class AddCardListCtrl implements Initializable {
 
     public void cancel() {
         clearFields();
-        mainCtrl.showBoardOverview();
     }
 
     private void clearFields() {

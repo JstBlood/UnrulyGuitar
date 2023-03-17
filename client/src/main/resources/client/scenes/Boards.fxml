@@ -17,6 +17,7 @@
          <children>
             <Label styleClass="subtitle" text="Join a board..." />
             <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="199.0" spacing="15.0" VBox.vgrow="ALWAYS">
+
                <children>
                   <Label styleClass="text-0" text="Board key" />
                   <TextField fx:id="key" promptText="eg. emsiz24" />
@@ -34,7 +35,7 @@
             <Label styleClass="subtitle" text="Or create  one" />
             <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
                <children>
-                  <Button mnemonicParsing="false" onAction="#list" styleClass="button-1" text="Create a board" />
+                  <Button mnemonicParsing="false" onAction="#create" styleClass="button-1" text="Create a board" />
                </children>
             </VBox>
          </children>
