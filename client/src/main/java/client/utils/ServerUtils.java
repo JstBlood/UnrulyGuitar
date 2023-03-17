@@ -17,11 +17,7 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -31,12 +27,10 @@ import javax.websocket.WebSocketContainer;
 
 import commons.Board;
 import commons.CardList;
-import commons.Quote;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
-import javafx.util.Pair;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -45,6 +39,7 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.data.util.Pair;
 
 public class ServerUtils {
 
@@ -62,54 +57,58 @@ public class ServerUtils {
         return "ws://" + url + "/websocket";
     }
 
+    private <T> T internalPostRequest(String path, Entity send, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path(path) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(send, retType);
+    }
+
+    private <T> T internalGetRequest(String path, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path(path) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(retType);
+    }
+
     public List<Board> getBoards() {
         if(!isAdmin())
             throw new ForbiddenException();
 
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path("api/boards/list") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(adminPass, APPLICATION_JSON), new GenericType<List<Board>>() {});
+        return internalPostRequest("api/boards/list",
+                Entity.entity(adminPass, APPLICATION_JSON),
+                new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path("api/boards/previous") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(username, APPLICATION_JSON), new GenericType<Set<Board>>() {});
+        return internalPostRequest("api/boards/previous",
+                Entity.entity(username, APPLICATION_JSON),
+                new GenericType<>() {});
     }
 
     public Board getBoard(String key) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target("http://" + url).path("api/boards/join") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new Pair<>(username, key), APPLICATION_JSON), Board.class);
+        return internalPostRequest("api/boards/" + key + "/join",
+                Entity.entity(username, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     public Board addBoard(Board board) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path("api/boards/create") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new Pair<>(username, board), APPLICATION_JSON), Board.class);
+        return internalPostRequest("api/boards/create",
+                Entity.entity(Pair.of(username, board), APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     public CardList addCardList(CardList cardList) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path("api/cardlists/add") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(cardList, APPLICATION_JSON), CardList.class);
+        return internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>(){});
     }
-    public List<CardList> getCardLists(Board board) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path("api/cardlists/get/all") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(board, APPLICATION_JSON), new GenericType<List<CardList>>() {});
+
+    public void forceRefresh(String key) {
+        internalGetRequest("api/boards/" + key + "/forceRefresh",
+                new GenericType<String>(){});
     }
 
     public void connect() {

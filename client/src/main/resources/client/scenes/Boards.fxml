@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="200.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardsCtrl">
+<AnchorPane prefHeight="435.0" prefWidth="574.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardsCtrl">
    <children>
       <SplitPane dividerPositions="0.4797979797979798" layoutX="129.0" layoutY="20.0" prefHeight="200.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -12,14 +12,14 @@
                   <Button fx:id="submit" layoutX="107.0" layoutY="377.0" mnemonicParsing="false" onAction="#join" text="Join!" textAlignment="CENTER" textFill="#153618" AnchorPane.bottomAnchor="14.0" />
                   <Label layoutX="58.0" layoutY="27.0" text="Join a board..." AnchorPane.topAnchor="27.0" />
                   <Label fx:id="listLabel" layoutX="78.0" layoutY="135.0" text="Previosuly joined:" textAlignment="CENTER" />
-                  <TextField fx:id="key" layoutX="47.0" layoutY="102.0" promptText="eg. emsiz24" AnchorPane.topAnchor="102.0" />
+                  <TextField fx:id="key" layoutX="47.0" layoutY="102.0" promptText="eg. emsiz42" AnchorPane.topAnchor="102.0" />
                   <Button layoutX="12.0" layoutY="16.0" mnemonicParsing="false" onAction="#back" text="&lt;-" />
-                  <ListView fx:id="previous" layoutX="22.0" layoutY="160.0" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="previous" layoutX="22.0" layoutY="160.0" onMouseClicked="#fillIn" prefHeight="200.0" prefWidth="200.0" />
                </children></AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="279.0" prefWidth="219.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="177.0">
                <children>
-                  <Label layoutX="43.0" layoutY="26.0" text="Or create a new one" AnchorPane.bottomAnchor="157.0" />
-                  <Button layoutX="50.0" layoutY="99.0" mnemonicParsing="false" onAction="#create" text="Create a board" />
+                  <Label layoutX="89.0" layoutY="130.0" text="Or create a new one" AnchorPane.bottomAnchor="288.0" />
+                  <Button layoutX="95.0" layoutY="98.0" mnemonicParsing="false" onAction="#create" text="Create a board" />
                </children></AnchorPane>
         </items>
       </SplitPane>

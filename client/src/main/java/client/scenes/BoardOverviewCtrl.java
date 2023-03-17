@@ -1,15 +1,10 @@
 package client.scenes;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.CardList;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -40,16 +35,24 @@ public class BoardOverviewCtrl {
 
     public void prepare() {
         server.connect();
-        server.registerForMessages("/topic/cardlists", CardList.class, q -> {
-            Platform.runLater(() -> {
-                refresh();
-                System.out.println("Refreshed!");
-            });
+
+        server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
+            System.out.println("Current cardlists: ");
+            for(int j = 0; j < q.cardLists.size(); j++) {
+                CardList currCardList = q.cardLists.get(j);
+
+                System.out.println(currCardList.title);
+            }
+
+            refresh(q);
         });
+
+        refresh(board);
+        server.forceRefresh(board.key);
     }
 
-    public void refresh() {
-        board.cardLists = server.getCardLists(board);
+    public void refresh(Board newState) {
+        board = newState;
 
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
@@ -65,7 +68,6 @@ public class BoardOverviewCtrl {
 
             listsGrid.getColumnConstraints().add(new ColumnConstraints(120));
         }
-        System.out.println(listsGrid.getColumnCount());
 
         Button addNewList = new Button("Add new list");
         addNewList.setOnMouseClicked(e -> addCardList());

@@ -90,11 +90,10 @@ public class MainCtrl {
         boardOverviewCtrl.prepare();
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
-        boardOverviewCtrl.refresh();
+
     }
 
     public void showAddCardList() {
-        addCardListCtrl.prepare();
         addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
         primaryStage.setTitle("Add new CardList");
         primaryStage.setScene(addCardList);

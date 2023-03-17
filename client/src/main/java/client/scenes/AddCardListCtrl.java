@@ -1,19 +1,14 @@
 package client.scenes;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.CardList;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
 
 /**
  * This class is the controller of the AddCardList scene,
@@ -33,20 +28,14 @@ public class AddCardListCtrl {
         this.server = server;
     }
 
-    public void prepare() {
-        server.connect();
-    }
 
     public void ok() {
         try {
-            server.send("/app/cardlists/add", getCardList());
+            server.addCardList(getCardList());
         } catch (WebApplicationException e) {
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            return;
+            UIUtils.showError(e.getMessage());
         }
+
         clearFields();
         mainCtrl.showBoardOverview();
     }

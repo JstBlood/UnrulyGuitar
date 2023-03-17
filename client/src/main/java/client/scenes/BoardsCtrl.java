@@ -6,9 +6,7 @@ import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -43,6 +41,8 @@ public class BoardsCtrl {
     }
 
     public void prepare() {
+        previous.getItems().clear();
+
         if(server.isAdmin()) {
             listLabel.setText("All boards:");
             for(var board : server.getBoards()) {
@@ -54,8 +54,6 @@ public class BoardsCtrl {
                 previous.getItems().add(board.key);
             }
         }
-
-
     }
 
     public void join() {
@@ -64,24 +62,31 @@ public class BoardsCtrl {
             return;
         }
 
+        Board receivedBoard = null;
         try {
-            Board receivedBoard = server.getBoard(key.getText());
+            receivedBoard = server.getBoard(key.getText());
             System.out.println("[DEBUG] Received board: " + receivedBoard);
-
-            mainCtrl.setCurrentBoard(receivedBoard);
-            mainCtrl.showBoardOverview();
         } catch (NotFoundException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {
             UIUtils.showError("An unexpected error occurred");
         }
+
+        mainCtrl.setCurrentBoard(receivedBoard);
+        mainCtrl.showBoardOverview();
     }
 
     public void create() {
         Random rng = new Random();
         Board created = new Board(Long.toString(rng.nextLong()), "New board");
-        server.addBoard(created);
+
+        mainCtrl.setCurrentBoard(server.addBoard(created));
+        mainCtrl.showBoardOverview();
         System.out.println("[DEBUG] Received board: " + created);
+    }
+
+    public void fillIn() {
+        key.setText(previous.getSelectionModel().getSelectedItem());
     }
 
     public void back() {
