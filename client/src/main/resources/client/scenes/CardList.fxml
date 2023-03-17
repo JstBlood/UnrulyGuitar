@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
+<VBox spacing="10.0" styleClass="card-list-root" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
    <children>
       <TextField fx:id="title" styleClass="subtitle" text="List Name" />
-      <ListView fx:id="listView" maxHeight="1.7976931348623157E308" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="listView" maxHeight="1.7976931348623157E308" style="-fx-background-color: rgba(255, 255, 255, 0.2);" VBox.vgrow="ALWAYS" />
       <BorderPane>
          <left>
             <Button mnemonicParsing="false" onAction="#addCard" styleClass="button-1" text="Add a card " BorderPane.alignment="CENTER" />

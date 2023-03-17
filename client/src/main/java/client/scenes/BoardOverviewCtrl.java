@@ -104,6 +104,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void openSettings() {
+        mainCtrl.showBoardSettings();
     }
 
     public Board getBoard() {

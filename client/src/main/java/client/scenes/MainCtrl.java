@@ -43,13 +43,17 @@ public class MainCtrl {
     private AddCardCtrl addCardCtrl;
     private Scene addCard;
 
+    private BoardSettingsCtrl boardSettingsCtrl;
+    private Scene boardSettings;
+
     public void initialize(Stage primaryStage,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<CardListCtrl, Parent> cardList,
                            Pair<AddCardListCtrl, Parent> addCardList,
-                           Pair<AddCardCtrl, Parent> addCard) {
+                           Pair<AddCardCtrl, Parent> addCard,
+                           Pair<BoardSettingsCtrl, Parent> boardSettings) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -69,6 +73,9 @@ public class MainCtrl {
 
         this.addCardCtrl = addCard.getKey();
         this.addCard = new Scene(addCard.getValue());
+
+        this.boardSettingsCtrl = boardSettings.getKey();
+        this.boardSettings = new Scene(boardSettings.getValue());
 
         showLogon();
         primaryStage.show();
@@ -106,6 +113,12 @@ public class MainCtrl {
     public void showBoard() {
         primaryStage.setTitle("BOARD NAME");
         primaryStage.setScene(boardOverview);
+        primaryStage.setFullScreen(true);
+    }
+
+    public void showBoardSettings() {
+        primaryStage.setTitle("Settings");
+        primaryStage.setScene(boardSettings);
         primaryStage.setFullScreen(true);
     }
 
