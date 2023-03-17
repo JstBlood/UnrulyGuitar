@@ -32,6 +32,7 @@ public class BoardOverviewCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Board board;
+    private AddCardListCtrl addCardListCtrl;
     @FXML
     private Label boardTitle;
     @FXML
@@ -48,10 +49,6 @@ public class BoardOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // ONLY for debugging purposes, remove before committing
-        this.board = new Board("1234", "Parrot Parlor");
-        //SERIOUSLY!!
-
         server.connect();
         server.registerForMessages("/topic/cardlists", CardList.class, q -> {
             Platform.runLater(() -> {
@@ -64,8 +61,7 @@ public class BoardOverviewCtrl implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
             Parent root = loader.load();
-            AddCardListCtrl ctrl = loader.getController();
-            ctrl.setParentBoard(this.board);
+            this.addCardListCtrl = loader.getController();
             section.getChildren().add(root);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -89,7 +85,7 @@ public class BoardOverviewCtrl implements Initializable {
 
             listsGrid.getColumnConstraints().add(new ColumnConstraints(120));
         }
-        System.out.println(listsGrid.getColumnCount());
+        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
     public void openSettings() {
@@ -101,5 +97,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void setBoard(Board board) {
         this.board = board;
+        this.addCardListCtrl.setParentBoard(board);
     }
 }
