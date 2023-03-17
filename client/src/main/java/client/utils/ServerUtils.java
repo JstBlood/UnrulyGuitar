@@ -153,6 +153,10 @@ public class ServerUtils {
     public void setAdminPass(String pass) {
         ServerUtils.adminPass = pass;
     }
+    
+    public void removeAdmin() {
+        ServerUtils.adminPass = null;
+    }
 
     public void setUsername(String username) {
         ServerUtils.username = username;

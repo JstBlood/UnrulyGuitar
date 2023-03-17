@@ -77,6 +77,8 @@ public class LogonCtrl {
 
         if(adminChk.isSelected())
             server.setAdminPass(admin.getText());
+        else
+            server.removeAdmin();
 
         try {
             server.connect();
