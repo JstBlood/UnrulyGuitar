@@ -1,5 +1,5 @@
 .logo {
-    -fx-background-image: url('../images/trashcan_icon.png');
+    -fx-background-image: url('/client/images/unruly_guitar_logo.png');
     -fx-background-repeat: stretch;
     -fx-background-size: contain;
     -fx-background-position: center center;

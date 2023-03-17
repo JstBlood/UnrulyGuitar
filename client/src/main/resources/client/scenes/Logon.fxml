@@ -44,9 +44,9 @@
             <String fx:value="button-0" />
             <String fx:value="text-1" />
          </styleClass></Button>
-      <Pane prefHeight="152.0" prefWidth="149.0" styleClass="logo" GridPane.rowIndex="2" GridPane.rowSpan="4">
+      <Pane prefHeight="152.0" prefWidth="149.0" styleClass="logo" GridPane.rowIndex="1" GridPane.rowSpan="6">
          <GridPane.margin>
-            <Insets right="20.0" />
+            <Insets bottom="20.0" left="20.0" right="40.0" top="20.0" />
          </GridPane.margin>
       </Pane>
       <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="title" text="Join A Board!" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
