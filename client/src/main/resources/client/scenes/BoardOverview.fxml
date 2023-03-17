@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -41,16 +42,20 @@
             <Insets right="30.0" />
          </GridPane.margin>
       </ImageView>
-      <HBox fx:id="section" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+      <HBox fx:id="section" styleClass="section" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
          <children>
             <ScrollPane fitToHeight="true" pannable="true" prefHeight="354.0" prefWidth="480.0" HBox.hgrow="ALWAYS">
                <content>
-                  <GridPane fx:id="listsGrid" hgap="20.0" prefHeight="100.0" prefWidth="140.0">
+                  <GridPane fx:id="listsGrid" hgap="20.0" styleClass="lists-grid">
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                   </GridPane>
                </content>
+               <styleClass>
+                  <String fx:value="edge-to-edge" />
+                  <String fx:value="lists-grid-root" />
+               </styleClass>
             </ScrollPane>
          </children>
       </HBox>

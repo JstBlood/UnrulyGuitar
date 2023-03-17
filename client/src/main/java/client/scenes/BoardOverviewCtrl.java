@@ -2,7 +2,8 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
@@ -16,8 +17,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -33,6 +34,7 @@ public class BoardOverviewCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
+    private List<CardListCtrl> cardListControllers;
     @FXML
     private Label boardTitle;
     @FXML
@@ -44,6 +46,7 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+        this.cardListControllers = new ArrayList<>();
     }
 
     @Override
@@ -79,11 +82,23 @@ public class BoardOverviewCtrl implements Initializable {
         for (int j = 0; j < board.cardLists.size(); j++) {
             CardList currCardList = board.cardLists.get(j);
 
-            //TODO: replace the Label node with the List node
-            Node title = new Label(currCardList.title);
-            listsGrid.add(title, j, 0);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
+            loader.setControllerFactory(c -> new CardListCtrl(this.server, this.mainCtrl, new ListView<>()));
 
-            listsGrid.getColumnConstraints().add(new ColumnConstraints(120));
+            Node node;
+            try {
+                node = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            CardListCtrl clctrl = loader.getController();
+            clctrl.title.setText(currCardList.title);
+            this.cardListControllers.add(clctrl);
+
+            listsGrid.add(node, j, 0);
+
+            listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
         System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }

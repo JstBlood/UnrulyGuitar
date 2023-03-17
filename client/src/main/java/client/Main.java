@@ -41,6 +41,7 @@ public class Main extends Application {
         var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
         var cardList = FXML.load(CardListCtrl.class, "client", "scenes", "CardList.fxml");
         var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes", "AddCardList.fxml");
+        var addCard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
@@ -49,6 +50,7 @@ public class Main extends Application {
                 boards,
                 boardOverview,
                 cardList,
-                addCardList);
+                addCardList,
+                addCard);
     }
 }

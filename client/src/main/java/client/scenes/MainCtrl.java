@@ -48,7 +48,8 @@ public class MainCtrl {
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<CardListCtrl, Parent> cardList,
-                           Pair<AddCardListCtrl, Parent> addCardList) {
+                           Pair<AddCardListCtrl, Parent> addCardList,
+                           Pair<AddCardCtrl, Parent> addCard) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -65,6 +66,9 @@ public class MainCtrl {
 
         this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
+
+        this.addCardCtrl = addCard.getKey();
+        this.addCard = new Scene(addCard.getValue());
 
         showLogon();
         primaryStage.show();
