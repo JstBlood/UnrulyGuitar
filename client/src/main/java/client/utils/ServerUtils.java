@@ -17,12 +17,9 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import javax.websocket.ContainerProvider;
@@ -30,7 +27,7 @@ import javax.websocket.WebSocketContainer;
 
 import commons.Board;
 import commons.CardList;
-import commons.Quote;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -42,70 +39,76 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.data.util.Pair;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
     private final static int MLIMIT = 1024 * 1024;
-    private static String url = "localhost:8080";
-    private StompSession session ;
+    private static String url = null;
+    private static String adminPass = null;
+    private static String username = null;
+    private StompSession session;
 
-
-    public void getQuotesTheHardWay() throws IOException {
-        var url = new URL("http://localhost:8080/api/quotes");
-        var is = url.openConnection().getInputStream();
-        var br = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
+    private String getServer() {
+        return "http://" + url + "/";
     }
 
-    public List<Quote> getQuotes() {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Quote>>() {});
+    private String getSocket() {
+        return "ws://" + url + "/websocket";
     }
 
-    public Quote addQuote(Quote quote) {
+    private <T> T internalPostRequest(String path, Entity send, GenericType<T> retType) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
+                .target(getServer()).path(path) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+                .post(send, retType);
+    }
+
+    private <T> T internalGetRequest(String path, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path(path) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(retType);
+    }
+
+    public List<Board> getBoards() {
+        if(!isAdmin())
+            throw new ForbiddenException();
+
+        return internalPostRequest("api/boards/list",
+                Entity.entity(adminPass, APPLICATION_JSON),
+                new GenericType<>() {});
+    }
+
+    public Set<Board> getPrevious() {
+        return internalPostRequest("api/boards/previous",
+                Entity.entity(username, APPLICATION_JSON),
+                new GenericType<>() {});
     }
 
     public Board getBoard(String key) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target("http://" + url).path("api/boards/join") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(key, APPLICATION_JSON), Board.class);
+        return internalPostRequest("api/boards/" + key + "/join",
+                Entity.entity(username, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     public Board addBoard(Board board) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/boards/create") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+        return internalPostRequest("api/boards/create",
+                Entity.entity(Pair.of(username, board), APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     public CardList addCardList(CardList cardList) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/cardlists/add") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(cardList, APPLICATION_JSON), CardList.class);
+        return internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>(){});
     }
-    public List<CardList> getCardLists(Board board) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/cardlists/get/all") //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(board, APPLICATION_JSON), new GenericType<List<CardList>>() {});
+
+    public void forceRefresh(String key) {
+        internalGetRequest("api/boards/" + key + "/forceRefresh",
+                new GenericType<String>(){});
     }
 
     public void connect() {
@@ -122,7 +125,7 @@ public class ServerUtils {
         stomp.setInboundMessageSizeLimit(MLIMIT);
 
         try {
-            session = stomp.connect("ws://" + url + "/websocket", new StompSessionHandlerAdapter() {}).get();
+            session = stomp.connect(getSocket(), new StompSessionHandlerAdapter() {}).get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -143,11 +146,19 @@ public class ServerUtils {
     public void send(String dest, Object o) {
         session.send(dest, o);
     }
-
-    public String getUrl() {
-        return url;
-    }
     public void setUrl(String url) {
         ServerUtils.url = url;
+    }
+
+    public void setAdminPass(String pass) {
+        ServerUtils.adminPass = pass;
+    }
+
+    public void setUsername(String username) {
+        ServerUtils.username = username;
+    }
+
+    public boolean isAdmin() {
+        return ServerUtils.adminPass != null;
     }
 }

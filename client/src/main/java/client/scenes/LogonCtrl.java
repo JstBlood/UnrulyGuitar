@@ -18,8 +18,10 @@ package client.scenes;
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 /**
@@ -44,6 +46,12 @@ public class LogonCtrl {
     @FXML
     private Button submit;
 
+    @FXML
+    private CheckBox adminChk;
+
+    @FXML
+    private TextField admin;
+
     @Inject
     public LogonCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -51,12 +59,34 @@ public class LogonCtrl {
 
     }
 
+    public void unveilAdmin() {
+        if(adminChk.isSelected())
+            admin.setDisable(false);
+        else
+            admin.setDisable(true);
+    }
+
     public void tryLogon() {
+        if(username.getText().equals("")) {
+            UIUtils.showError("You need to provide a username");
+            return;
+        }
+
         server.setUrl(ip.getText());
+        server.setUsername(username.getText());
+
+        if(adminChk.isSelected())
+            server.setAdminPass(admin.getText());
 
         try {
             server.connect();
-        } catch (Exception e) {
+
+            if(adminChk.isSelected())
+                server.getBoards();
+        } catch (ForbiddenException e) {
+            UIUtils.showError("Access denied, invalid administrative password");
+            return;
+        }  catch (Exception e) {
             UIUtils.showError(e.getMessage());
             return;
         }
