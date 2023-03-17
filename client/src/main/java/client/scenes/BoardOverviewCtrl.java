@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.CardList;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -33,21 +34,13 @@ public class BoardOverviewCtrl {
         this.server = server;
     }
 
-    public void prepare() {
+    public void prepare(Board board) {
+        this.board = board;
+
         server.connect();
-
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
-            System.out.println("Current cardlists: ");
-            for(int j = 0; j < q.cardLists.size(); j++) {
-                CardList currCardList = q.cardLists.get(j);
-
-                System.out.println(currCardList.title);
-            }
-
-            refresh(q);
+            Platform.runLater(() -> refresh(q));
         });
-
-        refresh(board);
         server.forceRefresh(board.key);
     }
 
@@ -87,8 +80,5 @@ public class BoardOverviewCtrl {
 
     public Board getBoard() {
         return board;
-    }
-    public void setBoard(Board board) {
-        this.board = board;
     }
 }

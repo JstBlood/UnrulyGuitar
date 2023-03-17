@@ -72,7 +72,7 @@ public class BoardsCtrl {
             UIUtils.showError("An unexpected error occurred");
         }
 
-        mainCtrl.setCurrentBoard(receivedBoard);
+        mainCtrl.setupBoardOverview(receivedBoard);
         mainCtrl.showBoardOverview();
     }
 
@@ -80,7 +80,7 @@ public class BoardsCtrl {
         Random rng = new Random();
         Board created = new Board(Long.toString(rng.nextLong()), "New board");
 
-        mainCtrl.setCurrentBoard(server.addBoard(created));
+        mainCtrl.setupBoardOverview(server.addBoard(created));
         mainCtrl.showBoardOverview();
         System.out.println("[DEBUG] Received board: " + created);
     }
