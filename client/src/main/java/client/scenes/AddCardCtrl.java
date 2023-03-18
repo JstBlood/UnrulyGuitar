@@ -2,7 +2,6 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import commons.*;
-import jakarta.ws.rs.WebApplicationException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -96,7 +94,6 @@ public class AddCardCtrl implements Initializable {
             mi.setOnAction(addTagEvent);
             this.addTag.getItems().add(mi);
         }
-        this.subtaskPane.setVisible(false);
     }
 
     public void setParentBoard(Board parentBoard) {
@@ -109,26 +106,30 @@ public class AddCardCtrl implements Initializable {
 
     public void submitCard(){
 
-        // communicate it to the parent Card
-        if (this.title.getText().equals("")){
-            this.submit.setText("Please provide a title!");
-            this.submit.setStyle("-fx-text-fill: red;");
-            return;
-        }
-        this.parentCardList.addCard(new Card(this.title.getText(), description.getText(), this.parentCardList));
-        this.subtaskPane.setVisible(true);
-        System.out.println("Grid: " + this.subtaskPane.toString());
+        //TODO: doesn't work yet, as neither setParentBoard nor setParentCardList are ever called.
+        //TODO: figure out from where to call those methods.
 
-        // communicate it to the server
-        try {
-            server.send("/app/cards", new Card(title.getText(), description.getText(), parentCardList));
-        } catch (WebApplicationException e) {
+//        // communicate it to the parent List
+//        if (this.title.getText().equals("")){
+//            this.submit.setText("Please provide a title!");
+//            this.submit.setStyle("-fx-text-fill: red;");
+//            return;
+//        }
+//        this.parentCardList.addCard(new Card(this.title.getText(), description.getText(), this.parentCardList));
+//
+//        // communicate it to the server
+//        try {
+//            server.send("/app/cards", new Card(title.getText(), description.getText(), parentCardList));
+//        } catch (WebApplicationException e) {
+//
+//            var alert = new Alert(Alert.AlertType.ERROR);
+//            alert.initModality(Modality.APPLICATION_MODAL);
+//            alert.setContentText(e.getMessage());
+//            alert.showAndWait();
+//        }
 
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-        }
+        // go back to the overview
+        mainCtrl.showBoardOverview();
     }
 
     public void addSubtask(){

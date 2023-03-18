@@ -7,15 +7,19 @@ import commons.Board;
 import commons.CardList;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the AddCardList scene,
  * where the user can create a new CardList for the current board.
  */
 
-public class AddCardListCtrl {
+public class AddCardListCtrl implements Initializable{
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
@@ -28,24 +32,28 @@ public class AddCardListCtrl {
         this.server = server;
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.title.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
+    }
 
     public void ok() {
         try {
+            System.out.println(getCardList());
             server.addCardList(getCardList());
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
         }
 
         clearFields();
-        mainCtrl.showBoardOverview();
     }
+
     private CardList getCardList() {
         return new CardList(title.getText(), parentBoard);
     }
 
     public void cancel() {
         clearFields();
-        mainCtrl.showBoardOverview();
     }
 
     private void clearFields() {

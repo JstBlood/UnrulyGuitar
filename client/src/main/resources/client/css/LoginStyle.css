@@ -1,0 +1,10 @@
+.logo {
+    -fx-background-image: url('/client/images/unruly_guitar_logo.png');
+    -fx-background-repeat: stretch;
+    -fx-background-size: contain;
+    -fx-background-position: center center;
+}
+
+.input-0:focused {
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}

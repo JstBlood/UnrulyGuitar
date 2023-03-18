@@ -18,6 +18,7 @@ package client.scenes;
 import commons.Board;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -43,12 +44,17 @@ public class MainCtrl {
     private AddCardCtrl addCardCtrl;
     private Scene addCard;
 
+    private BoardSettingsCtrl boardSettingsCtrl;
+    private Scene boardSettings;
+
     public void initialize(Stage primaryStage,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<CardListCtrl, Parent> cardList,
-                           Pair<AddCardListCtrl, Parent> addCardList) {
+                           Pair<AddCardListCtrl, Parent> addCardList,
+                           Pair<AddCardCtrl, Parent> addCard,
+                           Pair<BoardSettingsCtrl, Parent> boardSettings) {
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -60,11 +66,20 @@ public class MainCtrl {
         this.boardOverviewCtrl = boardOverview.getKey();
         this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.cardListCtrl= cardList.getKey();
+        this.cardListCtrl = cardList.getKey();
         this.cardList = new Scene(cardList.getValue());
 
-        this.addCardListCtrl= addCardList.getKey();
+        this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
+
+        this.addCardCtrl = addCard.getKey();
+        this.addCard = new Scene(addCard.getValue());
+
+        this.boardSettingsCtrl = boardSettings.getKey();
+        this.boardSettings = new Scene(boardSettings.getValue());
+
+        primaryStage.getIcons().add(new Image(getClass()
+                .getResourceAsStream("/client/images/unruly_guitar_icon.png")));
 
         showLogon();
         primaryStage.show();
@@ -81,7 +96,8 @@ public class MainCtrl {
         primaryStage.setScene(boards);
         primaryStage.show();
     }
-    public void showAddCard(){
+
+    public void showAddCard() {
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(addCard);
     }
@@ -89,17 +105,28 @@ public class MainCtrl {
     public void showBoardOverview() {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
-    }
-
-    public void showAddCardList() {
-        addCardListCtrl.setParentBoard(boardOverviewCtrl.getBoard());
-        primaryStage.setTitle("Add new CardList");
-        primaryStage.setScene(addCardList);
+        primaryStage.setFullScreen(true);
     }
 
     public void showCardList() {
         primaryStage.setTitle("Lists");
         primaryStage.setScene(cardList);
+    }
+
+    public void showBoard() {
+        primaryStage.setTitle("BOARD NAME");
+        primaryStage.setScene(boardOverview);
+        primaryStage.setFullScreen(true);
+    }
+
+    public void showBoardSettings() {
+        primaryStage.setTitle("Settings");
+        primaryStage.setScene(boardSettings);
+        primaryStage.setFullScreen(true);
+    }
+
+    public void setCurrentBoard(Board board) {
+        boardOverviewCtrl.setBoard(board);
     }
 
     public void setupBoardOverview(Board board) {
