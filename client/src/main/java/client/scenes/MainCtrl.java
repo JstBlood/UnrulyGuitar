@@ -89,7 +89,6 @@ public class MainCtrl {
     public void showBoardOverview() {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
-        boardOverviewCtrl.refresh();
     }
 
     public void showAddCardList() {
@@ -103,7 +102,7 @@ public class MainCtrl {
         primaryStage.setScene(cardList);
     }
 
-    public void setCurrentBoard(Board board) {
-        boardOverviewCtrl.setBoard(board);
+    public void setupBoardOverview(Board board) {
+        boardOverviewCtrl.prepare(board);
     }
 }

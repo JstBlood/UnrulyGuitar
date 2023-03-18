@@ -22,7 +22,6 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Quote;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -60,12 +59,5 @@ public class QuoteOverviewCtrl implements Initializable {
         server.registerForMessages("/topic/quotes", Quote.class, q -> {
             data.add(q);
         });
-    }
-
-
-    public void refresh() {
-        var quotes = server.getQuotes();
-        data = FXCollections.observableList(quotes);
-        table.setItems(data);
     }
 }

@@ -1,15 +1,11 @@
 package client.scenes;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.CardList;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -22,7 +18,7 @@ import javafx.scene.layout.GridPane;
  * which is an overview of the board the client is currently on.
  */
 
-public class BoardOverviewCtrl implements Initializable {
+public class BoardOverviewCtrl {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -38,19 +34,18 @@ public class BoardOverviewCtrl implements Initializable {
         this.server = server;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void prepare(Board board) {
+        this.board = board;
+
         server.connect();
-        server.registerForMessages("/topic/cardlists", CardList.class, q -> {
-            Platform.runLater(() -> {
-                refresh();
-                System.out.println("Refreshed!");
-            });
+        server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
+            Platform.runLater(() -> refresh(q));
         });
+        server.forceRefresh(board.key);
     }
 
-    public void refresh() {
-        board.cardLists = server.getCardLists(board);
+    public void refresh(Board newState) {
+        board = newState;
 
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
@@ -66,7 +61,6 @@ public class BoardOverviewCtrl implements Initializable {
 
             listsGrid.getColumnConstraints().add(new ColumnConstraints(120));
         }
-        System.out.println(listsGrid.getColumnCount());
 
         Button addNewList = new Button("Add new list");
         addNewList.setOnMouseClicked(e -> addCardList());
@@ -86,8 +80,5 @@ public class BoardOverviewCtrl implements Initializable {
 
     public Board getBoard() {
         return board;
-    }
-    public void setBoard(Board board) {
-        this.board = board;
     }
 }

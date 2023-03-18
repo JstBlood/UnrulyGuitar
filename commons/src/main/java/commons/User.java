@@ -20,14 +20,17 @@ public class User {
     public String username;
     public int index;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    public String passwd = null;
+
+    //@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
     public Set<Board> boards = new HashSet<>();
 
     @SuppressWarnings("unused")
-    private User() {}
+    protected User() {}
 
     /**
      * @param username The user's username (UNIQUE)
