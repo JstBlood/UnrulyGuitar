@@ -106,7 +106,6 @@ public class MainCtrl {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
         primaryStage.setFullScreen(true);
-        boardOverviewCtrl.refresh();
     }
 
     public void showCardList() {
@@ -128,5 +127,9 @@ public class MainCtrl {
 
     public void setCurrentBoard(Board board) {
         boardOverviewCtrl.setBoard(board);
+    }
+
+    public void setupBoardOverview(Board board) {
+        boardOverviewCtrl.prepare(board);
     }
 }

@@ -34,7 +34,7 @@
             <Font name="Arial Black" size="14.0" />
          </font>
       </Label>
-      <ImageView fx:id="allBoards" fitHeight="73.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
+      <ImageView fx:id="allBoards" fitHeight="73.0" fitWidth="61.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
          <image>
             <Image url="@/client/images/simple_arrow_reverse.png" />
          </image>

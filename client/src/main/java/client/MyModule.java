@@ -19,11 +19,11 @@ import client.scenes.*;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import commons.Board;
 
 public class MyModule implements Module {
 
     @Override
-
     public void configure(Binder binder) {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
@@ -31,5 +31,6 @@ public class MyModule implements Module {
         binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AddCardCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(Board.class).in(Scopes.SINGLETON);
     }
 }

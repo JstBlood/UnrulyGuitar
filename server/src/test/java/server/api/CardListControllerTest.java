@@ -31,6 +31,8 @@ public class CardListControllerTest {
     private MyRandom random;
     private TestCardListRepository repo;
     private Board pBoard;
+    private TestUserRepository uRepo;
+    private TestBoardsRepository bRepo;
     private CardListController sut;
 
     @BeforeEach
@@ -38,7 +40,9 @@ public class CardListControllerTest {
         pBoard = new Board("parent", "title");
         random = new MyRandom();
         repo = new TestCardListRepository();
-        sut = new CardListController(random, repo, null);
+        uRepo = new TestUserRepository();
+        bRepo = new TestBoardsRepository();
+        sut = new CardListController(random, repo, new BoardsController(random, bRepo, uRepo, null));
     }
 
     @Test

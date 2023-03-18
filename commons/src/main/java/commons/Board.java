@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,7 +25,6 @@ public class Board {
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
-    @JsonIgnore
     public List<CardList> cardLists = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)

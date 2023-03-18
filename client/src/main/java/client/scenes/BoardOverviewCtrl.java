@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -51,15 +50,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        server.connect();
-        server.registerForMessages("/topic/cardlists", CardList.class, q -> {
-            Platform.runLater(() -> {
-                refresh();
-                System.out.println("Refreshed!");
-            });
-        });
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -70,9 +60,19 @@ public class BoardOverviewCtrl implements Initializable {
             throw new RuntimeException(e);
         }
     }
+    public void prepare(Board board) {
+        this.board = board;
+        setBoard(board);
 
-    public void refresh() {
-        board.cardLists = server.getCardLists(board);
+        server.connect();
+        server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
+            Platform.runLater(() -> refresh(q));
+        });
+        server.forceRefresh(board.key);
+    }
+
+    public void refresh(Board newState) {
+        board = newState;
 
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
@@ -114,5 +114,9 @@ public class BoardOverviewCtrl implements Initializable {
     public void setBoard(Board board) {
         this.board = board;
         this.addCardListCtrl.setParentBoard(board);
+    }
+
+    public void back(){
+        mainCtrl.showBoards();
     }
 }
