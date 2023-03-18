@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
  * where the user can create a new CardList for the current board.
  */
 
-public class AddCardListCtrl {
+public class AddCardListCtrl implements Initializable{
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
