@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox;
  * which is an overview of the board the client is currently on.
  */
 
-public class BoardOverviewCtrl implements Initializable {
+public class BoardOverviewCtrl {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
