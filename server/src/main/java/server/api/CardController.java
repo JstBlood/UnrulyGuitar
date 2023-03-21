@@ -1,23 +1,61 @@
 package server.api;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import commons.Card;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
-import server.database.CardListRepository;
 import server.database.CardRepository;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {
+    private final Random random;
+    private final CardRepository cardRepo;
+    private BoardsController boardsController;
 
-    private final CardRepository cardRepository;
-    private SimpMessagingTemplate messageTemplate;
+    public CardController(Random rng, CardRepository cardRepo, BoardsController boardsController) {
+        this.random = rng;
+        this.cardRepo = cardRepo;
+        this.boardsController = boardsController;
+    }
+    @PostMapping("/add")
+    public ResponseEntity<Card> add(@RequestBody Card card) {
+        if (card == null || isNullOrEmpty(card.title) || card.parentCardList == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Card saved = cardRepo.save(card);
 
-    public CardController(CardRepository cardRepository,
-                          CardListRepository cardListRepository,
-                          BoardRepository boardRepository,
-                          SimpMessagingTemplate messageTemplate) {
-        this.cardRepository = cardRepository;
-        this.messageTemplate = messageTemplate;
+        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
+
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Card> delete(@RequestBody Card card) {
+        if (card == null || card.parentCardList == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        cardRepo.deleteById(card.id);
+
+        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
+
+        return ResponseEntity.ok(card);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Card> update(@RequestBody Card card) {
+        if (card == null || card.title == null || card.parentCardList == null){
+            return ResponseEntity.badRequest().build();
+        }
+        cardRepo.saveAndFlush(card);
+
+        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
+
+        return ResponseEntity.ok(card);
+    }
+
+    private static boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 }
