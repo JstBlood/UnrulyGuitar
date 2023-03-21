@@ -77,27 +77,38 @@ public class ServerUtils {
         if(!isAdmin())
             throw new ForbiddenException();
 
-        return internalPostRequest("api/boards/list",
-                Entity.entity(adminPass, APPLICATION_JSON),
+        return internalPostRequest("api/boards/restricted/" + adminPass + "/list",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return internalPostRequest("api/boards/previous",
-                Entity.entity(username, APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + username + "/previous",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Board getBoard(String key) {
-        return internalPostRequest("api/boards/" + key + "/join",
-                Entity.entity(username, APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + username + "/" + key + "/join",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
     public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/create",
-                Entity.entity(Pair.of(username, board), APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" +username + "/create",
+                Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
+    }
+
+    public void editTitle(String key, String newTitle) {
+        internalPostRequest("api/boards/restricted/" + username + "/" + key + "/edit/title",
+                Entity.entity(newTitle, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void forceRefresh(String key) {
+        internalGetRequest("api/boards/" + key + "/forceRefresh",
+                new GenericType<String>(){});
     }
 
     public CardList addCardList(CardList cardList) {
@@ -106,10 +117,6 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    public void forceRefresh(String key) {
-        internalGetRequest("api/boards/" + key + "/forceRefresh",
-                new GenericType<String>(){});
-    }
 
     public void connect() {
         if(url == null)
