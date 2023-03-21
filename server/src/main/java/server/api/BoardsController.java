@@ -19,12 +19,10 @@ import java.util.*;
 
 import commons.Board;
 import commons.User;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.Config;
 import server.database.BoardRepository;
 import server.database.UserRepository;
 import server.security.PasswordValidator;

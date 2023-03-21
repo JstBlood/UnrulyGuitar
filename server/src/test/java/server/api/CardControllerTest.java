@@ -17,46 +17,45 @@ package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Random;
 
 import commons.Board;
+import commons.Card;
 import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.security.PasswordValidator;
 
-public class CardListControllerTest {
+public class CardControllerTest {
 
     public int nextInt;
     private MyRandom random;
-    private TestCardListRepository repo;
+    private TestCardRepository repo;
     private Board pBoard;
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
-    private CardListController sut;
+    private CardController sut;
 
     @BeforeEach
     public void setup() {
         pBoard = new Board("parent", "title");
         random = new MyRandom();
-        repo = new TestCardListRepository();
+        repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardListController(random, repo, new BoardsController(random, bRepo, uRepo,
-                null, new PasswordValidator(uRepo)), new PasswordValidator(uRepo));
+        sut = new CardController(random, repo, new BoardsController(random, bRepo, uRepo, null, new PasswordValidator(uRepo)));
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getCardList(null));
+        var actual = sut.add(getCard(null, "p1"));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
-    public void cannotAddNullParentBoard() {
-        var actual = sut.add(new CardList("title", null));
+    public void cannotAddNullParentList() {
+        var actual = sut.add(new Card("title", "description", null));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -68,33 +67,35 @@ public class CardListControllerTest {
 
     @Test
     public void cannotUpdateNullList() {
-        var actual = sut.update("", "pwd", -1, "title");
-        assertEquals(NOT_FOUND, actual.getStatusCode());
+        var actual = sut.update(null);
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedAdd() {
-        sut.add(getCardList("q1"));
+        sut.add(getCard("q1", "p1"));
         repo.calledMethods.contains("save");
     }
 
     @Test
     public void databaseIsUsedDelete() {
-        CardList cardList = getCardList("q1");
-        sut.add(cardList);
-        sut.delete(cardList);
+        Card card = getCard("q1", "p1");
+        sut.add(card);
+        sut.delete(card);
         repo.calledMethods.contains("deleteById");
     }
 
     @Test
     public void databaseIsUsedUpdate() {
-        CardList cardList = getCardList("q1");
-        sut.add(cardList);
+        Card card = getCard("q1", "p1");
+        sut.add(card);
+        sut.update(card);
         repo.calledMethods.contains("saveAndFlush");
     }
-    private static CardList getCardList(String q) {
+    private static Card getCard(String q, String p) {
         Board pBoard = new Board("key", "title");
-        return new CardList(q, pBoard);
+        CardList pList = new CardList("title", pBoard);
+        return new Card(q, p, pList);
     }
 
     @SuppressWarnings("serial")
