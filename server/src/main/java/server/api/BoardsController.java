@@ -15,6 +15,8 @@
  */
 package server.api;
 
+import java.util.*;
+
 import commons.Board;
 import commons.User;
 import org.springframework.http.HttpStatus;
@@ -22,12 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.UserRepository;
-import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
-
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/boards")
