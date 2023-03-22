@@ -2,6 +2,8 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
+import commons.CardList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -24,6 +26,7 @@ public class CardListCtrl {
     public TextField title;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private CardList cardList;
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, ListView<String> listView){
         this.server = server;
@@ -32,11 +35,15 @@ public class CardListCtrl {
     }
     @FXML
     public void addCard(){
-        mainCtrl.showAddCard();
+        mainCtrl.showAddCard(this.cardList);
     }
     @FXML
     public void removeCard(){
         int id = listView.getSelectionModel().getSelectedIndex();
         listView.getItems().remove(id);
+    }
+
+    public void setCardList(CardList cardList) {
+        this.cardList = cardList;
     }
 }

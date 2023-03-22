@@ -34,6 +34,7 @@ public class BoardOverviewCtrl implements Initializable {
     private Board board;
     private AddCardListCtrl addCardListCtrl;
     private List<CardListCtrl> cardListControllers;
+    private AddCardCtrl addCardCtrl;
     @FXML
     private Label boardTitle;
     @FXML
@@ -46,6 +47,7 @@ public class BoardOverviewCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.cardListControllers = new ArrayList<>();
+        this.addCardCtrl = new AddCardCtrl(server, mainCtrl);
     }
 
     @Override
@@ -82,6 +84,9 @@ public class BoardOverviewCtrl implements Initializable {
         for (int j = 0; j < board.cardLists.size(); j++) {
             CardList currCardList = board.cardLists.get(j);
 
+            currCardList.parentBoard = this.board;
+            System.out.printf("[REFRESH]: Received CardList %s", currCardList);
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
             loader.setControllerFactory(c -> new CardListCtrl(this.server, this.mainCtrl, new ListView<>()));
 
@@ -94,6 +99,7 @@ public class BoardOverviewCtrl implements Initializable {
 
             CardListCtrl clctrl = loader.getController();
             clctrl.title.setText(currCardList.title);
+            clctrl.setCardList(currCardList);
             this.cardListControllers.add(clctrl);
 
             listsGrid.add(node, j, 0);
@@ -114,6 +120,7 @@ public class BoardOverviewCtrl implements Initializable {
     public void setBoard(Board board) {
         this.board = board;
         this.addCardListCtrl.setParentBoard(board);
+        this.addCardCtrl.setParentBoard(board);
     }
 
     public void back(){

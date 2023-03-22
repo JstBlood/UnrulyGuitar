@@ -26,6 +26,7 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import commons.Board;
+import commons.Card;
 import commons.CardList;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -103,6 +104,12 @@ public class ServerUtils {
     public CardList addCardList(CardList cardList) {
         return internalPostRequest("api/cardlists/add",
                 Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public Card addCard(Card card){
+        return internalPostRequest("api/cards/add",
+                Entity.entity(card, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 

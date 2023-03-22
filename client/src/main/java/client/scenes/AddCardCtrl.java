@@ -1,7 +1,9 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import commons.*;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -55,12 +57,6 @@ public class AddCardCtrl implements Initializable {
     private TextArea subtaskDescription;
     private List<Task> subtasks;
 
-    // temporary variable, because the Board class wasn't yet sufficiently implemented at the time of this commit.
-    // replace with parentboard.tags, and set the value in MainCtrl when the Board is sufficiently implemented.
-    private final Set<Tag> parentboardDotTags = new HashSet<Tag>(List.of(
-            new Tag("Tag 1", Color.BLUE),
-            new Tag("Tag 2", Color.RED)));
-
     @Inject
     public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -69,6 +65,13 @@ public class AddCardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources){
+
+    }
+
+    public void setParentBoard(Board parentBoard) {
+        this.parentBoard = parentBoard;
+
+        // init tagBar
         EventHandler<ActionEvent> removeTagEvent = e -> {
             this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
         };
@@ -79,7 +82,7 @@ public class AddCardCtrl implements Initializable {
                     b -> (b instanceof ToggleButton) && ((ToggleButton) b).getText().equals(tagName)))
                 return;
 
-            Tag tag = parentboardDotTags.stream().filter(t -> t.name.equals(tagName)).findFirst().orElse(null);
+            Tag tag = parentBoard.tags.stream().filter(t -> t.name.equals(tagName)).findFirst().orElse(null);
             ToggleButton tagButton = new ToggleButton(tagName);
             tagButton.setStyle(String.format("-fx-background-color: rgb(%d, %d, %d);",
                     tag.color.getRed(), tag.color.getGreen(), tag.color.getBlue()));
@@ -89,15 +92,11 @@ public class AddCardCtrl implements Initializable {
 
             tagsBar.getButtons().add(tagButton);
         };
-        for(Tag tag : parentboardDotTags){
+        for(Tag tag : parentBoard.tags){
             MenuItem mi = new MenuItem(tag.name);
             mi.setOnAction(addTagEvent);
             this.addTag.getItems().add(mi);
         }
-    }
-
-    public void setParentBoard(Board parentBoard) {
-        this.parentBoard = parentBoard;
     }
 
     public void setParentCardList(CardList parentCardList) {
@@ -105,30 +104,24 @@ public class AddCardCtrl implements Initializable {
     }
 
     public void submitCard(){
+        // communicate it to the parent List
+        if (this.title.getText().equals("")) {
+            this.submit.setText("Please provide a title!");
+            this.submit.setStyle("-fx-text-fill: red;");
+            return;
+        }
 
-        //TODO: doesn't work yet, as neither setParentBoard nor setParentCardList are ever called.
-        //TODO: figure out from where to call those methods.
-
-//        // communicate it to the parent List
-//        if (this.title.getText().equals("")){
-//            this.submit.setText("Please provide a title!");
-//            this.submit.setStyle("-fx-text-fill: red;");
-//            return;
-//        }
-//        this.parentCardList.addCard(new Card(this.title.getText(), description.getText(), this.parentCardList));
-//
-//        // communicate it to the server
-//        try {
-//            server.send("/app/cards", new Card(title.getText(), description.getText(), parentCardList));
-//        } catch (WebApplicationException e) {
-//
-//            var alert = new Alert(Alert.AlertType.ERROR);
-//            alert.initModality(Modality.APPLICATION_MODAL);
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-//        }
+        // communicate it to the server
+        try {
+            Card newCard = generateCard();
+            System.out.printf("[DEBUG] Sending %s to the server\n", newCard);
+            server.addCard(newCard);
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
 
         // go back to the overview
+        clearFields();
         mainCtrl.showBoardOverview();
     }
 
@@ -161,6 +154,15 @@ public class AddCardCtrl implements Initializable {
         for (Node child : this.subtaskPane.getChildren()) {
             System.out.println(child.toString());
         }
+    }
+
+    public Card generateCard(){
+        return new Card(this.title.getText(), this.description.getText(), this.parentCardList);
+    }
+
+    public void clearFields(){
+        this.title.clear();
+        this.description.clear();
     }
 }
 
