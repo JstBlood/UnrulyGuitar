@@ -16,19 +16,24 @@
 package server.api;
 
 import commons.CardList;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardListRepository;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/cardlists")
 public class CardListController {
     private final CardListRepository listRepo;
     private BoardsController boardsController;
+    private RepositoryBasedAuthService pwd;
 
-    public CardListController(CardListRepository listRepo, BoardsController boardsController) {
+    public CardListController(CardListRepository listRepo,
+                              BoardsController boardsController, RepositoryBasedAuthService pwd) {
         this.listRepo = listRepo;
         this.boardsController = boardsController;
+        this.pwd = pwd;
     }
 
     @PostMapping("/add")
@@ -43,7 +48,7 @@ public class CardListController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/restricted/{password}/delete")
     public ResponseEntity<CardList> delete(@RequestBody CardList cardList) {
         if (cardList == null || cardList.parentBoard == null) {
             return ResponseEntity.badRequest().build();
@@ -53,14 +58,28 @@ public class CardListController {
         return ResponseEntity.ok(cardList);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<CardList> update(@RequestBody CardList cardList) {
-        if (cardList == null || cardList.title == null || cardList.parentBoard == null){
+    @PutMapping("/restricted/{password}/{id}/edit/{component}")
+    public ResponseEntity<String> update(@RequestBody String newValue, @PathVariable String password,
+                                           @PathVariable long id, @PathVariable String component) {
+        if(listRepo.findById(id) == null)
+            return ResponseEntity.notFound().build();
+
+        CardList edit = listRepo.findById(id);
+
+        if(!pwd.hasEditAccess(password, edit.parentBoard.key))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        try {
+            edit.getClass().getField(component).set(edit, newValue);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-        listRepo.saveAndFlush(cardList);
-        boardsController.forceRefresh(cardList.parentBoard.key);
-        return ResponseEntity.ok(cardList);
+
+        listRepo.save(edit);
+
+        boardsController.forceRefresh(edit.parentBoard.key);
+
+        return ResponseEntity.ok("");
     }
 
     private static boolean isNullOrEmpty(String s) {

@@ -41,7 +41,6 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.data.util.Pair;
 
 public class ServerUtils {
 
@@ -83,27 +82,39 @@ public class ServerUtils {
         if(!store.accessStore().isAdmin())
             throw new ForbiddenException();
 
-        return internalPostRequest("api/boards/list",
-                Entity.entity(store.accessStore().getPassword(), APPLICATION_JSON),
+        return internalPostRequest("api/boards/restricted/" + store.accessStore().getPassword() + "/list",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return internalPostRequest("api/boards/previous",
-                Entity.entity(store.accessStore().getUsername(), APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/previous",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Board getBoard(String key) {
-        return internalPostRequest("api/boards/" + key + "/join",
-                Entity.entity(store.accessStore().getUsername(), APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
     public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/create",
-                Entity.entity(Pair.of(store.accessStore().getUsername(), board), APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
+                Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
+    }
+
+    public void editTitle(String key, String newTitle) {
+        internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
+                        + "/" + key + "/edit/title",
+                Entity.entity(newTitle, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void forceRefresh(String key) {
+        internalGetRequest("api/boards/" + key + "/forceRefresh",
+                new GenericType<String>(){});
     }
 
     public CardList addCardList(CardList cardList) {
@@ -112,10 +123,6 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    public void forceRefresh(String key) {
-        internalGetRequest("api/boards/" + key + "/forceRefresh",
-                new GenericType<String>(){});
-    }
 
     public void connect() {
         if(store.accessStore().getUrl() == null)

@@ -11,7 +11,8 @@ public class CardController {
     private final CardRepository cardRepo;
     private BoardsController boardsController;
 
-    public CardController(CardRepository cardRepo, BoardsController boardsController) {
+    public CardController(CardRepository cardRepo,
+                          BoardsController boardsController) {
         this.cardRepo = cardRepo;
         this.boardsController = boardsController;
     }

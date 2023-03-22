@@ -17,6 +17,7 @@ package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Random;
 
@@ -24,6 +25,7 @@ import commons.Board;
 import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.services.RepositoryBasedAuthService;
 
 public class CardListControllerTest {
 
@@ -42,7 +44,8 @@ public class CardListControllerTest {
         repo = new TestCardListRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardListController(repo, new BoardsController(bRepo, uRepo, null));
+        sut = new CardListController(repo, new BoardsController(bRepo, uRepo,
+                null, new RepositoryBasedAuthService(uRepo)), new RepositoryBasedAuthService(uRepo));
     }
 
     @Test
@@ -65,8 +68,8 @@ public class CardListControllerTest {
 
     @Test
     public void cannotUpdateNullList() {
-        var actual = sut.update(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.update("", "pwd", -1, "title");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -87,7 +90,6 @@ public class CardListControllerTest {
     public void databaseIsUsedUpdate() {
         CardList cardList = getCardList("q1");
         sut.add(cardList);
-        sut.update(cardList);
         repo.calledMethods.contains("saveAndFlush");
     }
     private static CardList getCardList(String q) {
