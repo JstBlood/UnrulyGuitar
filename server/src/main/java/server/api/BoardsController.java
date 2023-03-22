@@ -22,11 +22,11 @@ import commons.User;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.Config;
 import server.database.BoardRepository;
 import server.database.UserRepository;
+import server.services.SocketRefreshService;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -34,12 +34,12 @@ public class BoardsController {
     private final Random random;
     private final BoardRepository repo;
     private final UserRepository userRepo;
-    private SimpMessagingTemplate messages;
+    private final SocketRefreshService sockets;
 
-    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo, SimpMessagingTemplate messages) {
+    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo, SocketRefreshService messages) {
         this.random = rng;
         this.repo = repo;
-        this.messages = messages;
+        this.sockets = messages;
         this.userRepo = userRepo;
     }
 
@@ -66,7 +66,6 @@ public class BoardsController {
 
         // refetch the board with all new changes
         joined = repo.findByKey(id);
-        stubRecurrence(joined);
 
         return ResponseEntity.ok(joined);
     }
@@ -87,8 +86,6 @@ public class BoardsController {
         repo.save(board);
         userRepo.save(usr);
 
-        stubRecurrence(board);
-
         return ResponseEntity.ok(board);
     }
 
@@ -97,20 +94,14 @@ public class BoardsController {
         if(!Config.getAdminPass().equals(adminPass))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        var stuber = repo.findAll();
-        stubRecurrence(stuber);
-
-        return ResponseEntity.ok(stuber);
+        return ResponseEntity.ok(repo.findAll());
     }
 
     @PostMapping("/previous")
     public Set<Board> getPrev(@RequestBody String username) {
         User usr = handleUser(username);
 
-        var stuber = usr.boards;
-        stubRecurrence(stuber);
-
-        return stuber;
+        return usr.boards;
     }
 
     @GetMapping("/{id}/forceRefresh")
@@ -118,39 +109,12 @@ public class BoardsController {
         if(repo.findByKey(id) == null)
             return ResponseEntity.notFound().build();
 
-        var stuber = repo.findByKey(id);
-        stubRecurrence(stuber);
-
-        messages.convertAndSend("/topic/board/" + id, stuber);
+        sockets.broadcast(repo.findByKey(id));
 
         return ResponseEntity.ok("");
     }
 
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
-    }
-
-    // The boards have a field called users
-    // The objects in that field (Users) have a field called boards
-    // These boards will have pointers to the parent board
-    // this is a recursive relation so if we want to send these objects over
-    // json we need to stub those recurrences, this is what the following
-    // functions do.
-    private static void stubRecurrence(Collection<Board> boards) {
-        for(var b : boards)
-            stubRecurrence(b);
-    }
-
-    private static void stubRecurrence(Board board) {
-        for(var u : board.users)
-            u.boards = null;
-
-        for(var p : board.cardLists) {
-            p.parentBoard = null;
-
-            for(var c : p.cards) {
-                c.parentCardList = null;
-            }
-        }
     }
 }
