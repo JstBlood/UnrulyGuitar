@@ -14,7 +14,8 @@ public class CardController {
     private final CardRepository cardRepo;
     private BoardsController boardsController;
 
-    public CardController(Random rng, CardRepository cardRepo, BoardsController boardsController) {
+    public CardController(Random rng, CardRepository cardRepo,
+                          BoardsController boardsController) {
         this.random = rng;
         this.cardRepo = cardRepo;
         this.boardsController = boardsController;

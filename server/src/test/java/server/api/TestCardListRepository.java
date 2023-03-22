@@ -222,4 +222,9 @@ public class TestCardListRepository implements CardListRepository {
     public List<CardList> findByParentBoard(Board parentBoard) {
         return null;
     }
+
+    @Override
+    public CardList findById(long id) {
+        return null;
+    }
 }
