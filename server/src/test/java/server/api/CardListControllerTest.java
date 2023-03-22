@@ -42,7 +42,7 @@ public class CardListControllerTest {
         repo = new TestCardListRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardListController(random, repo, new BoardsController(random, bRepo, uRepo, null));
+        sut = new CardListController(repo, new BoardsController(bRepo, uRepo, null));
     }
 
     @Test

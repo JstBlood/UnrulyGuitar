@@ -43,7 +43,7 @@ public class BoardsCtrl {
     public void prepare() {
         previous.getItems().clear();
 
-        if(server.isAdmin()) {
+        if(mainCtrl.accessStore().isAdmin()) {
             listLabel.setText("All boards:");
             for(var board : server.getBoards()) {
                 previous.getItems().add(board.key);

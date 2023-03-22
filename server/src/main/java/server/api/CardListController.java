@@ -15,8 +15,6 @@
  */
 package server.api;
 
-import java.util.Random;
-
 import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +23,10 @@ import server.database.CardListRepository;
 @RestController
 @RequestMapping("/api/cardlists")
 public class CardListController {
-    private final Random random;
     private final CardListRepository listRepo;
     private BoardsController boardsController;
 
-    public CardListController(Random rng, CardListRepository listRepo, BoardsController boardsController) {
-        this.random = rng;
+    public CardListController(CardListRepository listRepo, BoardsController boardsController) {
         this.listRepo = listRepo;
         this.boardsController = boardsController;
     }

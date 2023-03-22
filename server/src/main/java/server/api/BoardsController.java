@@ -31,13 +31,11 @@ import server.database.UserRepository;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardsController {
-    private final Random random;
     private final BoardRepository repo;
     private final UserRepository userRepo;
     private SimpMessagingTemplate messages;
 
-    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo, SimpMessagingTemplate messages) {
-        this.random = rng;
+    public BoardsController(BoardRepository repo, UserRepository userRepo, SimpMessagingTemplate messages) {
         this.repo = repo;
         this.messages = messages;
         this.userRepo = userRepo;
