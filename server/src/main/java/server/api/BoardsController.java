@@ -19,14 +19,13 @@ import java.util.*;
 
 import commons.Board;
 import commons.User;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.Config;
 import server.database.BoardRepository;
 import server.database.UserRepository;
 import server.services.SocketRefreshService;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -35,24 +34,21 @@ public class BoardsController {
     private final BoardRepository repo;
     private final UserRepository userRepo;
     private final SocketRefreshService sockets;
+    private final RepositoryBasedAuthService pwd;
 
-    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo, SocketRefreshService messages) {
+    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo,
+                            SocketRefreshService messages, RepositoryBasedAuthService pwd) {
+
         this.random = rng;
         this.repo = repo;
         this.sockets = messages;
         this.userRepo = userRepo;
+        this.pwd = pwd;
     }
 
-    private User handleUser(String username) {
-        if(userRepo.findByUsername(username) == null)
-            return new User(username);
-
-        return userRepo.findByUsername(username);
-    }
-
-    @PostMapping("/{id}/join")
-    public ResponseEntity<Board> joinBoard(@RequestBody String username, @PathVariable String id) {
-        User usr = handleUser(username);
+    @PostMapping("/secure/{username}/{id}/join")
+    public ResponseEntity<Board> joinBoard(@PathVariable String username, @PathVariable String id) {
+        User usr = pwd.retriveUser(username);
 
 
         if(repo.findByKey(id) == null) {
@@ -70,16 +66,36 @@ public class BoardsController {
         return ResponseEntity.ok(joined);
     }
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<Board> addBoard(@RequestBody Pair<String, Board> pair) {
-        var board = pair.getSecond();
-        var uname = pair.getFirst();
+    @PostMapping("/restricted/{password}/{id}/edit/{component}")
+    public ResponseEntity<String> editBoard(@PathVariable String password, @PathVariable String id,
+                                            @PathVariable String component, @RequestBody String newValue) {
+        if(repo.findByKey(id) == null)
+            return ResponseEntity.notFound().build();
+        if(!pwd.hasEditAccess(password, id))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
+        Board edit = repo.findByKey(id);
+
+        try {
+            edit.getClass().getField(component).set(edit, newValue);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        repo.save(edit);
+
+        forceRefresh(id);
+
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/secure/{uname}/create")
+    public ResponseEntity<Board> addBoard(@RequestBody Board board, @PathVariable String uname) {
         if(board == null || isNullOrEmpty(board.key)) {
             return ResponseEntity.badRequest().build();
         }
 
-        User usr = handleUser(uname);
+        User usr = pwd.retriveUser(uname);
 
         usr.boards.add(board);
 
@@ -89,17 +105,17 @@ public class BoardsController {
         return ResponseEntity.ok(board);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<Board>> getBoards(@RequestBody String adminPass) {
-        if(!Config.getAdminPass().equals(adminPass))
+    @PostMapping("/restricted/{adminPass}/list")
+    public ResponseEntity<List<Board>> getBoards(@PathVariable String adminPass) {
+        if(!pwd.checkAdminPass(adminPass))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         return ResponseEntity.ok(repo.findAll());
     }
 
-    @PostMapping("/previous")
-    public Set<Board> getPrev(@RequestBody String username) {
-        User usr = handleUser(username);
+    @PostMapping("/secure/{username}/previous")
+    public Set<Board> getPrev(@PathVariable String username) {
+        User usr = pwd.retriveUser(username);
 
         return usr.boards;
     }
