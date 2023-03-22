@@ -114,7 +114,6 @@ public class AddCardCtrl implements Initializable {
         // communicate it to the server
         try {
             Card newCard = generateCard();
-            System.out.printf("[DEBUG] Sending %s to the server\n", newCard);
             server.addCard(newCard);
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());

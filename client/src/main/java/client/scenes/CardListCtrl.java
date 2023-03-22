@@ -7,6 +7,7 @@ import commons.CardList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 /**
  * This class is the controller of the CardList scene,
@@ -21,17 +22,16 @@ import javafx.scene.control.TextField;
 
 public class CardListCtrl {
     @FXML
-    public ListView<String> listView;
+    private VBox cardsContainer;
     @FXML
-    public TextField title;
+    private TextField title;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private CardList cardList;
     @Inject
-    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, ListView<String> listView){
+    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.listView=listView;
     }
     @FXML
     public void addCard(){
@@ -39,11 +39,23 @@ public class CardListCtrl {
     }
     @FXML
     public void removeCard(){
-        int id = listView.getSelectionModel().getSelectedIndex();
-        listView.getItems().remove(id);
+        // cardContainer used to be a ListView, but a ListView can only contain Strings,
+        // while the cards are VBoxes, so I had to refactor it.
+        // Unfortunately, VBoxes do not have SelectionModels, so this code is deprecated.
+        // TODO: figure out a different way to remove cards.
+//        int id = listView.getSelectionModel().getSelectedIndex();
+//        listView.getItems().remove(id);
     }
 
     public void setCardList(CardList cardList) {
         this.cardList = cardList;
+    }
+
+    public void addCardToContainer(VBox cardNode){
+        this.cardsContainer.getChildren().add(cardNode);
+    }
+
+    public void setTitle(String s) {
+        this.title.setText(s);
     }
 }

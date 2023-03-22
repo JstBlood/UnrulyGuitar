@@ -39,7 +39,6 @@ public class AddCardListCtrl implements Initializable{
 
     public void ok() {
         try {
-            System.out.printf("[DEBUG]: Sending %s to the server\n", getCardList());
             server.addCardList(getCardList());
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
