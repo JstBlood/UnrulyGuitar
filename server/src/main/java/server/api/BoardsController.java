@@ -25,7 +25,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import server.database.BoardRepository;
 import server.database.UserRepository;
-import server.security.PasswordValidator;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -33,11 +33,11 @@ public class BoardsController {
     private final Random random;
     private final BoardRepository repo;
     private final UserRepository userRepo;
-    private final PasswordValidator pwd;
+    private final RepositoryBasedAuthService pwd;
     private SimpMessagingTemplate messages;
 
     public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo,
-                            SimpMessagingTemplate messages, PasswordValidator pwd) {
+                            SimpMessagingTemplate messages, RepositoryBasedAuthService pwd) {
         this.random = rng;
         this.repo = repo;
         this.messages = messages;
@@ -47,7 +47,7 @@ public class BoardsController {
 
     @PostMapping("/secure/{username}/{id}/join")
     public ResponseEntity<Board> joinBoard(@PathVariable String username, @PathVariable String id) {
-        User usr = pwd.handleUser(username);
+        User usr = pwd.retriveUser(username);
 
 
         if(repo.findByKey(id) == null) {
@@ -95,7 +95,7 @@ public class BoardsController {
             return ResponseEntity.badRequest().build();
         }
 
-        User usr = pwd.handleUser(uname);
+        User usr = pwd.retriveUser(uname);
 
         usr.boards.add(board);
 
@@ -120,7 +120,7 @@ public class BoardsController {
 
     @PostMapping("/secure/{username}/previous")
     public Set<Board> getPrev(@PathVariable String username) {
-        User usr = pwd.handleUser(username);
+        User usr = pwd.retriveUser(username);
 
         var stuber = usr.boards;
         stubRecurrence(stuber);

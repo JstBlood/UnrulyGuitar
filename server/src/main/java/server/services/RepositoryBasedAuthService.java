@@ -1,18 +1,18 @@
-package server.security;
+package server.services;
 
 import commons.User;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 import server.database.UserRepository;
 
-@Configuration
-public class PasswordValidator {
+@Service
+public class RepositoryBasedAuthService implements AuthenticationService {
     private UserRepository userRepo;
 
-    public PasswordValidator(UserRepository uRepo) {
+    public RepositoryBasedAuthService(UserRepository uRepo) {
         userRepo = uRepo;
     }
 
-    public User handleUser(String username) {
+    public User retriveUser(String username) {
         if(userRepo.findByUsername(username) == null)
             return new User(username);
 

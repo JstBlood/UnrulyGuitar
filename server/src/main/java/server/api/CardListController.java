@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardListRepository;
-import server.security.PasswordValidator;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/cardlists")
@@ -30,10 +30,10 @@ public class CardListController {
     private final Random random;
     private final CardListRepository listRepo;
     private BoardsController boardsController;
-    private PasswordValidator pwd;
+    private RepositoryBasedAuthService pwd;
 
     public CardListController(Random rng, CardListRepository listRepo,
-                              BoardsController boardsController, PasswordValidator pwd) {
+                              BoardsController boardsController, RepositoryBasedAuthService pwd) {
         this.random = rng;
         this.listRepo = listRepo;
         this.boardsController = boardsController;

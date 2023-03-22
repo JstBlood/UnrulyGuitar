@@ -25,7 +25,7 @@ import commons.Card;
 import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.security.PasswordValidator;
+import server.services.RepositoryBasedAuthService;
 
 public class CardControllerTest {
 
@@ -44,7 +44,7 @@ public class CardControllerTest {
         repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardController(random, repo, new BoardsController(random, bRepo, uRepo, null, new PasswordValidator(uRepo)));
+        sut = new CardController(random, repo, new BoardsController(random, bRepo, uRepo, null, new RepositoryBasedAuthService(uRepo)));
     }
 
     @Test
