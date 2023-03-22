@@ -28,6 +28,4 @@ public class Config {
         return new Random();
     }
 
-    @Bean
-    public static String getAdminPass() { return "xyz"; }
 }
