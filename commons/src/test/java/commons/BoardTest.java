@@ -1,12 +1,12 @@
 package commons;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest {
     private static final Board SOME_BOARD = new Board("board", "myBoard");
