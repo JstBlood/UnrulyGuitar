@@ -15,6 +15,9 @@
  */
 package client.scenes;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Quote;
@@ -24,9 +27,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class QuoteOverviewCtrl implements Initializable {
 

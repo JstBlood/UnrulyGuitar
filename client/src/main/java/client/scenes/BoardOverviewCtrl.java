@@ -1,5 +1,12 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -11,18 +18,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -86,15 +87,8 @@ public class BoardOverviewCtrl implements Initializable {
 
         System.out.printf("[REFRESH]: New state: %s", newState);
 
-        // Update the CardLists and their Cards using FXML Loaders
-        updateCardLists();
-
-        // Update the board title
-        boardTitle.setText(board.title);
-    }
-
-    private void updateCardLists() throws IOException {
         // Update the card lists
+
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
 
@@ -138,6 +132,9 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
         System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
+
+        // Update the board title
+        boardTitle.setText(board.title);
     }
 
     @FXML
