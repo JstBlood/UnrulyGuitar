@@ -26,7 +26,6 @@ import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 @RestController

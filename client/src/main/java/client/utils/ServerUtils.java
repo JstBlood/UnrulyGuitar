@@ -26,7 +26,9 @@ import javax.inject.Inject;
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
+import client.scenes.MainCtrl;
 import commons.Board;
+import commons.Card;
 import commons.CardList;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;

@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import server.database.CardListRepository;
 import server.services.RepositoryBasedAuthService;
 
-import java.util.Random;
-
 @RestController
 @RequestMapping("/api/cardlists")
 public class CardListController {
