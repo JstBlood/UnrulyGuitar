@@ -44,7 +44,7 @@ public class CardControllerTest {
         repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardController(random, repo, new BoardsController(random, bRepo, uRepo, null, new RepositoryBasedAuthService(uRepo)));
+        sut = new CardController(repo, new BoardsController(bRepo, uRepo, null, new RepositoryBasedAuthService(uRepo)));
     }
 
     @Test
