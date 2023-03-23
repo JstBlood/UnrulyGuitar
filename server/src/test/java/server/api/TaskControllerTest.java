@@ -11,6 +11,8 @@ import commons.CardList;
 import commons.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.services.SocketRefreshService;
 
 public class TaskControllerTest {
 
@@ -21,15 +23,18 @@ public class TaskControllerTest {
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
     private TaskController sut;
+    private SimpMessagingTemplate simp;
+    private SocketRefreshService messages;
 
     @BeforeEach
     public void setup() {
+        messages = new SocketRefreshService(simp);
         pBoard = new Board("parent", "title");
         random = new MyRandom();
         repo = new TestTaskRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new TaskController(random, repo, new BoardsController(random, bRepo, uRepo, null));
+        sut = new TaskController(random, repo, new BoardsController(bRepo, uRepo, messages , null));
     }
 
     @Test
