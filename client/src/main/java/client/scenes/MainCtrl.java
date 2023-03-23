@@ -23,6 +23,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.util.Objects;
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -89,8 +91,8 @@ public class MainCtrl {
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
 
-        primaryStage.getIcons().add(new Image(getClass()
-                .getResourceAsStream("/client/images/unruly_guitar_icon.png")));
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
+                .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
         showLogon();
         primaryStage.show();
