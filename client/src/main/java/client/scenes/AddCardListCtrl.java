@@ -22,10 +22,10 @@ import java.util.ResourceBundle;
 public class AddCardListCtrl implements Initializable{
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private Board parentBoard;
+
     @FXML
     private TextField title;
-
-    private Board parentBoard;
 
     @Inject
     public AddCardListCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -77,4 +77,5 @@ public class AddCardListCtrl implements Initializable{
     public void setParentBoard(Board parentBoard) {
         this.parentBoard = parentBoard;
     }
+
 }

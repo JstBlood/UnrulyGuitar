@@ -18,22 +18,27 @@ import javafx.scene.control.TextField;
  */
 
 public class CardListCtrl {
+
     @FXML
     public ListView<String> listView;
     @FXML
     public TextField title;
+
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, ListView<String> listView){
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.listView=listView;
     }
+
     @FXML
     public void addCard(){
         mainCtrl.showAddCard();
     }
+
     @FXML
     public void removeCard(){
         int id = listView.getSelectionModel().getSelectedIndex();

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import client.scenes.*;
+import client.shared.CredentialsStore;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -45,6 +46,8 @@ public class Main extends Application {
         var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+
+        var cStore = new CredentialsStore();
 
         mainCtrl.initialize(primaryStage,
                 login,
