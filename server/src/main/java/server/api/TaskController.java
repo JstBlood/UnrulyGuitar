@@ -8,7 +8,7 @@ import server.database.TaskRepository;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/tasks/")
 public class TaskController {
     private final Random random;
     private final TaskRepository taskRepo;
@@ -19,7 +19,7 @@ public class TaskController {
         this.taskRepo = taskRepo;
         this.boardsController = boardsController;
     }
-    @PostMapping("/add")
+    @PostMapping("/secure/{username}/{id}/add")
     public ResponseEntity<Task> add(@RequestBody Task task) {
         if (task == null || isNullOrEmpty(task.title) || task.parentCard == null) {
             return ResponseEntity.badRequest().build();
@@ -31,7 +31,7 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/secure/{username}/{id}/delete")
     public ResponseEntity<Task> delete(@RequestBody Task task) {
         if (task == null || task.parentCard == null) {
             return ResponseEntity.badRequest().build();
@@ -43,7 +43,7 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/secure/{username}/{id}/update")
     public ResponseEntity<Task> update(@RequestBody Task task) {
         if (task == null || task.title == null || task.parentCard == null){
             return ResponseEntity.badRequest().build();
