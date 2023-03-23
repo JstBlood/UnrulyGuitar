@@ -27,14 +27,12 @@ import java.util.Random;
 @RestController
 @RequestMapping("/api/cardlists")
 public class CardListController {
-    private final Random random;
     private final CardListRepository listRepo;
     private BoardsController boardsController;
     private RepositoryBasedAuthService pwd;
 
-    public CardListController(Random rng, CardListRepository listRepo,
+    public CardListController(CardListRepository listRepo,
                               BoardsController boardsController, RepositoryBasedAuthService pwd) {
-        this.random = rng;
         this.listRepo = listRepo;
         this.boardsController = boardsController;
         this.pwd = pwd;

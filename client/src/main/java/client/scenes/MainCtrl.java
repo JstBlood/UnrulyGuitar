@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import client.shared.CredentialsStore;
 import commons.Board;
 import commons.CardList;
 import javafx.scene.Parent;
@@ -47,6 +48,12 @@ public class MainCtrl {
 
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
+
+    private CredentialsStore cStore = new CredentialsStore();
+
+    public CredentialsStore accessStore() {
+        return cStore;
+    }
 
     public void initialize(Stage primaryStage,
                            Pair<LogonCtrl, Parent> logon,

@@ -32,16 +32,14 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/boards")
 public class BoardsController {
-    private final Random random;
     private final BoardRepository repo;
     private final UserRepository userRepo;
     private final SocketRefreshService sockets;
     private final RepositoryBasedAuthService pwd;
 
-    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo,
+    public BoardsController(BoardRepository repo, UserRepository userRepo,
                             SocketRefreshService messages, RepositoryBasedAuthService pwd) {
 
-        this.random = rng;
         this.repo = repo;
         this.sockets = messages;
         this.userRepo = userRepo;

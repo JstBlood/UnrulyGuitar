@@ -24,6 +24,7 @@ public class AddCardListCtrl implements Initializable{
     private final MainCtrl mainCtrl;
     @FXML
     private TextField title;
+
     private Board parentBoard;
 
     @Inject
