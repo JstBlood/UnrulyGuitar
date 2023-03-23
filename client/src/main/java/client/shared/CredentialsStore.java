@@ -3,6 +3,9 @@ package client.shared;
 import javax.inject.Inject;
 
 public class CredentialsStore {
+
+    private String username = null;
+    private String password = null;
     private String url = null;
 
     public String getUrl() {
@@ -37,11 +40,8 @@ public class CredentialsStore {
         this.password = password;
     }
 
-    private String username = null;
-    private String password = null;
-
     @Inject
     public CredentialsStore() {
-
     }
+
 }
