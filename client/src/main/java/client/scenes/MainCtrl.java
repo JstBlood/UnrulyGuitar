@@ -57,18 +57,16 @@ public class MainCtrl {
     }
 
     public void initialize(Stage primaryStage,
-                           Pair<CredentialsStore, Parent> cStore,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<CardListCtrl, Parent> cardList,
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<AddCardCtrl, Parent> addCard,
-                           Pair<BoardSettingsCtrl, Parent> boardSettings) {
+                           Pair<BoardSettingsCtrl, Parent> boardSettings,
+                           CredentialsStore cStore) {
 
         this.primaryStage = primaryStage;
-
-        this.cStore = cStore.getKey();
 
         this.logonCtrl = logon.getKey();
         this.logon = new Scene(logon.getValue());
@@ -91,11 +89,14 @@ public class MainCtrl {
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
 
+        this.cStore = cStore;
+
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
                 .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
         showLogon();
         primaryStage.show();
+
     }
 
     public void showLogon() {
