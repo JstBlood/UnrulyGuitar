@@ -5,17 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CardRepository;
 
-import java.util.Random;
-
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {
-    private final Random random;
     private final CardRepository cardRepo;
     private BoardsController boardsController;
 
-    public CardController(Random rng, CardRepository cardRepo, BoardsController boardsController) {
-        this.random = rng;
+    public CardController(CardRepository cardRepo,
+                          BoardsController boardsController) {
         this.cardRepo = cardRepo;
         this.boardsController = boardsController;
     }

@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import javax.inject.Inject;
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
+import client.scenes.MainCtrl;
 import commons.Board;
 import commons.CardList;
 import jakarta.ws.rs.ForbiddenException;
@@ -39,22 +41,25 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.data.util.Pair;
 
 public class ServerUtils {
 
-    private final static int MLIMIT = 1024 * 1024;
-    private static String url = null;
-    private static String adminPass = null;
-    private static String username = null;
+    private final int mlimit = 1024 * 1024;
     private StompSession session;
 
+    private MainCtrl store;
+
+    @Inject
+    public ServerUtils(MainCtrl store) {
+        this.store = store;
+    }
+
     private String getServer() {
-        return "http://" + url + "/";
+        return "http://" + store.accessStore().getUrl() + "/";
     }
 
     private String getSocket() {
-        return "ws://" + url + "/websocket";
+        return "ws://" + store.accessStore().getUrl() + "/websocket";
     }
 
     private <T> T internalPostRequest(String path, Entity send, GenericType<T> retType) {
@@ -74,35 +79,36 @@ public class ServerUtils {
     }
 
     public List<Board> getBoards() {
-        if(!isAdmin())
+        if(!store.accessStore().isAdmin())
             throw new ForbiddenException();
 
-        return internalPostRequest("api/boards/list",
-                Entity.entity(adminPass, APPLICATION_JSON),
+        return internalPostRequest("api/boards/restricted/" + store.accessStore().getPassword() + "/list",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return internalPostRequest("api/boards/previous",
-                Entity.entity(username, APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/previous",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
     public Board getBoard(String key) {
-        return internalPostRequest("api/boards/" + key + "/join",
-                Entity.entity(username, APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
+                Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
     public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/create",
-                Entity.entity(Pair.of(username, board), APPLICATION_JSON),
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
+                Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public CardList addCardList(CardList cardList) {
-        return internalPostRequest("api/cardlists/add",
-                Entity.entity(cardList, APPLICATION_JSON),
+    public void editTitle(String key, String newTitle) {
+        internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
+                        + "/" + key + "/edit/title",
+                Entity.entity(newTitle, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
@@ -111,18 +117,25 @@ public class ServerUtils {
                 new GenericType<String>(){});
     }
 
+    public CardList addCardList(CardList cardList) {
+        return internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+
     public void connect() {
-        if(url == null)
+        if(store.accessStore().getUrl() == null)
             throw new RuntimeException("No address provided");
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        container.setDefaultMaxBinaryMessageBufferSize(MLIMIT);
-        container.setDefaultMaxTextMessageBufferSize(MLIMIT);
+        container.setDefaultMaxBinaryMessageBufferSize(mlimit);
+        container.setDefaultMaxTextMessageBufferSize(mlimit);
 
         var client = new StandardWebSocketClient(container);
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
-        stomp.setInboundMessageSizeLimit(MLIMIT);
+        stomp.setInboundMessageSizeLimit(mlimit);
 
         try {
             session = stomp.connect(getSocket(), new StompSessionHandlerAdapter() {}).get();
@@ -145,24 +158,5 @@ public class ServerUtils {
     }
     public void send(String dest, Object o) {
         session.send(dest, o);
-    }
-    public void setUrl(String url) {
-        ServerUtils.url = url;
-    }
-
-    public void setAdminPass(String pass) {
-        ServerUtils.adminPass = pass;
-    }
-    
-    public void removeAdmin() {
-        ServerUtils.adminPass = null;
-    }
-
-    public void setUsername(String username) {
-        ServerUtils.username = username;
-    }
-
-    public boolean isAdmin() {
-        return ServerUtils.adminPass != null;
     }
 }

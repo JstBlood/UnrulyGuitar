@@ -16,8 +16,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -35,7 +35,7 @@ public class BoardOverviewCtrl implements Initializable {
     private AddCardListCtrl addCardListCtrl;
     private List<CardListCtrl> cardListControllers;
     @FXML
-    private Label boardTitle;
+    private TextField boardTitle;
     @FXML
     private GridPane listsGrid;
     @FXML
@@ -74,6 +74,8 @@ public class BoardOverviewCtrl implements Initializable {
     public void refresh(Board newState) {
         board = newState;
 
+        // Update the card lists
+
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
 
@@ -101,6 +103,15 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
         System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
+
+        // Update the board title
+
+        boardTitle.setText(board.title);
+    }
+
+    @FXML
+    public void titleChanged() {
+        server.editTitle(board.key, boardTitle.getText());
     }
 
     public void openSettings() {

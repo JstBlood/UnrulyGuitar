@@ -19,40 +19,34 @@ import java.util.*;
 
 import commons.Board;
 import commons.User;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import server.Config;
 import server.database.BoardRepository;
 import server.database.UserRepository;
+import server.services.SocketRefreshService;
+import server.services.RepositoryBasedAuthService;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardsController {
-    private final Random random;
     private final BoardRepository repo;
     private final UserRepository userRepo;
-    private SimpMessagingTemplate messages;
+    private final SocketRefreshService sockets;
+    private final RepositoryBasedAuthService pwd;
 
-    public BoardsController(Random rng, BoardRepository repo, UserRepository userRepo, SimpMessagingTemplate messages) {
-        this.random = rng;
+    public BoardsController(BoardRepository repo, UserRepository userRepo,
+                            SocketRefreshService messages, RepositoryBasedAuthService pwd) {
+
         this.repo = repo;
-        this.messages = messages;
+        this.sockets = messages;
         this.userRepo = userRepo;
+        this.pwd = pwd;
     }
 
-    private User handleUser(String username) {
-        if(userRepo.findByUsername(username) == null)
-            return new User(username);
-
-        return userRepo.findByUsername(username);
-    }
-
-    @PostMapping("/{id}/join")
-    public ResponseEntity<Board> joinBoard(@RequestBody String username, @PathVariable String id) {
-        User usr = handleUser(username);
+    @PostMapping("/secure/{username}/{id}/join")
+    public ResponseEntity<Board> joinBoard(@PathVariable String username, @PathVariable String id) {
+        User usr = pwd.retriveUser(username);
 
 
         if(repo.findByKey(id) == null) {
@@ -66,51 +60,62 @@ public class BoardsController {
 
         // refetch the board with all new changes
         joined = repo.findByKey(id);
-        stubRecurrence(joined);
 
         return ResponseEntity.ok(joined);
     }
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<Board> addBoard(@RequestBody Pair<String, Board> pair) {
-        var board = pair.getSecond();
-        var uname = pair.getFirst();
+    @PostMapping("/restricted/{password}/{id}/edit/{component}")
+    public ResponseEntity<String> editBoard(@PathVariable String password, @PathVariable String id,
+                                            @PathVariable String component, @RequestBody String newValue) {
+        if(repo.findByKey(id) == null)
+            return ResponseEntity.notFound().build();
+        if(!pwd.hasEditAccess(password, id))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
+        Board edit = repo.findByKey(id);
+
+        try {
+            edit.getClass().getField(component).set(edit, newValue);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        repo.save(edit);
+
+        forceRefresh(id);
+
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping("/secure/{uname}/create")
+    public ResponseEntity<Board> addBoard(@RequestBody Board board, @PathVariable String uname) {
         if(board == null || isNullOrEmpty(board.key)) {
             return ResponseEntity.badRequest().build();
         }
 
-        User usr = handleUser(uname);
+        User usr = pwd.retriveUser(uname);
 
         usr.boards.add(board);
 
         repo.save(board);
         userRepo.save(usr);
 
-        stubRecurrence(board);
-
         return ResponseEntity.ok(board);
     }
 
-    @PostMapping("/list")
-    public ResponseEntity<List<Board>> getBoards(@RequestBody String adminPass) {
-        if(!Config.getAdminPass().equals(adminPass))
+    @PostMapping("/restricted/{adminPass}/list")
+    public ResponseEntity<List<Board>> getBoards(@PathVariable String adminPass) {
+        if(!pwd.checkAdminPass(adminPass))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-        var stuber = repo.findAll();
-        stubRecurrence(stuber);
-
-        return ResponseEntity.ok(stuber);
+        return ResponseEntity.ok(repo.findAll());
     }
 
-    @PostMapping("/previous")
-    public Set<Board> getPrev(@RequestBody String username) {
-        User usr = handleUser(username);
+    @PostMapping("/secure/{username}/previous")
+    public Set<Board> getPrev(@PathVariable String username) {
+        User usr = pwd.retriveUser(username);
 
-        var stuber = usr.boards;
-        stubRecurrence(stuber);
-
-        return stuber;
+        return usr.boards;
     }
 
     @GetMapping("/{id}/forceRefresh")
@@ -118,39 +123,12 @@ public class BoardsController {
         if(repo.findByKey(id) == null)
             return ResponseEntity.notFound().build();
 
-        var stuber = repo.findByKey(id);
-        stubRecurrence(stuber);
-
-        messages.convertAndSend("/topic/board/" + id, stuber);
+        sockets.broadcast(repo.findByKey(id));
 
         return ResponseEntity.ok("");
     }
 
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
-    }
-
-    // The boards have a field called users
-    // The objects in that field (Users) have a field called boards
-    // These boards will have pointers to the parent board
-    // this is a recursive relation so if we want to send these objects over
-    // json we need to stub those recurrences, this is what the following
-    // functions do.
-    private static void stubRecurrence(Collection<Board> boards) {
-        for(var b : boards)
-            stubRecurrence(b);
-    }
-
-    private static void stubRecurrence(Board board) {
-        for(var u : board.users)
-            u.boards = null;
-
-        for(var p : board.cardLists) {
-            p.parentBoard = null;
-
-            for(var c : p.cards) {
-                c.parentCardList = null;
-            }
-        }
     }
 }

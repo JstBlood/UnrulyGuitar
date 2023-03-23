@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Board")
 @Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"key"}))
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
+                property = "@id")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

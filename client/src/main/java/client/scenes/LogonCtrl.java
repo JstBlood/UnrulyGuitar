@@ -56,7 +56,6 @@ public class LogonCtrl {
     public LogonCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
     }
 
     public void unveilAdmin() {
@@ -72,13 +71,13 @@ public class LogonCtrl {
             return;
         }
 
-        server.setUrl(ip.getText());
-        server.setUsername(username.getText());
+        mainCtrl.accessStore().setUrl(ip.getText());
+        mainCtrl.accessStore().setUsername(username.getText());
 
         if(adminChk.isSelected())
-            server.setAdminPass(admin.getText());
+            mainCtrl.accessStore().setPassword(admin.getText());
         else
-            server.removeAdmin();
+            mainCtrl.accessStore().removePassword();
 
         try {
             server.connect();
