@@ -17,6 +17,7 @@ package client.scenes;
 
 import client.shared.CredentialsStore;
 import commons.Board;
+import commons.CardList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -110,7 +111,8 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    public void showAddCard() {
+    public void showAddCard(CardList parentCardList) {
+        addCardCtrl.setParentCardList(parentCardList);
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(addCard);
     }

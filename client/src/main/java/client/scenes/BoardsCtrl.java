@@ -1,7 +1,5 @@
 package client.scenes;
 
-import java.util.Random;
-
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
@@ -11,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+
+import java.util.Random;
 
 /**
  * This class is the controller of the Boards scene,

@@ -40,7 +40,6 @@ public class AddCardListCtrl implements Initializable{
 
     public void ok() {
         try {
-            System.out.println(getCardList());
             server.addCardList(getCardList());
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
