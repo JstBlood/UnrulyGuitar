@@ -48,7 +48,15 @@ public class MainCtrl {
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
-    private CredentialsStore cStore = new CredentialsStore();
+    private final CredentialsStore cStore;
+
+    public MainCtrl(CredentialsStore cStore) {
+        this.cStore = cStore;
+    }
+
+    public MainCtrl() {
+        this.cStore = null;
+    }
 
     public CredentialsStore accessStore() {
         return cStore;
