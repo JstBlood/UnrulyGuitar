@@ -120,7 +120,7 @@ public class AddCardCtrl implements Initializable {
     public void addSubtask(){
 
         System.out.println("Grid: " + this.subtaskPane.toString());
-        ImageView iv = new ImageView("file:/client/assets/trashcan_icon.png");
+        ImageView iv = new ImageView("file:/client/images/trashcan_icon.png");
         iv.setFitHeight(50);
         iv.setFitWidth(50);
         TextField subtaskTitle = new TextField();
