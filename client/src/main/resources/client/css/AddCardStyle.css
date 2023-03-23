@@ -5,7 +5,7 @@
 }
 
 .anchor-plane {
-    -fx-background-image: url('../images/bg_0.png');
+    -fx-background-image: url('/client/images/bg_0.png');
     -fx-background-color: black;
 }
 .title {
