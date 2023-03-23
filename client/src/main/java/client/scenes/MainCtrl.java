@@ -48,21 +48,14 @@ public class MainCtrl {
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
-    private final CredentialsStore cStore;
-
-    public MainCtrl(CredentialsStore cStore) {
-        this.cStore = cStore;
-    }
-
-    public MainCtrl() {
-        this.cStore = null;
-    }
+    private CredentialsStore cStore;
 
     public CredentialsStore accessStore() {
         return cStore;
     }
 
     public void initialize(Stage primaryStage,
+                           Pair<CredentialsStore, Parent> cStore,
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
@@ -70,7 +63,10 @@ public class MainCtrl {
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<AddCardCtrl, Parent> addCard,
                            Pair<BoardSettingsCtrl, Parent> boardSettings) {
+
         this.primaryStage = primaryStage;
+
+        this.cStore = cStore.getKey();
 
         this.logonCtrl = logon.getKey();
         this.logon = new Scene(logon.getValue());
