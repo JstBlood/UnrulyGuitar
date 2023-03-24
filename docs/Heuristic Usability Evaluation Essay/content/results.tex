@@ -1,0 +1,71 @@
+% !TEX root =  ../results.tex
+\section{Results}
+
+Following the meeting with the other group for the Heuristic Usability Evaluation, we have asked each of their members to fill out a form based of questions on different heuristics regarding our application prototype. All the filled-out forms have been considered while making the following list. The different problems have been categorized and ordered/prioritized in terms of severity – from urgently needed to "can wait".
+\subsection{System}
+\begin{itemize}
+    \item Multiple instances of error pop-ups, that the user might not know the origin and/or meaning of
+    \begin{itemize}
+        \item 400 HTTP error during list creation with an Empty title field
+        \item DeploymentException error when entering an invalid hostname
+        \item Sometimes the app shows system status messages
+    \end{itemize}
+    \item Connection to the server
+    \begin{itemize}
+        \item The 8080 port shouldn’t be entered by the user after the hostname
+        \item Connects with ‘localhost’ but not with 127.0.0.1
+    \end{itemize}
+\end{itemize}
+
+\subsection{Client}
+\begin{itemize}
+    \item A couple of functionalities not working as intended:
+    \begin{itemize}
+        \item Editing the Board name
+        \item Board settings page
+        \item Editing and deleting Lists
+        \item Editing and deleting Cards
+        \item Creating Cards
+        \begin{itemize}
+            \item Can’t add Sub-Tasks
+            \item Non-time values can be entered
+            \item Non-existent locations can be entered
+        \end{itemize}
+    \end{itemize}
+        \item Usability:
+    \begin{itemize}
+        \item No cancel button when adding a card
+        \item It is not clear whether I’m logged in as an admin or not
+        \item Can log in with the same user on multiple instances on the same computer
+        \item No back button from Board Settings page
+        \item Not many keyboard shortcuts, only TAB and SHIFT + TAB
+        \item Login screen fields do not get cleared when leaving the page and coming back
+        \item A user should not see the full Board ID in the ‘previous boards’ list, but their names
+        \item Tags, location, and time aren't visible after adding a card
+        \item No character limit to the names and descriptions of Board, CardList and Card
+        \item Some documentation should be provided as it is hard for users to get around some features like, for ex., adding a card.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Visual}
+\begin{itemize}
+    \item Overall not satisfied with visual aspect of the application:
+    \begin{itemize}
+        \item Very specific theme and bright colors that give out a blurry feeling
+        \item Some buttons, like the back button on the Board View screen, are hard to spot
+        \item List of previous boards has a different theme than the rest of the app
+        \item Add List feature has a different theme than the rest of the app
+    \end{itemize}
+        \item Resizing:
+    \begin{itemize}
+        \item App switches between Fullscreen and windowed mode automatically often and unnecessarily
+        \item Sometimes when automatically full screened, the ‘Press EXIT to get out of Fullscreen mode’ persists and doesn’t remove itself
+    \end{itemize}
+        \item Recommended color coding:
+    \begin{itemize}
+        \item Color-code adding and removing cards for minimal confusion
+        \item Color-code the color choices in Board Settings page
+    \end{itemize}
+\end{itemize}
+
+After thorough analysis and testing in a timely manner, we have concluded to opt for the following changes within our application:
