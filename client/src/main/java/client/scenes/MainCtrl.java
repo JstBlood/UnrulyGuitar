@@ -24,6 +24,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.util.Objects;
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -49,7 +51,7 @@ public class MainCtrl {
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
-    private CredentialsStore cStore = new CredentialsStore();
+    private CredentialsStore cStore;
 
     public CredentialsStore accessStore() {
         return cStore;
@@ -63,6 +65,7 @@ public class MainCtrl {
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<AddCardCtrl, Parent> addCard,
                            Pair<BoardSettingsCtrl, Parent> boardSettings) {
+
         this.primaryStage = primaryStage;
 
         this.logonCtrl = logon.getKey();
@@ -86,11 +89,14 @@ public class MainCtrl {
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
 
-        primaryStage.getIcons().add(new Image(getClass()
-                .getResourceAsStream("/client/images/unruly_guitar_icon.png")));
+        cStore = new CredentialsStore();
+
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
+                .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
         showLogon();
         primaryStage.show();
+
     }
 
     public void showLogon() {

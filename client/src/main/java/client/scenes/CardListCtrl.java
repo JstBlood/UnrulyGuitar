@@ -19,22 +19,27 @@ import javafx.scene.layout.VBox;
  */
 
 public class CardListCtrl {
+
     @FXML
     private VBox cardsContainer;
+
     @FXML
     private TextField title;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private CardList cardList;
+
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
+
     @FXML
     public void addCard(){
         mainCtrl.showAddCard(this.cardList);
     }
+
     @FXML
     public void removeCard(){
         // cardContainer used to be a ListView, but a ListView can only contain Strings,
