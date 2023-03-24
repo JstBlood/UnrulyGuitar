@@ -1,0 +1,3 @@
+# Roadmap for Group 22 "Unruly Guitar"
+
+This roadmap is an outline for the overall distribution and planning of the user stories, which themselves were derived from the user epics during the first few weeks. Every week, the user stories specified in the roadmap will be distrubuted into concrete tasks, which will then be assigned and planned. The activity, i.d. which tasks were assigned to which people, can be found in the minute taker notes, as well as in the GitLab history. 
