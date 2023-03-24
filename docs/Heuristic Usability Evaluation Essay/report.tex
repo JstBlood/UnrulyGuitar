@@ -1,0 +1,36 @@
+\documentclass[sigconf]{acmart}
+
+% meta-data
+\title{OOP Heuristic Usability Evaluation Report -- Group 22}
+\author{Mikołaj Gazeel, Vlad Drăgutoiu}
+\author{Matiss Berzins, Bogdan Micu}
+\author{Madeline Sebastian, Michael da Rocha Frota Fokkens}
+
+% remove overhead that is used in regular ACM papers
+\settopmatter{printacmref=false} % box after abstract
+\renewcommand\footnotetextcopyrightpermission[1]{} % copyright on first page
+\pagestyle{plain} % running headers
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{abstract}
+\input{content/abstract}
+\end{abstract}
+
+\maketitle
+
+\input{content/introduction}
+\input{content/methods}
+\input{content/results}
+\input{content/conclusions}
+% \input{content/citations}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}
+\endinput
