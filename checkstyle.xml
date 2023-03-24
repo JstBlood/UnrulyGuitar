@@ -61,6 +61,7 @@
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*$)"/>
             <message key="name.invalidPattern" value="Class type name ''{0}'' must match pattern ''{1}''."/>
         </module>
+        <module name="SuppressWarningsHolder"/>
     </module>
     <module name="LineLength">
         <property name="severity" value="warning"/>
