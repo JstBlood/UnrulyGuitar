@@ -89,6 +89,15 @@ User stories:
 - #18: "As a user I want to rename a board."
 - #23: "As a user I want to see a list of all boards that I have joined."
 - #28: "As an admin I want to use a server password."
+- #29: "As an admin I want to see an overview of all existing boards on the server."
+- #48: "As a user I want to add a description to a task."
+
+HUE:
+- Find a group to do the HUE with
+- Instruct the evaluators
+- Aggregate and analyse the findings into a report
+- Write an essay about that report
+- Evaluate them, and send individual reports over.
 
 ### Week 7
 
@@ -99,17 +108,50 @@ User stories:
 Update the list of user stories and tasks, closing them if they have been completed. Create new tasks based on the Heuristic Usability Evaluation that was done last week. Split up user stories into tasks, and assign them.
 
 User stories: 
-
+-  #13: "As a user I want to order my tasks."
+-  #15: "As a user I want to be able to to drag and drop tasks with the mouse."
+-  #19: "As a user I want to remove a board."
+-  #24: "As a user I want to leave a board."
+-  #40: "As a user I want to open task details through double-click."
+-  #44: "As a user I want to see a description indicator in the overview."
+-  #45: "As a user I want to see task progress in overview."
+-  #46: "As a user I want to close the details and return to the overview."
+-  #47: "As a user I want to delete the task."
 
 ### Week 8
 
 > Date | 2023-04-03 .. 2023-04-09
 > |-|-|
 
+Update the list of user stories and tasks, closing them if they have been completed. Create new user stories if deemed necessary. Split up user stories into tasks, and assign them.
+
+User stories:
+- #51: "As a user I want to open the list of tags for a board."
+- #52: "As a user I want to add tags to tasks in the task details."
+- #53: "As a user I want to see simplified highlights of tags in the overview."
+- #55: "As a user I want to open a color management view"
+- #56: "As a user I want to select a color preset for a task in the task details."
+- #57: "As a user I want to define font/background colors for each tag in tag management."
+- #71: "As an admin I want to change/remove passwords of password protected boards."
+- #72: "As an admin I want to delete password-protected boards."
+
 ### Week 9
 
 > Date | 2023-04-10 .. 2023-04-16
 > |-|-|
+
+Update the list of user stories and tasks, closing them if they have been completed. Split up user stories into tasks, and assign them. Do a penultimate review of the product during the meeting, to see if there is things that absolutely need to be done before we hand it in, and do a final review at the end of the week to make sure that we have everything.
+
+- #58: "As a user I want to pick colors from a color wheel."
+- #61: "As a user I want to hover with the mouse over a task to highlight it."
+- #62: "As a user I want to see a highlight of the currently selected task."
+- #63: "As a user I want to move the task highlight with arrow keys (Up/Down/Left/Right)."
+- #64: "As a user I want to see a lock symbol in the board overview."
+- #65/#66: "As a user I want to click the lock/unlock symbol and provide a password."
+- #67: "As a user I want the client to store the password locally."
+- #68: "As a user I want to change or remove the password of a board."
+- #69: "As a user I want to get a popup when I try to edit a task on a protected board."
+- #70: "As a user I want to see a read-only warning in the details view of a task."
 
 ### Week 10 (endterms)
 
