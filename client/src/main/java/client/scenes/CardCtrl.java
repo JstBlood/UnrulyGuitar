@@ -1,11 +1,12 @@
 package client.scenes;
 
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
+import commons.Card;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-
-import javax.inject.Inject;
 
 public class CardCtrl {
     private final ServerUtils server;
@@ -22,12 +23,9 @@ public class CardCtrl {
         this.mainCtrl = mainCtrl;
     }
 
-    public void setTitle(String s){
-        this.title.setText(s);
-    }
-
-    public void setDescription(String s){
-        this.description.setText(s);
-        this.description.setPrefRowCount((int) s.lines().count());
+    public void setup(Card card) {
+        title.setText(card.title);
+        description.setText(card.description);
+        description.setPrefRowCount((int) card.description.lines().count());
     }
 }

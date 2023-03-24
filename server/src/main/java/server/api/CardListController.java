@@ -38,7 +38,7 @@ public class CardListController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/restricted/{password}/{id}/delete")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<?> delete(@PathVariable long id) {
         if(!cardListService.delete(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

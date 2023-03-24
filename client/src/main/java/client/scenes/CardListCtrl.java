@@ -27,7 +27,7 @@ public class CardListCtrl {
     private TextField title;
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private CardList cardList;
+    public CardList cardList;
 
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
@@ -50,15 +50,17 @@ public class CardListCtrl {
 //        listView.getItems().remove(id);
     }
 
-    public void setCardList(CardList cardList) {
+    public void setup(CardList cardList) {
         this.cardList = cardList;
+        title.setText(cardList.title);
+    }
+    @FXML
+    public void deleteCardList() {
+        server.deleteCardList(cardList.id);
     }
 
     public void addCardToContainer(VBox cardNode){
         this.cardsContainer.getChildren().add(cardNode);
     }
 
-    public void setTitle(String s) {
-        this.title.setText(s);
-    }
 }

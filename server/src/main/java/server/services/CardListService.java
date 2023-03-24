@@ -44,12 +44,12 @@ public class CardListService {
     }
 
     public boolean delete(long id) {
-        CardList c = cardListRepo.findById(id);
-        if (id < 0 || c == null) {
+        CardList cardList = cardListRepo.findById(id);
+        if (cardList == null) {
             return false;
         }
-        cardListRepo.deleteById(id);
-        forceRefresh(c);
+        cardListRepo.delete(cardList);
+        forceRefresh(cardList);
         return true;
     }
 
