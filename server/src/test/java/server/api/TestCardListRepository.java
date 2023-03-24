@@ -71,8 +71,8 @@ public class TestCardListRepository implements CardListRepository {
 
     @Override
     public <S extends CardList> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
-        return null;
+        calledMethods.add("saveAndFlush");
+        return entity;
     }
 
     @Override

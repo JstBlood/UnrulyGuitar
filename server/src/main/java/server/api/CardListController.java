@@ -19,70 +19,40 @@ import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.CardListRepository;
-import server.services.RepositoryBasedAuthService;
+import server.services.CardListService;
 
 @RestController
 @RequestMapping("/api/cardlists")
 public class CardListController {
-    private final CardListRepository listRepo;
-    private BoardsController boardsController;
-    private RepositoryBasedAuthService pwd;
+    private final CardListService cardListService;
 
-    public CardListController(CardListRepository listRepo,
-                              BoardsController boardsController, RepositoryBasedAuthService pwd) {
-        this.listRepo = listRepo;
-        this.boardsController = boardsController;
-        this.pwd = pwd;
+    public CardListController(CardListService service) {
+        this.cardListService = service;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CardList> add(@RequestBody CardList cardList) {
-        if (cardList == null || isNullOrEmpty(cardList.title) || cardList.parentBoard == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> add(@RequestBody CardList cardList) {
+        if(!cardListService.add(cardList)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        CardList saved = listRepo.save(cardList);
-
-        boardsController.forceRefresh(cardList.parentBoard.key);
-
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/restricted/{password}/delete")
-    public ResponseEntity<CardList> delete(@RequestBody CardList cardList) {
-        if (cardList == null || cardList.parentBoard == null) {
-            return ResponseEntity.badRequest().build();
+    @DeleteMapping("/restricted/{password}/{id}/delete")
+    public ResponseEntity<?> delete(@PathVariable long id) {
+        if(!cardListService.delete(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        listRepo.deleteById(cardList.id);
-        boardsController.forceRefresh(cardList.parentBoard.key);
-        return ResponseEntity.ok(cardList);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/restricted/{password}/{id}/edit/{component}")
-    public ResponseEntity<String> update(@RequestBody String newValue, @PathVariable String password,
-                                           @PathVariable long id, @PathVariable String component) {
-        if(listRepo.findById(id) == null)
-            return ResponseEntity.notFound().build();
-
-        CardList edit = listRepo.findById(id);
-
-        if(!pwd.hasEditAccess(password, edit.parentBoard.key))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-        try {
-            edit.getClass().getField(component).set(edit, newValue);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+    @PatchMapping("/restricted/{password}/{id}/edit/{component}")
+    public ResponseEntity<?> update(@PathVariable String password,
+                                    @RequestBody CardList cardList) {
+        if(!cardListService.update(cardList)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-
-        listRepo.save(edit);
-
-        boardsController.forceRefresh(edit.parentBoard.key);
-
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok().build();
     }
 
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
-    }
 }
