@@ -56,6 +56,7 @@ public class Main extends Application {
                 cardList,
                 addCardList,
                 addCard,
-                boardSettings);
+                boardSettings,
+                cStore);
     }
 }
