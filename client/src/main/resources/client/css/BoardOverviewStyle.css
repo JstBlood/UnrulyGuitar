@@ -22,3 +22,27 @@
     -fx-background-color: transparent;
     -fx-control-inner-background: transparent;
 }
+
+.card-container-root > .viewport {
+    -fx-background-color: transparent;
+}
+
+.card-container-root {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.text-3 {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-font-size: 22px;
+
+    -fx-background-color: transparent;
+}
+
+.card-root {
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}

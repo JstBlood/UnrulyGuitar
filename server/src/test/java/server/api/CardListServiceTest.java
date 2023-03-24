@@ -15,7 +15,6 @@
  */
 package server.api;
 
-
 import java.util.Random;
 
 import commons.Board;
@@ -27,8 +26,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.services.CardListService;
 import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
-
 public class CardListServiceTest {
+
     public int nextInt;
     private MyRandom random;
     private TestCardListRepository repo;

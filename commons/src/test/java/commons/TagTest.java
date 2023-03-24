@@ -1,13 +1,13 @@
 package commons;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TagTest {
 
