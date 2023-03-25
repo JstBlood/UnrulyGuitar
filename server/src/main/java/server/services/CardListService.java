@@ -24,22 +24,33 @@ public class CardListService {
         return true;
     }
 
-    public boolean update(CardList cardList) {
-        if(cardList == null) {
+    public boolean update(long id, String component, String newValue) {
+
+        CardList cardList = cardListRepo.findById(id);
+        if(cardList == null || isNullOrEmpty(component) || isNullOrEmpty(newValue)) {
             return false;
         }
 
-//        if(!pwd.hasEditAccess(password, edit.parentBoard.key))
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        try {
-//            edit.getClass().getField(component).set(edit, newValue);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().build();
-//        }
+        switch (component) {
+            case "title":
+                if (isNullOrEmpty(newValue)) {
+                    return false;
+                }
+                cardList.title = newValue;
+                break;
+            case "index":
+                int newIndex = Integer.parseInt(newValue);
+                if (newIndex < 0) {
+                    return false;
+                }
+                cardList.index = newIndex;
+                break;
+            default:
+                return false;
+        }
 
         cardListRepo.saveAndFlush(cardList);
         forceRefresh(cardList);
-
         return true;
     }
 

@@ -15,6 +15,11 @@
  */
 package server.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import commons.Board;
 import commons.CardList;
 import org.springframework.data.domain.Example;
@@ -23,11 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import server.database.CardListRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 
 public class TestCardListRepository implements CardListRepository {
@@ -66,12 +66,12 @@ public class TestCardListRepository implements CardListRepository {
     @Override
     public void flush() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <S extends CardList> S saveAndFlush(S entity) {
         calledMethods.add("saveAndFlush");
+        cardLists.set(entity.index, entity);
         return entity;
     }
 
@@ -143,8 +143,8 @@ public class TestCardListRepository implements CardListRepository {
 
     @Override
     public Optional<CardList> findById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        call("findById");
+        return find(id);
     }
 
     @Override
@@ -225,6 +225,8 @@ public class TestCardListRepository implements CardListRepository {
 
     @Override
     public CardList findById(long id) {
-        return null;
+        call("findById");
+        Optional<CardList> c = find(id);
+        return c.orElse(null);
     }
 }

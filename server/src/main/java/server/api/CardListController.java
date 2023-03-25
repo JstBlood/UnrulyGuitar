@@ -38,7 +38,7 @@ public class CardListController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
         if(!cardListService.delete(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -46,11 +46,12 @@ public class CardListController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/restricted/{password}/{id}/edit/{component}")
-    public ResponseEntity<?> update(@PathVariable String password,
-                                    @RequestBody CardList cardList) {
-        if(!cardListService.update(cardList)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    @PutMapping("/{id}/{component}")
+    public <T> ResponseEntity<?> update(@PathVariable long id,
+                                        @PathVariable String component,
+                                        @RequestBody String newValue) {
+        if(!cardListService.update(id, component, newValue)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok().build();
     }
