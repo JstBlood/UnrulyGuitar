@@ -2,9 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import commons.Board;
-import commons.Card;
-import commons.CardList;
+import commons.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,10 +17,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -35,7 +30,6 @@ public class BoardOverviewCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
-    private List<CardListCtrl> cardListControllers;
     private AddCardCtrl addCardCtrl;
     @FXML
     private TextField boardTitle;
@@ -48,7 +42,6 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.cardListControllers = new ArrayList<>();
         this.addCardCtrl = new AddCardCtrl(server, mainCtrl);
     }
 
@@ -64,6 +57,7 @@ public class BoardOverviewCtrl implements Initializable {
             throw new RuntimeException(e);
         }
     }
+
     public void prepare(Board board) {
         this.board = board;
         setBoard(board);
@@ -78,13 +72,46 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
         });
+
         server.forceRefresh(board.key);
     }
 
+    private void performRelinkage(Board newState) {
+        for(CardList cl : newState.cardLists) {
+            cl.parentBoard = newState;
+
+            for(Card c : cl.cards) {
+                c.parentCardList = cl;
+
+                for(Task t : c.tasks)
+                    t.parentCard = c;
+            }
+
+        }
+
+        for(Tag u : newState.tags) {
+            u.board = newState;
+        }
+    }
+
     public void refresh(Board newState) throws IOException {
+        if(mainCtrl.isSilence())
+            return;
+
+        performRelinkage(newState);
+
+        // If our data is already up-to-date
+        // we forgo this update
+
+        // Just as a side note: hashCode does not help with speed here
+        // since we already have to go through every field.
+        if(board.equals(newState)) {
+            return;
+        }
+
         board = newState;
 
-        System.out.printf("[REFRESH]: New state: %s", newState);
+        //System.out.printf("[REFRESH]: New state: %s", newState);
 
         // Update the CardLists and their Cards using FXML Loaders
         updateCardLists();
@@ -94,49 +121,24 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     private void updateCardLists() throws IOException {
-        // Update the card lists
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
 
         listsGrid.setAlignment(Pos.TOP_CENTER);
 
-        for (int j = 0; j < board.cardLists.size(); j++) {
-            CardList currCardList = board.cardLists.get(j);
-
-            System.out.printf("[DEBUG] Received CardList %s with children: %s\n",
-                    currCardList.title,
-                    currCardList.cards.stream().map(c -> c.title).collect(Collectors.toList()));
-
-            currCardList.parentBoard = this.board;
-
+        for (CardList cl : board.cardLists) {
             FXMLLoader cardListLoader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
-            cardListLoader.setControllerFactory(c -> new CardListCtrl(this.server, this.mainCtrl));
+
+            cardListLoader.setControllerFactory(c ->
+                    new CardListCtrl(this.server, this.mainCtrl, cl)
+            );
 
             VBox cardListNode = cardListLoader.load();
 
-            CardListCtrl clctrl = cardListLoader.getController();
-            clctrl.setTitle(currCardList.title);
-            clctrl.setCardList(currCardList);
-            this.cardListControllers.add(clctrl);
-
-
-            for (Card currCard : currCardList.cards) {
-                FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-                cardLoader.setControllerFactory(c -> new CardCtrl(this.server, this.mainCtrl));
-
-                VBox cardNode = cardLoader.load();
-
-                CardCtrl cctrl = cardLoader.getController();
-                cctrl.setTitle(currCard.title);
-                cctrl.setDescription(currCard.description);
-
-                clctrl.addCardToContainer(cardNode);
-            }
-
-            listsGrid.add(cardListNode, j, 0);
-
+            listsGrid.add(cardListNode, cl.index, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
+
         System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
@@ -156,8 +158,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void setBoard(Board board) {
         this.board = board;
-        this.addCardListCtrl.setParentBoard(board);
-        this.addCardCtrl.setParentBoard(board);
     }
 
     public void back(){

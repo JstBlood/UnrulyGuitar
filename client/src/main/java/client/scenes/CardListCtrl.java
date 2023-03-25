@@ -2,10 +2,14 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Card;
 import commons.CardList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 /**
  * This class is the controller of the CardList scene,
@@ -30,32 +34,31 @@ public class CardListCtrl {
     private CardList cardList;
 
     @Inject
-    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
+    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, CardList cardList) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.cardList = cardList;
     }
+
+
+    @FXML
+    public void initialize() throws IOException {
+        title.setText(cardList.title);
+
+        for (Card c : cardList.cards) {
+            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c));
+
+            VBox cardNode = cardLoader.load();
+
+            this.cardsContainer.getChildren().add(cardNode);
+        }
+    }
+
 
     @FXML
     public void addCard(){
         mainCtrl.showAddCard(this.cardList);
-    }
-
-    @FXML
-    public void removeCard(){
-        // cardContainer used to be a ListView, but a ListView can only contain Strings,
-        // while the cards are VBoxes, so I had to refactor it.
-        // Unfortunately, VBoxes do not have SelectionModels, so this code is deprecated.
-        // TODO: figure out a different way to remove cards.
-//        int id = listView.getSelectionModel().getSelectedIndex();
-//        listView.getItems().remove(id);
-    }
-
-    public void setCardList(CardList cardList) {
-        this.cardList = cardList;
-    }
-
-    public void addCardToContainer(VBox cardNode){
-        this.cardsContainer.getChildren().add(cardNode);
     }
 
     public void setTitle(String s) {

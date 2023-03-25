@@ -17,7 +17,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 @Entity(name = "Board")
 @Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"key"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
-                property = "@id")
+                property = "@board_id")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,15 +27,13 @@ public class Board {
     public String title;
 
     @OneToMany(mappedBy = "parentBoard",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
+            cascade = CascadeType.ALL)
     public List<CardList> cardLists = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "boards", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "boards")
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

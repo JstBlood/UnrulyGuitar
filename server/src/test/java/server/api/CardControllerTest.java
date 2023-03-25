@@ -20,12 +20,14 @@ import commons.Card;
 import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.services.CardService;
 import server.services.RepositoryBasedAuthService;
 
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class CardControllerTest {
 
@@ -44,7 +46,8 @@ public class CardControllerTest {
         repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardController(repo, new BoardsController(bRepo, uRepo, null, new RepositoryBasedAuthService(uRepo)));
+        sut = new CardController(new CardService(repo,  new BoardsController(bRepo, uRepo,
+                null, new RepositoryBasedAuthService(uRepo))));
     }
 
     @Test
@@ -61,14 +64,14 @@ public class CardControllerTest {
 
     @Test
     public void cannotDeleteNullList() {
-        var actual = sut.delete(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.delete(-1);
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateNullList() {
-        var actual = sut.update(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.update(-1, "title", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -81,7 +84,7 @@ public class CardControllerTest {
     public void databaseIsUsedDelete() {
         Card card = getCard("q1", "p1");
         sut.add(card);
-        sut.delete(card);
+        sut.delete(card.id);
         repo.calledMethods.contains("deleteById");
     }
 
@@ -89,7 +92,7 @@ public class CardControllerTest {
     public void databaseIsUsedUpdate() {
         Card card = getCard("q1", "p1");
         sut.add(card);
-        sut.update(card);
+        sut.update(card.id, "title", "");
         repo.calledMethods.contains("saveAndFlush");
     }
     private static Card getCard(String q, String p) {
