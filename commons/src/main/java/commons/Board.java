@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Entity(name = "Board")
 @Table(name = "board", uniqueConstraints = @UniqueConstraint(columnNames = {"key"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,
-                property = "@id")
+                property = "@board_id")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,8 +33,7 @@ public class Board {
     @ManyToMany(mappedBy = "boards")
     public Set<User> users = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

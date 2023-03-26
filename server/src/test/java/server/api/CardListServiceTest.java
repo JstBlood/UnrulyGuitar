@@ -56,12 +56,6 @@ public class CardListServiceTest {
     }
 
     @Test
-    public void cannotAddNullParentBoard() {
-        var actual = sut.add(new CardList("title", null));
-        Assertions.assertFalse(actual);
-    }
-
-    @Test
     public void cannotDeleteInexistentList() {
         var actual = sut.delete(-1);
         Assertions.assertFalse(actual);

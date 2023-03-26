@@ -33,6 +33,8 @@ public class MainCtrl {
     private LogonCtrl logonCtrl;
     private Scene logon;
 
+    private int silence = 0;
+
     private BoardsCtrl boardsCtrl;
     private Scene boards;
 
@@ -115,6 +117,7 @@ public class MainCtrl {
 
     public void showAddCard(CardList parentCardList) {
         addCardCtrl.setParentCardList(parentCardList);
+        addCardCtrl.prepare();
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(addCard);
     }
@@ -144,6 +147,10 @@ public class MainCtrl {
 
     public void setCurrentBoard(Board board) {
         boardOverviewCtrl.setBoard(board);
+    }
+
+    public Board getCurrentBoard() {
+        return boardOverviewCtrl.getBoard();
     }
 
     public void setupBoardOverview(Board board) {

@@ -22,11 +22,9 @@ public class TagTest {
     public void addBoard() {
         var t = new Tag("urgent", new Color(0, 0, 0));
         Board testBoard1 = new Board("board1", "myBoard");
-        Board testBoard2 = new Board("board2", "testBoard");
-        Set<Board> SOME_BOARDS = new HashSet<>(Arrays.asList(testBoard1, testBoard2));
-        t.addBoard(testBoard1);
-        t.addBoard(testBoard2);
-        assertEquals(SOME_BOARDS, t.boards);
+        t.board = testBoard1;
+
+        assertEquals(testBoard1, t.board);
     }
 
     @Test
@@ -50,7 +48,7 @@ public class TagTest {
         var t = new Tag("urgent", new Color(0, 0, 0)).toString();
         assertTrue(t.contains(Tag.class.getSimpleName()));
         assertTrue(t.contains("\n"));
-        assertTrue(t.contains("boards"));
+        assertTrue(t.contains("board"));
     }
 
 }

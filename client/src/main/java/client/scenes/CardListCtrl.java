@@ -5,8 +5,10 @@ import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Card;
 import commons.CardList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -33,33 +35,32 @@ public class CardListCtrl implements Initializable {
     public CardList cardList;
 
     @Inject
-    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
+    public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, CardList cardList) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.cardList = cardList;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    public void initialize(URL uri, ResourceBundle rs) {
+        title.setText(cardList.title);
+
         title.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER)) {
+            if (e.getCode().equals(KeyCode.ENTER)) {
                 editTitle();
             }
         });
-    }
+        for (Card c : cardList.cards) {
+            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c));
 
-    @FXML
-    public void addCard(){
-        mainCtrl.showAddCard(this.cardList);
-    }
-
-    @FXML
-    public void removeCard(){
-        // cardContainer used to be a ListView, but a ListView can only contain Strings,
-        // while the cards are VBoxes, so I had to refactor it.
-        // Unfortunately, VBoxes do not have SelectionModels, so this code is deprecated.
-        // TODO: figure out a different way to remove cards.
-//        int id = listView.getSelectionModel().getSelectedIndex();
-//        listView.getItems().remove(id);
+            try {
+                VBox cardNode = cardLoader.load();
+                this.cardsContainer.getChildren().add(cardNode);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     //TODO: move this into constructor and initialize methods
@@ -70,13 +71,14 @@ public class CardListCtrl implements Initializable {
     public void editTitle() {
         server.editCardList(cardList.id, "title", title.getText());
     }
+
     @FXML
     public void deleteCardList() {
         server.deleteCardList(cardList.id);
     }
 
-    public void addCardToContainer(VBox cardNode){
-        this.cardsContainer.getChildren().add(cardNode);
+    @FXML
+    public void addCard() {
+        this.mainCtrl.showAddCard(this.cardList);
     }
-
 }

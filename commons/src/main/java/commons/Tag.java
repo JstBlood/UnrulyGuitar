@@ -6,8 +6,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -21,8 +19,8 @@ public class Tag {
     public String name;
     public Color color;
 
-    @ManyToMany(mappedBy = "tags")
-    public Set<Board> boards = new HashSet<>();
+    @ManyToOne
+    public Board board;
 
     @SuppressWarnings("unused")
     protected Tag() {}
@@ -30,10 +28,6 @@ public class Tag {
     public Tag(String name, Color color) {
         this.color = color;
         this.name = name;
-    }
-
-    public void addBoard(Board newBoard) {
-        boards.add(newBoard);
     }
 
     @Override

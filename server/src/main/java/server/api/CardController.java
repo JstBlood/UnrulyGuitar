@@ -3,53 +3,30 @@ package server.api;
 import commons.Card;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.CardRepository;
+import server.services.CardService;
 
 @RestController
 @RequestMapping("/api/cards")
 public class CardController {
-    private final CardRepository cardRepo;
-    private BoardsController boardsController;
+    private CardService cardService;
 
-    public CardController(CardRepository cardRepo,
-                          BoardsController boardsController) {
-        this.cardRepo = cardRepo;
-        this.boardsController = boardsController;
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
     }
     @PostMapping("/add")
     public ResponseEntity<Card> add(@RequestBody Card card) {
-        if (card == null || isNullOrEmpty(card.title) || card.parentCardList == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Card saved = cardRepo.save(card);
-
-        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.status(cardService.add(card)).build();
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<Card> delete(@RequestBody Card card) {
-        if (card == null || card.parentCardList == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        cardRepo.deleteById(card.id);
-
-        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(card);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Card> delete(@PathVariable long id) {
+        return ResponseEntity.status(cardService.delete(id)).build();
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Card> update(@RequestBody Card card) {
-        if (card == null || card.title == null || card.parentCardList == null){
-            return ResponseEntity.badRequest().build();
-        }
-        cardRepo.saveAndFlush(card);
-
-        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(card);
+    @PutMapping("/{id}/{component}")
+    public ResponseEntity<Card> update(@PathVariable long id, @PathVariable String component,
+                                       @RequestBody String newValue) {
+        return ResponseEntity.status(cardService.update(id, component, newValue)).build();
     }
 
     private static boolean isNullOrEmpty(String s) {

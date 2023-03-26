@@ -3,7 +3,6 @@ package client.scenes;
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
-import commons.Board;
 import commons.CardList;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
@@ -22,7 +21,6 @@ import java.util.ResourceBundle;
 public class AddCardListCtrl implements Initializable{
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private Board parentBoard;
 
     @FXML
     private TextField title;
@@ -49,7 +47,7 @@ public class AddCardListCtrl implements Initializable{
     }
 
     private CardList getCardList() {
-        return new CardList(title.getText(), parentBoard);
+        return new CardList(title.getText(), mainCtrl.getCurrentBoard());
     }
 
     public void cancel() {
@@ -71,10 +69,6 @@ public class AddCardListCtrl implements Initializable{
             default:
                 break;
         }
-    }
-
-    public void setParentBoard(Board parentBoard) {
-        this.parentBoard = parentBoard;
     }
 
 }

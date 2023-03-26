@@ -202,4 +202,8 @@ public class TestCardRepository implements CardRepository {
         return null;
     }
 
+    @Override
+    public Card findById(long id) {
+        return null;
+    }
 }

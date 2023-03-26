@@ -7,27 +7,20 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class AddCardCtrl implements Initializable {
+public class AddCardCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private Board parentBoard;
     private CardList parentCardList;
 
-    @FXML
-    private AnchorPane root;
     @FXML
     private TextField title;
     @FXML
@@ -56,15 +49,7 @@ public class AddCardCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources){
-
-    }
-
-    public void setParentBoard(Board parentBoard) {
-        this.parentBoard = parentBoard;
-
-        // init tagBar
+    public void prepare(){
         EventHandler<ActionEvent> removeTagEvent = e -> {
             this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
         };
@@ -75,7 +60,8 @@ public class AddCardCtrl implements Initializable {
                     b -> (b instanceof ToggleButton) && ((ToggleButton) b).getText().equals(tagName)))
                 return;
 
-            Tag tag = parentBoard.tags.stream().filter(t -> t.name.equals(tagName)).findFirst().orElse(null);
+            Tag tag = mainCtrl.getCurrentBoard().tags.stream().filter(t ->
+                    t.name.equals(tagName)).findFirst().orElse(null);
             ToggleButton tagButton = new ToggleButton(tagName);
             tagButton.setStyle(String.format("-fx-background-color: rgb(%d, %d, %d);",
                     tag.color.getRed(), tag.color.getGreen(), tag.color.getBlue()));
@@ -85,7 +71,7 @@ public class AddCardCtrl implements Initializable {
 
             tagsBar.getButtons().add(tagButton);
         };
-        for(Tag tag : parentBoard.tags){
+        for(Tag tag : mainCtrl.getCurrentBoard().tags){
             MenuItem mi = new MenuItem(tag.name);
             mi.setOnAction(addTagEvent);
             this.addTag.getItems().add(mi);

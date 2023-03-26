@@ -46,6 +46,7 @@ public class CardList {
     public CardList(String title, Board parentBoard) {
         this.title = title;
         this.parentBoard = parentBoard;
+        System.out.println("ager " + parentBoard.cardLists);
         if(parentBoard != null) index = parentBoard.cardLists.size();
     }
 

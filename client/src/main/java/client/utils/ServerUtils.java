@@ -63,34 +63,33 @@ public class ServerUtils {
     }
 
     private <T> T internalPostRequest(String path, Entity send, GenericType<T> retType) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path(path) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(getServer()).path(path)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .post(send, retType);
     }
 
     private <T> T internalGetRequest(String path, GenericType<T> retType) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path(path) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(getServer()).path(path)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .get(retType);
     }
-
-    private <T> void internalDeleteRequest(String path) {
-        ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path(path) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
+    private void internalDeleteRequest(String path) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(getServer()).path(path)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .delete();
     }
 
-    private <T> void internalPutRequest(String path, Entity send) {
-        ClientBuilder.newClient(new ClientConfig()) //
-                .target(getServer()).path(path) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
+    private void internalPutRequest(String path, Entity send) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(getServer()).path(path)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .put(send);
     }
 
@@ -143,11 +142,24 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    public Card addCard(Card card){
-        return internalPostRequest("api/cards/add",
+    // CARD RELATED FUNCTIONS
+
+    public void addCard(Card card){
+        internalPostRequest("api/cards/add",
                 Entity.entity(card, APPLICATION_JSON),
-                new GenericType<>(){});
+                new GenericType<String>(){});
     }
+
+    public void removeCard(long id){
+        internalDeleteRequest("api/cards/" + id);
+    }
+
+    public void editCardTitle(long id, String newTitle) {
+        internalPutRequest("api/cards/" + id + "/title",
+                Entity.entity(newTitle, APPLICATION_JSON));
+    }
+
+    // END OF CARD RELATED FUNCTIONS
 
     public void forceRefresh(String key) {
         internalGetRequest("api/boards/" + key + "/forceRefresh",
