@@ -69,8 +69,7 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card id: " + id + "\nTitle: " + title + "\nDesc: " + description + "\nParentList: " + parentCardList + "\nIndex: " + index;
-//        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 
     public void setDescription(String description) {
