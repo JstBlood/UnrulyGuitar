@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxWidth="1.7976931348623157E308" onDragDetected="#onDragDetected" onDragDropped="#onDragExited" prefHeight="119.0" prefWidth="327.0" spacing="5.0" styleClass="card-root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardCtrl">
+<VBox fx:id="cardBox" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="119.0" prefWidth="327.0" spacing="5.0" styleClass="card-root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardCtrl">
    <children>
-      <GridPane prefHeight="99.0" prefWidth="305.0">
+      <GridPane prefHeight="100.0" prefWidth="350.0">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="307.0" minWidth="10.0" prefWidth="307.0" />
         </columnConstraints>

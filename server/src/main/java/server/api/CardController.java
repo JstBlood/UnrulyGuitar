@@ -29,6 +29,11 @@ public class CardController {
         return ResponseEntity.status(cardService.update(id, component, newValue)).build();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Card> get(@PathVariable long id) {
+        return cardService.get(id);
+    }
+
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }

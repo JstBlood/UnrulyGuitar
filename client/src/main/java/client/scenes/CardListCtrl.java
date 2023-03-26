@@ -1,8 +1,5 @@
 package client.scenes;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Card;
@@ -11,8 +8,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the CardList scene,
@@ -26,10 +28,14 @@ import javafx.scene.layout.VBox;
  */
 
 public class CardListCtrl implements Initializable {
+
+    @FXML
+    private VBox mainContainer;
     @FXML
     private VBox cardsContainer;
     @FXML
     private TextField title;
+    
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     public CardList cardList;
@@ -50,9 +56,76 @@ public class CardListCtrl implements Initializable {
                 editTitle();
             }
         });
+
+
+        //DRAG AND DROP HANDLERS
+
+        this.mainContainer.setOnDragOver(e -> {
+
+            if (e.getGestureSource() != this.cardsContainer &&
+                    e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragEntered(e -> {
+            if (e.getGestureSource() != this.mainContainer &&
+                    e.getDragboard().hasString()) {
+                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
+
+                System.out.println("DEBUG: Dropshadow on target CardList");
+
+            }
+
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragExited(e -> {
+            this.mainContainer.setStyle("-fx-effect: none");
+
+            System.out.println("DEBUG: Dropshadow removed on target cardList");
+
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragDropped(e -> {
+            Dragboard db = e.getDragboard();
+            var id = Long.parseLong(db.getString());
+
+            boolean success = false;
+
+            System.out.println("DEBUG: Initialized DragBoard");
+            
+            if (db.hasString()) {
+                Card card = server.getCard(id);
+                card.parentCardList = this.cardList;
+
+                System.out.println("DEBUG: Card initialized correctly" + card.toString());
+
+                server.removeCard(id);
+
+                System.out.println("DEBUG: Removed old card from DB");
+
+                server.addCard(card);
+                this.cardList.cards.add(this.cardList.cards.size(), card);
+
+                System.out.println("DEBUG: Added new card to DB and current cardList at last index");
+
+                success = true;
+            }
+            
+            e.setDropCompleted(success);
+            e.consume();
+        });
+
+        //END OF DRAG AND DROP HANDLERS
+
+
         for (Card c : cardList.cards) {
             FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c));
+            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
 
             try {
                 VBox cardNode = cardLoader.load();
@@ -81,4 +154,5 @@ public class CardListCtrl implements Initializable {
     public void addCard() {
         this.mainCtrl.showAddCard(this.cardList);
     }
+
 }

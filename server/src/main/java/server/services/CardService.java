@@ -2,6 +2,7 @@ package server.services;
 
 import commons.Card;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import server.api.BoardsController;
 import server.database.CardRepository;
@@ -25,6 +26,15 @@ public class CardService implements StandardEntityService<Card> {
         forceRefresh(card);
 
         return HttpStatus.OK;
+    }
+
+    public ResponseEntity<Card> get(long id) {
+        Card card = cardRepo.findById(id);
+
+        if (card == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(card);
     }
 
     public HttpStatus update(long id, String component, String newValue) {

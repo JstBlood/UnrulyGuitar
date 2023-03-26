@@ -46,7 +46,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 public class ServerUtils {
 
     private final int mlimit = 1024 * 1024;
-    private final MainCtrl store;
+    private  MainCtrl store;
     private StompSession session;
 
     @Inject
@@ -54,7 +54,7 @@ public class ServerUtils {
         this.store = store;
     }
 
-    private String getServer() {
+    private  String getServer() {
         return "http://" + store.accessStore().getUrl() + "/";
     }
 
@@ -157,6 +157,10 @@ public class ServerUtils {
     public void editCardTitle(long id, String newTitle) {
         internalPutRequest("api/cards/" + id + "/title",
                 Entity.entity(newTitle, APPLICATION_JSON));
+    }
+
+    public Card getCard(long id) {
+        return internalGetRequest("api/cards/" + id, new GenericType<>(){});
     }
 
     // END OF CARD RELATED FUNCTIONS
