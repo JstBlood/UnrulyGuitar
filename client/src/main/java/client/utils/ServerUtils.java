@@ -142,6 +142,7 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+
     // CARD RELATED FUNCTIONS
 
     public void addCard(Card card){
@@ -164,6 +165,7 @@ public class ServerUtils {
     }
 
     // END OF CARD RELATED FUNCTIONS
+
 
     public void forceRefresh(String key) {
         internalGetRequest("api/boards/" + key + "/forceRefresh",
