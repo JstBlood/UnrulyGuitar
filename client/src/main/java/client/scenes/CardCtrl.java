@@ -72,7 +72,8 @@ public class CardCtrl implements Initializable {
         this.cardBox.setOnDragDone(e -> {
             if (e.getTransferMode() == TransferMode.MOVE) {
 
-                System.out.println("DEBUG: Drag done - removed card with id " + this.card.id);
+                System.out.println("DEBUG: Removed card with id " + this.card.id + " from CardList " + this.card.parentCardList.title);
+                System.out.println("DEBUG: Drag end");
 
             }
 

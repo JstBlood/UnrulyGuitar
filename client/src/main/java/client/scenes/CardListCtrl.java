@@ -71,11 +71,11 @@ public class CardListCtrl implements Initializable {
         });
 
         this.mainContainer.setOnDragEntered(e -> {
+
             if (e.getGestureSource() != this.mainContainer &&
                     e.getDragboard().hasString()) {
-                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
 
-                System.out.println("DEBUG: Dropshadow on target CardList");
+                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
 
             }
 
@@ -83,9 +83,8 @@ public class CardListCtrl implements Initializable {
         });
 
         this.mainContainer.setOnDragExited(e -> {
-            this.mainContainer.setStyle("-fx-effect: none");
 
-            System.out.println("DEBUG: Dropshadow removed on target cardList");
+            this.mainContainer.setStyle("-fx-effect: none");
 
             e.consume();
         });
@@ -96,22 +95,18 @@ public class CardListCtrl implements Initializable {
 
             boolean success = false;
 
-            System.out.println("DEBUG: Initialized DragBoard");
+            System.out.println("DEBUG: Initialized DragBoard and newCard id");
             
             if (db.hasString()) {
-                Card card = server.getCard(id);
-                card.parentCardList = this.cardList;
-
-                System.out.println("DEBUG: Card initialized correctly" + card.toString());
+                Card newCard = server.getCard(id);
+                newCard.parentCardList = this.cardList;
 
                 server.removeCard(id);
+                server.addCard(newCard);
 
-                System.out.println("DEBUG: Removed old card from DB");
+                this.cardList.cards.add(this.cardList.cards.size(), newCard);
 
-                server.addCard(card);
-                this.cardList.cards.add(this.cardList.cards.size(), card);
-
-                System.out.println("DEBUG: Added new card to DB and current cardList at last index");
+                System.out.println("DEBUG: Removed oldCard from DB using id and added newCard to DB and to current cardList at last index !!TODO: Implement Indexing!!");
 
                 success = true;
             }
