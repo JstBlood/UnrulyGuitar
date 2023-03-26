@@ -28,7 +28,7 @@
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <TextField fx:id="boardTitle" styleClass="subtitle" text="Board title" GridPane.columnIndex="1" />
+      <TextField fx:id="title" styleClass="subtitle" text="Board title" GridPane.columnIndex="1" />
       <ImageView fx:id="allBoards" fitHeight="73.0" fitWidth="61.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
          <image>
             <Image url="@/client/images/simple_arrow_reverse.png" />

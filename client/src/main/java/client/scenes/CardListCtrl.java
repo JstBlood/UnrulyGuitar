@@ -1,6 +1,7 @@
 package client.scenes;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
@@ -41,15 +42,28 @@ public class CardListCtrl implements Initializable {
         this.cardList = cardList;
     }
 
-    @FXML
+    @Override
     public void initialize(URL uri, ResourceBundle rs) {
         title.setText(cardList.title);
 
-        title.setOnKeyPressed(e -> {
-            if (e.getCode().equals(KeyCode.ENTER)) {
-                editTitle();
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(oldV, newV)) {
+                title.setStyle("-fx-text-fill: red;");
             }
         });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+
         for (Card c : cardList.cards) {
             FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c));
@@ -62,13 +76,10 @@ public class CardListCtrl implements Initializable {
             }
         }
     }
+    public void updateTitle() {
+        title.setStyle("-fx-text-fill: white;");
+        cardList.title = title.getText();
 
-    //TODO: move this into constructor and initialize methods
-    public void setup(CardList cardList) {
-        this.cardList = cardList;
-        title.setText(cardList.title);
-    }
-    public void editTitle() {
         server.editCardList(cardList.id, "title", title.getText());
     }
 
