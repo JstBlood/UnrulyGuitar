@@ -3,16 +3,12 @@ package client.scenes;
 import javax.inject.Inject;
 
 import client.utils.ServerUtils;
-import com.sun.javafx.scene.input.DragboardHelper;
 import commons.Card;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
@@ -72,7 +68,8 @@ public class CardCtrl implements Initializable {
         this.cardBox.setOnDragDone(e -> {
             if (e.getTransferMode() == TransferMode.MOVE) {
 
-                System.out.println("DEBUG: Removed card with id " + this.card.id + " from CardList " + this.card.parentCardList.title);
+                System.out.println("DEBUG: Removed card with id " + this.card.id +
+                                    " from CardList " + this.card.parentCardList.title);
                 System.out.println("DEBUG: Drag end");
 
             }

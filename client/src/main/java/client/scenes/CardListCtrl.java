@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -47,7 +48,9 @@ public class CardListCtrl implements Initializable {
         this.cardList = cardList;
     }
 
+
     @FXML
+    @SuppressWarnings("checkstyle:MethodLength")
     public void initialize(URL uri, ResourceBundle rs) {
         title.setText(cardList.title);
 
@@ -75,7 +78,8 @@ public class CardListCtrl implements Initializable {
             if (e.getGestureSource() != this.mainContainer &&
                     e.getDragboard().hasString()) {
 
-                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
+                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, " +
+                        "rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
 
             }
 
@@ -96,7 +100,7 @@ public class CardListCtrl implements Initializable {
             boolean success = false;
 
             System.out.println("DEBUG: Initialized DragBoard and newCard id");
-            
+
             if (db.hasString()) {
                 Card newCard = server.getCard(id);
                 newCard.parentCardList = this.cardList;
@@ -106,11 +110,12 @@ public class CardListCtrl implements Initializable {
 
                 this.cardList.cards.add(this.cardList.cards.size(), newCard);
 
-                System.out.println("DEBUG: Removed oldCard from DB using id and added newCard to DB and to current cardList at last index !!TODO: Implement Indexing!!");
+                System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
+                        " DB and to current cardList at last index !!TODO: Implement Indexing!!");
 
                 success = true;
             }
-            
+
             e.setDropCompleted(success);
             e.consume();
         });
