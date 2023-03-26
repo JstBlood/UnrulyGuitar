@@ -1,5 +1,11 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -16,13 +22,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -94,50 +93,56 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     private void updateCardLists() throws IOException {
-        // Update the card lists
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
-
         listsGrid.setAlignment(Pos.TOP_CENTER);
 
+        loadCardLists();
+
+        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
+    }
+
+    public void loadCardLists() throws IOException {
         for (int j = 0; j < board.cardLists.size(); j++) {
             CardList currCardList = board.cardLists.get(j);
 
-            System.out.printf("[DEBUG] Received CardList %s with children: %s\n",
-                    currCardList.title,
-                    currCardList.cards.stream().map(c -> c.title).collect(Collectors.toList()));
+//            System.out.printf("[DEBUG] Received CardList %s with children: %s\n",
+//                    currCardList.title,
+//                    currCardList.cards.stream().map(c -> c.title).collect(Collectors.toList()));
 
+            //TODO: remove this line
             currCardList.parentBoard = this.board;
 
             FXMLLoader cardListLoader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
             cardListLoader.setControllerFactory(c -> new CardListCtrl(this.server, this.mainCtrl));
 
             VBox cardListNode = cardListLoader.load();
+            CardListCtrl ctrl = cardListLoader.getController();
 
-            CardListCtrl clctrl = cardListLoader.getController();
-            clctrl.setTitle(currCardList.title);
-            clctrl.setCardList(currCardList);
-            this.cardListControllers.add(clctrl);
+            ctrl.setup(currCardList);
 
+            cardListControllers.add(ctrl);
 
-            for (Card currCard : currCardList.cards) {
-                FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-                cardLoader.setControllerFactory(c -> new CardCtrl(this.server, this.mainCtrl));
-
-                VBox cardNode = cardLoader.load();
-
-                CardCtrl cctrl = cardLoader.getController();
-                cctrl.setTitle(currCard.title);
-                cctrl.setDescription(currCard.description);
-
-                clctrl.addCardToContainer(cardNode);
-            }
+            loadCards(ctrl);
 
             listsGrid.add(cardListNode, j, 0);
 
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
-        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
+    }
+
+    public void loadCards(CardListCtrl clctrl) throws IOException {
+        for (Card currCard : clctrl.cardList.cards) {
+            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+            cardLoader.setControllerFactory(c -> new CardCtrl(this.server, this.mainCtrl));
+
+            VBox cardNode = cardLoader.load();
+            CardCtrl cctrl = cardLoader.getController();
+
+            cctrl.setup(currCard);
+
+            clctrl.addCardToContainer(cardNode);
+        }
     }
 
     @FXML
@@ -148,10 +153,6 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void openSettings() {
         mainCtrl.showBoardSettings();
-    }
-
-    public Board getBoard() {
-        return board;
     }
 
     public void setBoard(Board board) {

@@ -46,9 +46,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 public class ServerUtils {
 
     private final int mlimit = 1024 * 1024;
+    private final MainCtrl store;
     private StompSession session;
-
-    private MainCtrl store;
 
     @Inject
     public ServerUtils(MainCtrl store) {
@@ -71,12 +70,20 @@ public class ServerUtils {
                 .post(send, retType);
     }
 
-    private <T> T internalGetRequest(String path, GenericType<T> retType) {
-        return ClientBuilder.newClient(new ClientConfig()) //
+    private <T> void internalGetRequest(String path, GenericType<T> retType) {
+        ClientBuilder.newClient(new ClientConfig()) //
                 .target(getServer()).path(path) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .get(retType);
+    }
+
+    private <T> void internalDeleteRequest(String path) {
+        ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path(path) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .delete();
     }
 
     public List<Board> getBoards() {
@@ -94,16 +101,26 @@ public class ServerUtils {
                 new GenericType<>() {});
     }
 
+    public Board addBoard(Board board) {
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
+                Entity.entity(board, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
     public Board getBoard(String key) {
         return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
                 Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
-                Entity.entity(board, APPLICATION_JSON),
-                new GenericType<>(){});
+    public void addCardList(CardList cardList) {
+        internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>() {});
+    }
+
+    public void deleteCardList(long id) {
+        internalDeleteRequest("api/cardlists/" + id + "/delete");
     }
 
     public void editTitle(String key, String newTitle) {
@@ -124,11 +141,7 @@ public class ServerUtils {
                 new GenericType<String>(){});
     }
 
-    public CardList addCardList(CardList cardList) {
-        return internalPostRequest("api/cardlists/add",
-                Entity.entity(cardList, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
+
 
 
     public void connect() {
