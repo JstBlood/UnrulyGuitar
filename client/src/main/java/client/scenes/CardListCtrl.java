@@ -68,7 +68,6 @@ public class CardListCtrl implements Initializable {
         title.setText(cardList.title);
     }
     public void editTitle() {
-        System.out.println("called");
         server.editCardList(cardList.id, "title", title.getText());
     }
     @FXML

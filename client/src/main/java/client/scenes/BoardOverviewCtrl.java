@@ -90,7 +90,6 @@ public class BoardOverviewCtrl implements Initializable {
         updateBoard(newState);
         updateCardLists();
 
-        System.out.println("[REFRESH]");
     }
 
     private void updateBoard(Board board) {
@@ -148,7 +147,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void editTitle() {
         server.editBoardTitle(board.key, boardTitle.getText());
-        System.out.println("[DEBUG]: Title changed to " + boardTitle.getText());
+        
     }
 
     public void openSettings() {
