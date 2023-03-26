@@ -1,5 +1,7 @@
 package client.scenes;
 
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import commons.Card;
 import javafx.fxml.FXML;
@@ -7,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 

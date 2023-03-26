@@ -1,5 +1,9 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.*;
@@ -10,14 +14,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -47,6 +48,11 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        boardTitle.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)) {
+                editTitle();
+            }
+        } );
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -110,17 +116,20 @@ public class BoardOverviewCtrl implements Initializable {
 
         //System.out.printf("[REFRESH]: New state: %s", newState);
 
+        updateBoard(newState);
+
         // Update the CardLists and their Cards using FXML Loaders
         updateCardLists();
 
-        // Update the board title
+    }
+
+    private void updateBoard(Board board) {
         boardTitle.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {
         listsGrid.getChildren().clear();
         listsGrid.getColumnConstraints().clear();
-
         listsGrid.setAlignment(Pos.TOP_CENTER);
 
         for (CardList cl : board.cardLists) {
@@ -140,21 +149,21 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     @FXML
-    public void titleChanged() {
-        server.editTitle(board.key, boardTitle.getText());
-        System.out.printf("[DEBUG]: Title changed to %s", boardTitle.getText());
+    public void editTitle() {
+        server.editBoardTitle(board.key, boardTitle.getText());
+        
     }
 
     public void openSettings() {
         mainCtrl.showBoardSettings();
     }
 
-    public Board getBoard() {
-        return board;
-    }
-
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public Board getBoard() {
+        return this.board;
     }
 
     public void back(){

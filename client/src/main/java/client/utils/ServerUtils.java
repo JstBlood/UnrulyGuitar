@@ -46,9 +46,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 public class ServerUtils {
 
     private final int mlimit = 1024 * 1024;
+    private final MainCtrl store;
     private StompSession session;
-
-    private MainCtrl store;
 
     @Inject
     public ServerUtils(MainCtrl store) {
@@ -78,7 +77,6 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(retType);
     }
-
     private void internalDeleteRequest(String path) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
@@ -110,19 +108,34 @@ public class ServerUtils {
                 new GenericType<>() {});
     }
 
-    public Board getBoard(String key) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
-                Entity.entity(null, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
     public Board addBoard(Board board) {
         return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
                 Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public void editTitle(String key, String newTitle) {
+    public Board getBoard(String key) {
+        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
+                Entity.entity(null, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void addCardList(CardList cardList) {
+        internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>() {});
+    }
+
+    public void editCardList(long id, String component, String newValue) {
+        internalPutRequest("api/cardlists/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON));
+    }
+
+    public void deleteCardList(long id) {
+        internalDeleteRequest("api/cardlists/" + id);
+    }
+
+    public void editBoardTitle(String key, String newTitle) {
         internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
                         + "/" + key + "/edit/title",
                 Entity.entity(newTitle, APPLICATION_JSON),
@@ -153,11 +166,7 @@ public class ServerUtils {
                 new GenericType<String>(){});
     }
 
-    public CardList addCardList(CardList cardList) {
-        return internalPostRequest("api/cardlists/add",
-                Entity.entity(cardList, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
+
 
 
     public void connect() {

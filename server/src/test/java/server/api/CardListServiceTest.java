@@ -62,8 +62,10 @@ public class CardListServiceTest {
     }
 
     @Test
-    public void cannotUpdateNullList() {
-        var actual = sut.update(null);
+    public void cannotUpdateInexsistentComponent() {
+        CardList cardList = getCardList("test");
+        repo.save(cardList);
+        var actual = sut.update(cardList.id, "margin", "12");
         Assertions.assertFalse(actual);
     }
 
@@ -84,7 +86,8 @@ public class CardListServiceTest {
     @Test
     public void databaseIsUsedUpdate() {
         CardList cardList = getCardList("q1");
-        sut.update(cardList);
+        repo.save(cardList);
+        System.out.println(sut.update(cardList.id, "title", "newTitle"));
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
     }
     private CardList getCardList(String q) {
