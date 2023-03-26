@@ -70,8 +70,8 @@ public class ServerUtils {
                 .post(send, retType);
     }
 
-    private <T> void internalGetRequest(String path, GenericType<T> retType) {
-        ClientBuilder.newClient(new ClientConfig()) //
+    private <T> T internalGetRequest(String path, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig()) //
                 .target(getServer()).path(path) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
@@ -84,6 +84,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .delete();
+    }
+
+    private <T> void internalPutRequest(String path, Entity send) {
+        ClientBuilder.newClient(new ClientConfig()) //
+                .target(getServer()).path(path) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .put(send);
     }
 
     public List<Board> getBoards() {
@@ -119,11 +127,16 @@ public class ServerUtils {
                 new GenericType<>() {});
     }
 
-    public void deleteCardList(long id) {
-        internalDeleteRequest("api/cardlists/" + id + "/delete");
+    public void editCardList(long id, String component, String newValue) {
+        internalPutRequest("api/cardlists/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON));
     }
 
-    public void editTitle(String key, String newTitle) {
+    public void deleteCardList(long id) {
+        internalDeleteRequest("api/cardlists/" + id);
+    }
+
+    public void editBoardTitle(String key, String newTitle) {
         internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
                         + "/" + key + "/edit/title",
                 Entity.entity(newTitle, APPLICATION_JSON),

@@ -1,10 +1,15 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.CardList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 /**
@@ -18,11 +23,9 @@ import javafx.scene.layout.VBox;
  * 2. delete the list
  */
 
-public class CardListCtrl {
-
+public class CardListCtrl implements Initializable {
     @FXML
     private VBox cardsContainer;
-
     @FXML
     private TextField title;
     private final ServerUtils server;
@@ -33,6 +36,15 @@ public class CardListCtrl {
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl){
         this.server = server;
         this.mainCtrl = mainCtrl;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)) {
+                editTitle();
+            }
+        });
     }
 
     @FXML
@@ -50,9 +62,13 @@ public class CardListCtrl {
 //        listView.getItems().remove(id);
     }
 
+    //TODO: move this into constructor and initialize methods
     public void setup(CardList cardList) {
         this.cardList = cardList;
         title.setText(cardList.title);
+    }
+    public void editTitle() {
+        server.editCardList(cardList.id, "title", title.getText());
     }
     @FXML
     public void deleteCardList() {

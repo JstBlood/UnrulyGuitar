@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -53,6 +54,11 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        boardTitle.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER)) {
+                editTitle();
+            }
+        } );
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -81,14 +87,13 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void refresh(Board newState) throws IOException {
-        board = newState;
-
-        System.out.printf("[REFRESH]: New state: %s", newState);
-
-        // Update the CardLists and their Cards using FXML Loaders
+        updateBoard(newState);
         updateCardLists();
 
-        // Update the board title
+    }
+
+    private void updateBoard(Board board) {
+        this.board = board;
         boardTitle.setText(board.title);
     }
 
@@ -98,17 +103,11 @@ public class BoardOverviewCtrl implements Initializable {
         listsGrid.setAlignment(Pos.TOP_CENTER);
 
         loadCardLists();
-
-        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
     public void loadCardLists() throws IOException {
         for (int j = 0; j < board.cardLists.size(); j++) {
             CardList currCardList = board.cardLists.get(j);
-
-//            System.out.printf("[DEBUG] Received CardList %s with children: %s\n",
-//                    currCardList.title,
-//                    currCardList.cards.stream().map(c -> c.title).collect(Collectors.toList()));
 
             //TODO: remove this line
             currCardList.parentBoard = this.board;
@@ -146,9 +145,9 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     @FXML
-    public void titleChanged() {
-        server.editTitle(board.key, boardTitle.getText());
-        System.out.printf("[DEBUG]: Title changed to %s", boardTitle.getText());
+    public void editTitle() {
+        server.editBoardTitle(board.key, boardTitle.getText());
+        
     }
 
     public void openSettings() {
@@ -160,7 +159,6 @@ public class BoardOverviewCtrl implements Initializable {
         this.addCardListCtrl.setParentBoard(board);
         this.addCardCtrl.setParentBoard(board);
     }
-
     public void back(){
         mainCtrl.showBoards();
     }
