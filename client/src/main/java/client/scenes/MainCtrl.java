@@ -156,17 +156,4 @@ public class MainCtrl {
     public void setupBoardOverview(Board board) {
         boardOverviewCtrl.prepare(board);
     }
-
-    public void silenceOnce() {
-        silence++;
-    }
-
-    public boolean isSilence() {
-        if(silence > 0) {
-            silence--;
-            return true;
-        }
-
-        return false;
-    }
 }

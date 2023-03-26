@@ -95,9 +95,6 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void refresh(Board newState) throws IOException {
-        if(mainCtrl.isSilence())
-            return;
-
         performRelinkage(newState);
 
         // If our data is already up-to-date
