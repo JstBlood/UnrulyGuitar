@@ -8,6 +8,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,6 +29,8 @@ public class CardCtrl implements Initializable {
     private TextField title;
     @FXML
     private TextArea description;
+    @FXML
+    private VBox cardBox;
 
     @Inject
     public CardCtrl(ServerUtils server, MainCtrl mainCtrl, Card c) {
@@ -59,4 +68,32 @@ public class CardCtrl implements Initializable {
 
         server.editCardTitle(card.id, title.getText());
     }
+
+    @FXML
+    public void onDragDetected() {
+//        var parentList = this.card.parentCardList;
+//        var parentBoard = parentList.parentBoard;
+//
+//        parentList.removeCard(this.card);
+//        server.removeCard(this.card.id);
+//        server.forceRefresh(parentBoard.key);
+    }
+
+    @FXML
+    public void delete() {
+        server.removeCard(this.card.id);
+    }
+
+    @FXML
+    public void onDragExited() {
+//        var parentList = this.card.parentCardList;
+//        var parentBoard = parentList.parentBoard;
+//
+//        Card temp = this.card;
+//
+//        parentList.removeCard(this.card);
+//        server.removeCard(this.card.id);
+//        server.forceRefresh(parentBoard.key);
+    }
+
 }
