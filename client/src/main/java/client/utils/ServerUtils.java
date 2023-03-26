@@ -93,32 +93,44 @@ public class ServerUtils {
                 .put(send);
     }
 
+    // BOARD RELATED FUNCTIONS
+
     public List<Board> getBoards() {
         if(!store.accessStore().isAdmin())
             throw new ForbiddenException();
 
-        return internalPostRequest("api/boards/restricted/" + store.accessStore().getPassword() + "/list",
-                Entity.entity(null, APPLICATION_JSON),
+        return internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/list",
                 new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/previous",
-                Entity.entity(null, APPLICATION_JSON),
+        return internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/previous",
                 new GenericType<>() {});
     }
 
     public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/add",
                 Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public Board getBoard(String key) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
+    public Board joinBoard(String key) {
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/join/" + key,
                 Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
+
+    public void editBoardTitle(String key, String newTitle) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/title",
+                Entity.entity(newTitle, APPLICATION_JSON));
+    }
+
+    // END OF BOARD RELATED FUNCTIONS
 
     public void addCardList(CardList cardList) {
         internalPostRequest("api/cardlists/add",
@@ -135,38 +147,33 @@ public class ServerUtils {
         internalDeleteRequest("api/cardlists/" + id);
     }
 
-    public void editBoardTitle(String key, String newTitle) {
-        internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
-                        + "/" + key + "/edit/title",
-                Entity.entity(newTitle, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
     // CARD RELATED FUNCTIONS
 
     public void addCard(Card card){
-        internalPostRequest("api/cards/add",
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/add",
                 Entity.entity(card, APPLICATION_JSON),
                 new GenericType<String>(){});
     }
 
     public void removeCard(long id){
-        internalDeleteRequest("api/cards/" + id);
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/cards/" + id);
     }
 
     public void editCardTitle(long id, String newTitle) {
-        internalPutRequest("api/cards/" + id + "/title",
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/cards/" + id + "/title",
                 Entity.entity(newTitle, APPLICATION_JSON));
     }
 
     // END OF CARD RELATED FUNCTIONS
 
     public void forceRefresh(String key) {
-        internalGetRequest("api/boards/" + key + "/forceRefresh",
-                new GenericType<String>(){});
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/boards/force_refresh/" + key,
+                new GenericType<>(){});
     }
-
-
 
 
     public void connect() {
@@ -201,6 +208,12 @@ public class ServerUtils {
             }
         });
     }
+
+    public <T> void deregister() {
+        if(this.session != null)
+            session.disconnect();
+    }
+
     public void send(String dest, Object o) {
         session.send(dest, o);
     }

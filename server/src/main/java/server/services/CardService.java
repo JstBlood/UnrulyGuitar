@@ -3,20 +3,19 @@ package server.services;
 import commons.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import server.api.BoardsController;
 import server.database.CardRepository;
 
 @Service
-public class CardService implements StandardEntityService<Card> {
+public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
-    private final BoardsController boardsController;
+    private final BoardsService boards;
 
-    public CardService(CardRepository cardRepo, BoardsController boardsController) {
+    public CardService(CardRepository cardRepo, BoardsService boards) {
         this.cardRepo = cardRepo;
-        this.boardsController = boardsController;
+        this.boards = boards;
     }
 
-    public HttpStatus add(Card card) {
+    public HttpStatus add(Card card, String username, String password) {
         if (card == null || isNullOrEmpty(card.title) || card.parentCardList == null) {
             return HttpStatus.BAD_REQUEST;
         }
@@ -27,11 +26,11 @@ public class CardService implements StandardEntityService<Card> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus update(long id, String component, String newValue) {
+    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
         if(cardRepo.findById(id) == null)
             return HttpStatus.NOT_FOUND;
 
-        Card edit = cardRepo.findById(id);
+        Card edit = cardRepo.findById((long)id);
 
         try {
             edit.getClass().getField(component).set(edit, newValue);
@@ -46,20 +45,20 @@ public class CardService implements StandardEntityService<Card> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus delete(long id) {
+    public HttpStatus delete(Long id, String username, String password) {
         if(cardRepo.findById(id) == null)
             return HttpStatus.NOT_FOUND;
 
-        String rem = cardRepo.findById(id).parentCardList.parentBoard.key;
+        String rem = cardRepo.findById((long)id).parentCardList.parentBoard.key;
 
-        cardRepo.delete(cardRepo.findById(id));
-        boardsController.forceRefresh(rem);
+        cardRepo.delete(cardRepo.findById((long)id));
+        boards.forceRefresh(rem);
 
         return HttpStatus.OK;
     }
 
-    public void forceRefresh(Card card) {
-        boardsController.forceRefresh(card.parentCardList.parentBoard.key);
+    private void forceRefresh(Card card) {
+        boards.forceRefresh(card.parentCardList.parentBoard.key);
     }
 
     private boolean isNullOrEmpty(String s) {

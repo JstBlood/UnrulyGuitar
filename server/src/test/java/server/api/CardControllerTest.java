@@ -20,6 +20,7 @@ import commons.Card;
 import commons.CardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.services.BoardsService;
 import server.services.CardService;
 import server.services.RepositoryBasedAuthService;
 
@@ -46,53 +47,54 @@ public class CardControllerTest {
         repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new CardController(new CardService(repo,  new BoardsController(bRepo, uRepo,
+        sut = new CardController(new CardService(repo,  new BoardsService(bRepo, uRepo,
                 null, new RepositoryBasedAuthService(uRepo))));
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getCard(null, "p1"));
+        var actual = sut.add(getCard(null, "p1"), "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullParentList() {
-        var actual = sut.add(new Card("title", "description", null));
+        var actual = sut.add(new Card("title", "description", null)
+                , "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotDeleteNullList() {
-        var actual = sut.delete(-1);
+        var actual = sut.delete(-1, "", "");
         assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateNullList() {
-        var actual = sut.update(-1, "title", "");
+        var actual = sut.update(-1, "title", "", "", "");
         assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedAdd() {
-        sut.add(getCard("q1", "p1"));
+        sut.add(getCard("q1", "p1"), "", "");
         repo.calledMethods.contains("save");
     }
 
     @Test
     public void databaseIsUsedDelete() {
         Card card = getCard("q1", "p1");
-        sut.add(card);
-        sut.delete(card.id);
+        sut.add(card, "", "");
+        sut.delete(card.id, "", "");
         repo.calledMethods.contains("deleteById");
     }
 
     @Test
     public void databaseIsUsedUpdate() {
         Card card = getCard("q1", "p1");
-        sut.add(card);
-        sut.update(card.id, "title", "");
+        sut.add(card, "", "");
+        sut.update(card.id, "title", "", "", "");
         repo.calledMethods.contains("saveAndFlush");
     }
     private static Card getCard(String q, String p) {

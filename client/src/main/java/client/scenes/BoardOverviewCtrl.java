@@ -39,6 +39,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private HBox section;
 
+    private boolean suppress = true;
+
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -53,6 +55,21 @@ public class BoardOverviewCtrl implements Initializable {
                 editTitle();
             }
         } );
+
+        boardTitle.focusedProperty().addListener((o, oldV, newV) -> {
+            if(newV == false && !suppress) {
+                editTitle();
+                suppress = true;
+            }
+        });
+
+        boardTitle.textProperty().addListener((o, oldV, newV) -> {
+            if(oldV != newV) {
+                boardTitle.setStyle("-fx-text-fill: red;");
+                suppress = false;
+            }
+        });
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -66,8 +83,10 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void prepare(Board board) {
         this.board = board;
+        this.board.title = "";
         setBoard(board);
 
+        server.deregister();
         server.connect();
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
             Platform.runLater(() -> {
@@ -82,7 +101,7 @@ public class BoardOverviewCtrl implements Initializable {
         server.forceRefresh(board.key);
     }
 
-    private void performRelinkage(Board newState) {
+    private void performRelink(Board newState) {
         for(CardList cl : newState.cardLists) {
             cl.parentBoard = newState;
 
@@ -101,30 +120,35 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void refresh(Board newState) throws IOException {
-        performRelinkage(newState);
+        performRelink(newState);
 
         // If our data is already up-to-date
         // we forgo this update
 
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
-        if(board.equals(newState)) {
+
+        if(board.hashCode() == newState.hashCode()) {
+            System.out.println("Skipping refresh");
             return;
         }
 
+        System.out.println("Doing refresh");
+
         board = newState;
 
-        //System.out.printf("[REFRESH]: New state: %s", newState);
-
-        updateBoard(newState);
+        System.out.printf("[REFRESH]: New state: %s", newState);
 
         // Update the CardLists and their Cards using FXML Loaders
+        updateBoard();
         updateCardLists();
-
     }
 
-    private void updateBoard(Board board) {
+    private void updateBoard() {
+        suppress = true;
+
         boardTitle.setText(board.title);
+        boardTitle.setStyle("-fx-text-fill: -fx-col-0;");
     }
 
     private void updateCardLists() throws IOException {
@@ -150,8 +174,10 @@ public class BoardOverviewCtrl implements Initializable {
 
     @FXML
     public void editTitle() {
+        boardTitle.setStyle("-fx-text-fill: -fx-col-0;");
+
+        board.title = boardTitle.getText();
         server.editBoardTitle(board.key, boardTitle.getText());
-        
     }
 
     public void openSettings() {
