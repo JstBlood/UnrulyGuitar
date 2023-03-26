@@ -16,7 +16,6 @@
 package server.api;
 
 import commons.CardList;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.CardListService;
@@ -32,28 +31,20 @@ public class CardListController {
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList) {
-        if(!cardListService.add(cardList)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(cardListService.add(cardList)).build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
-        if(!cardListService.delete(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(cardListService.delete(id)).build();
+
     }
 
     @PutMapping("/{id}/{component}")
     public <T> ResponseEntity<?> update(@PathVariable long id,
                                         @PathVariable String component,
                                         @RequestBody String newValue) {
-        if(!cardListService.update(id, component, newValue)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(cardListService.update(id, component, newValue)).build();
     }
 
 }

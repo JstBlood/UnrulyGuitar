@@ -13,6 +13,7 @@ public class CardController {
     public CardController(CardService cardService) {
         this.cardService = cardService;
     }
+
     @PostMapping("/add")
     public ResponseEntity<Card> add(@RequestBody Card card) {
         return ResponseEntity.status(cardService.add(card)).build();
@@ -29,7 +30,4 @@ public class CardController {
         return ResponseEntity.status(cardService.update(id, component, newValue)).build();
     }
 
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
-    }
 }

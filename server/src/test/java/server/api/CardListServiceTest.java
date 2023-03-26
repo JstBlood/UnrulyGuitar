@@ -15,6 +15,9 @@
  */
 package server.api;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import java.util.Random;
 
 import commons.Board;
@@ -52,21 +55,21 @@ public class CardListServiceTest {
     @Test
     public void cannotAddNullTitle() {
         var actual = sut.add(getCardList(null));
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(BAD_REQUEST, actual);
     }
 
     @Test
     public void cannotDeleteInexistentList() {
         var actual = sut.delete(-1);
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(NOT_FOUND, actual);
     }
 
     @Test
-    public void cannotUpdateInexsistentComponent() {
+    public void cannotUpdateInexistentComponent() {
         CardList cardList = getCardList("test");
         repo.save(cardList);
         var actual = sut.update(cardList.id, "margin", "12");
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(BAD_REQUEST, actual);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package server.services;
 
 import commons.CardList;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.api.BoardsController;
 import server.database.CardListRepository;
@@ -15,53 +16,63 @@ public class CardListService {
         this.boardsController = boardsController;
     }
 
-    public boolean add(CardList cardList) {
-        if (cardList == null || isNullOrEmpty(cardList.title) || cardList.parentBoard == null) {
-            return false;
+    public HttpStatus add(CardList cardList) {
+
+        //TODO: decide if we want to keep these checks, because they are basically useless
+
+        if (cardList == null || cardList.parentBoard == null) {
+            return HttpStatus.NOT_FOUND;
         }
+        if(isNullOrEmpty(cardList.title)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        //TODO: cardList may have null values at the moment of saving in the repo (Ex: parent list)
+        // and that gives an internal server error
+
         cardListRepo.save(cardList);
         forceRefresh(cardList);
-        return true;
+
+        return HttpStatus.OK;
     }
 
-    public boolean update(long id, String component, String newValue) {
-
+    public HttpStatus update(long id, String component, String newValue) {
         CardList cardList = cardListRepo.findById(id);
-        if(cardList == null || isNullOrEmpty(component) || isNullOrEmpty(newValue)) {
-            return false;
+
+        if(cardList == null) {
+            return HttpStatus.NOT_FOUND;
         }
 
-        switch (component) {
-            case "title":
-                if (isNullOrEmpty(newValue)) {
-                    return false;
-                }
-                cardList.title = newValue;
-                break;
-            case "index":
-                int newIndex = Integer.parseInt(newValue);
-                if (newIndex < 0) {
-                    return false;
-                }
-                cardList.index = newIndex;
-                break;
-            default:
-                return false;
+        if(isNullOrEmpty(newValue)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        try {
+            cardList.getClass().getField(component).set(cardList, newValue);
+        } catch  (NoSuchFieldException | IllegalAccessException e) {
+            return HttpStatus.BAD_REQUEST;
         }
 
         cardListRepo.saveAndFlush(cardList);
         forceRefresh(cardList);
-        return true;
+
+        return HttpStatus.OK;
     }
 
-    public boolean delete(long id) {
+    public HttpStatus delete(long id) {
         CardList cardList = cardListRepo.findById(id);
-        if (cardList == null) {
-            return false;
+
+        if(cardList == null) {
+            return HttpStatus.NOT_FOUND;
         }
-        cardListRepo.delete(cardList);
+
+        //TODO: always use deleteById, since the object may have been modified on the meantime,
+        // but the id remains the same
+
+        cardListRepo.deleteById(id);
         forceRefresh(cardList);
-        return true;
+
+        return HttpStatus.OK;
     }
 
 

@@ -17,7 +17,10 @@ public class CardService implements StandardEntityService<Card> {
     }
 
     public HttpStatus add(Card card) {
-        if (card == null || isNullOrEmpty(card.title) || card.parentCardList == null) {
+        if (card == null || card.parentCardList == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+        if(isNullOrEmpty(card.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -28,32 +31,37 @@ public class CardService implements StandardEntityService<Card> {
     }
 
     public HttpStatus update(long id, String component, String newValue) {
-        if(cardRepo.findById(id) == null)
-            return HttpStatus.NOT_FOUND;
+        Card card = cardRepo.findById(id);
 
-        Card edit = cardRepo.findById(id);
+        if(card == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        if(isNullOrEmpty(card.title)) {
+            return HttpStatus.BAD_REQUEST;
+        }
 
         try {
-            edit.getClass().getField(component).set(edit, newValue);
+            card.getClass().getField(component).set(card, newValue);
         } catch (Exception e) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        cardRepo.saveAndFlush(edit);
-
-        forceRefresh(edit);
+        cardRepo.saveAndFlush(card);
+        forceRefresh(card);
 
         return HttpStatus.OK;
     }
 
     public HttpStatus delete(long id) {
-        if(cardRepo.findById(id) == null)
+        Card card = cardRepo.findById(id);
+
+        if(card == null) {
             return HttpStatus.NOT_FOUND;
+        }
 
-        String rem = cardRepo.findById(id).parentCardList.parentBoard.key;
-
-        cardRepo.delete(cardRepo.findById(id));
-        boardsController.forceRefresh(rem);
+        cardRepo.deleteById(id);
+        forceRefresh(card);
 
         return HttpStatus.OK;
     }
