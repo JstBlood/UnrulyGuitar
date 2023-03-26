@@ -16,6 +16,7 @@
 package server.api;
 
 import commons.CardList;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.CardListService;
@@ -31,20 +32,44 @@ public class CardListController {
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList) {
-        return ResponseEntity.status(cardListService.add(cardList)).build();
+        try {
+            cardListService.add(cardList);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable long id) {
+        try {
+            CardList cardList = cardListService.get(id);
+            return ResponseEntity.ok(cardList);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
-        return ResponseEntity.status(cardListService.delete(id)).build();
-
+        try {
+            cardListService.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/{component}")
-    public <T> ResponseEntity<?> update(@PathVariable long id,
-                                        @PathVariable String component,
-                                        @RequestBody String newValue) {
-        return ResponseEntity.status(cardListService.update(id, component, newValue)).build();
+    public ResponseEntity<?> update(@PathVariable long id,
+                                           @PathVariable String component,
+                                           @RequestBody String newValue) {
+        try {
+            CardList updatedCardList = cardListService.update(id, component, newValue);
+            return ResponseEntity.ok(updatedCardList);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

@@ -1,7 +1,8 @@
 package server.services;
 
+import java.util.Optional;
+
 import commons.CardList;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.api.BoardsController;
 import server.database.CardListRepository;
@@ -16,65 +17,62 @@ public class CardListService {
         this.boardsController = boardsController;
     }
 
-    public HttpStatus add(CardList cardList) {
-
-        //TODO: decide if we want to keep these checks, because they are basically useless
-
+    public void add(CardList cardList) throws RuntimeException{
         if (cardList == null || cardList.parentBoard == null) {
-            return HttpStatus.NOT_FOUND;
+            throw new RuntimeException("Invalid card list");
         }
-        if(isNullOrEmpty(cardList.title)) {
-            return HttpStatus.BAD_REQUEST;
+        if (isNullOrEmpty(cardList.title)) {
+            throw new RuntimeException("Card list title cannot be empty");
         }
-
-        //TODO: cardList may have null values at the moment of saving in the repo (Ex: parent list)
-        // and that gives an internal server error
 
         cardListRepo.save(cardList);
         forceRefresh(cardList);
-
-        return HttpStatus.OK;
     }
 
-    public HttpStatus update(long id, String component, String newValue) {
-        CardList cardList = cardListRepo.findById(id);
+    public CardList get(long id) throws RuntimeException{
+        Optional<CardList> optionalCardList = cardListRepo.findById(id);
 
-        if(cardList == null) {
-            return HttpStatus.NOT_FOUND;
+        if (optionalCardList.isEmpty()) {
+            throw new RuntimeException("CardList not found");
         }
 
-        if(isNullOrEmpty(newValue)) {
-            return HttpStatus.BAD_REQUEST;
+        return optionalCardList.get();
+    }
+
+    public void delete(long id) throws RuntimeException {
+        Optional<CardList> cardList = cardListRepo.findById(id);
+
+        if (cardList.isEmpty()) {
+            throw new RuntimeException("CardList not found with id: " + id);
+        }
+
+        cardListRepo.deleteById(id);
+        forceRefresh(cardList.get());
+    }
+
+    public CardList update(long id, String component, String newValue) throws RuntimeException {
+        Optional<CardList> optionalCardList = cardListRepo.findById(id);
+
+        if (optionalCardList.isEmpty()) {
+            throw new RuntimeException("CardList not found");
+        }
+
+        CardList cardList = optionalCardList.get();
+
+        if (isNullOrEmpty(newValue)) {
+            throw new RuntimeException("New value cannot be null or empty");
         }
 
         try {
             cardList.getClass().getField(component).set(cardList, newValue);
         } catch  (NoSuchFieldException | IllegalAccessException e) {
-            return HttpStatus.BAD_REQUEST;
+            throw new RuntimeException("Invalid field name: " + component);
         }
 
         cardListRepo.saveAndFlush(cardList);
         forceRefresh(cardList);
-
-        return HttpStatus.OK;
+        return cardList;
     }
-
-    public HttpStatus delete(long id) {
-        CardList cardList = cardListRepo.findById(id);
-
-        if(cardList == null) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        //TODO: always use deleteById, since the object may have been modified on the meantime,
-        // but the id remains the same
-
-        cardListRepo.deleteById(id);
-        forceRefresh(cardList);
-
-        return HttpStatus.OK;
-    }
-
 
     public void forceRefresh(CardList cardList) {
         //TODO: add functionality for only refreshing a certain cardList

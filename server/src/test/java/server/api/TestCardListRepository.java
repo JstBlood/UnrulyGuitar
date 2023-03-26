@@ -223,10 +223,4 @@ public class TestCardListRepository implements CardListRepository {
         return null;
     }
 
-    @Override
-    public CardList findById(long id) {
-        call("findById");
-        Optional<CardList> c = find(id);
-        return c.orElse(null);
-    }
 }
