@@ -6,8 +6,10 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.*;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +41,8 @@ public class BoardOverviewCtrl implements Initializable {
     private GridPane listsGrid;
     @FXML
     private HBox section;
+
+    private boolean suppress = true;
 
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -80,8 +84,10 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void prepare(Board board) {
         this.board = board;
+        this.board.title = "";
         setBoard(board);
 
+        server.deregister();
         server.connect();
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
             Platform.runLater(() -> {
@@ -96,7 +102,7 @@ public class BoardOverviewCtrl implements Initializable {
         server.forceRefresh(board.key);
     }
 
-    private void performRelinkage(Board newState) {
+    private void performRelink(Board newState) {
         for(CardList cl : newState.cardLists) {
             cl.parentBoard = newState;
 
@@ -115,14 +121,16 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void refresh(Board newState) throws IOException {
-        performRelinkage(newState);
+        performRelink(newState);
 
         // If our data is already up-to-date
         // we forgo this update
 
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
-        if(board.equals(newState)) {
+
+        if(board.hashCode() == newState.hashCode()) {
+            System.out.println("Skipping refresh");
             return;
         }
 
@@ -130,10 +138,14 @@ public class BoardOverviewCtrl implements Initializable {
 
         // Update the CardLists and their Cards using FXML Loaders
         updateCardLists();
-
     }
 
     private void updateBoard(Board newState) {
+        suppress = true;
+
+        title.setText(board.title);
+        title.setStyle("-fx-text-fill: -fx-col-0;");
+
         board = newState;
         title.setText(board.title);
     }
@@ -158,10 +170,22 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void updateTitle() {
+        if(title.getText().isEmpty()) {
+            title.setText(board.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
+
         title.setStyle("-fx-text-fill: white;");
+
         board.title = title.getText();
 
-        server.editBoardTitle(board.key, title.getText());
+        try {
+            server.updateBoard(board.key, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
     }
 
     public void openSettings() {

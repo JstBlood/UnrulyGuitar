@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.services.BoardsService;
 import server.services.CardListService;
 import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
@@ -48,7 +49,7 @@ public class CardListControllerTest {
         uRepo = new TestUserRepository();
         sockets = new SocketRefreshService(simp);
         pwd = new RepositoryBasedAuthService(uRepo);
-        sut = new CardListController(new CardListService(repo, new BoardsController(bRepo, uRepo, sockets, pwd)));
+        sut = new CardListController(new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd)));
     }
 
     @Test

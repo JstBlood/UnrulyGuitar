@@ -4,6 +4,7 @@ import commons.Task;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.TaskRepository;
+import server.services.BoardsService;
 
 import java.util.Random;
 
@@ -12,12 +13,12 @@ import java.util.Random;
 public class TaskController {
     private final Random random;
     private final TaskRepository taskRepo;
-    private BoardsController boardsController;
+    private BoardsService boards;
 
-    public TaskController(Random rng, TaskRepository taskRepo, BoardsController boardsController) {
+    public TaskController(Random rng, TaskRepository taskRepo, BoardsService boards) {
         this.random = rng;
         this.taskRepo = taskRepo;
-        this.boardsController = boardsController;
+        this.boards = boards;
     }
     @PostMapping("/secure/{username}/{id}/add")
     public ResponseEntity<Task> add(@RequestBody Task task) {
@@ -26,7 +27,7 @@ public class TaskController {
         }
         Task saved = taskRepo.save(task);
 
-        boardsController.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
+        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
 
         return ResponseEntity.ok(saved);
     }
@@ -38,7 +39,7 @@ public class TaskController {
         }
         taskRepo.deleteById(task.id);
 
-        boardsController.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
+        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
 
         return ResponseEntity.ok(task);
     }
@@ -50,7 +51,7 @@ public class TaskController {
         }
         taskRepo.saveAndFlush(task);
 
-        boardsController.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
+        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
 
         return ResponseEntity.ok(task);
     }

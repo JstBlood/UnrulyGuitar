@@ -50,6 +50,7 @@ public class BoardsCtrl {
             }
         } else {
             listLabel.setText("Previously joined boards:");
+            System.out.println("listing " + server.getPrevious());
             for(var board : server.getPrevious()) {
                 previous.getItems().add(board.key);
             }
@@ -64,7 +65,7 @@ public class BoardsCtrl {
 
         Board receivedBoard = null;
         try {
-            receivedBoard = server.getBoard(key.getText());
+            receivedBoard = server.joinBoard(key.getText());
             System.out.println("[DEBUG] Received board: " + receivedBoard);
         } catch (NotFoundException e) {
             UIUtils.showError("This board has not been found");

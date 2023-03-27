@@ -16,120 +16,67 @@
 package server.api;
 
 import commons.Board;
-import commons.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.BoardRepository;
-import server.database.UserRepository;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
+import server.services.BoardsService;
 
 import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping(value = {"/secure/{username}/{password}/boards", "/secure/{username}/boards"})
 public class BoardsController {
-    private final BoardRepository repo;
-    private final UserRepository userRepo;
-    private final SocketRefreshService sockets;
-    private final RepositoryBasedAuthService pwd;
+    private BoardsService service;
 
-    public BoardsController(BoardRepository repo, UserRepository userRepo,
-                            SocketRefreshService messages, RepositoryBasedAuthService pwd) {
-
-        this.repo = repo;
-        this.sockets = messages;
-        this.userRepo = userRepo;
-        this.pwd = pwd;
+    public BoardsController(BoardsService service) {
+        this.service = service;
     }
 
-    @PostMapping("/secure/{username}/{id}/join")
-    public ResponseEntity<Board> joinBoard(@PathVariable String username, @PathVariable String id) {
-        User usr = pwd.retriveUser(username);
+    @PostMapping("/add")
+    public ResponseEntity<Board> add(@RequestBody Board board, @PathVariable String username,
+                                      @PathVariable(required = false) String password) {
+        var status = service.add(board, username, password);
 
+        if(status != HttpStatus.OK)
+            return ResponseEntity.status(status).build();
 
-        if(repo.findByKey(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Board joined = repo.findByKey(id);
-
-        usr.boards.add(joined);
-        userRepo.save(usr);
-
-        // refetch the board with all new changes
-        joined = repo.findByKey(id);
-
-        return ResponseEntity.ok(joined);
+        return ResponseEntity.ok(service.getBoard(board.key));
     }
 
-    @PostMapping("/restricted/{password}/{id}/edit/{component}")
-    public ResponseEntity<String> editBoard(@PathVariable String password, @PathVariable String id,
-                                            @PathVariable String component, @RequestBody String newValue) {
-        if(repo.findByKey(id) == null)
-            return ResponseEntity.notFound().build();
-        if(!pwd.hasEditAccess(password, id))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    @PostMapping("/join/{id}")
+    public ResponseEntity<Board> join(@PathVariable String username,
+                                      @PathVariable(required = false) String password, @PathVariable String id) {
 
-        Board edit = repo.findByKey(id);
+        var status = service.join(id, username, password);
 
-        try {
-            edit.getClass().getField(component).set(edit, newValue);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        if(status != HttpStatus.OK)
+            return ResponseEntity.status(status).build();
 
-        repo.save(edit);
-
-        forceRefresh(id);
-
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(service.getBoard(id));
     }
 
-    @PostMapping("/secure/{uname}/create")
-    public ResponseEntity<Board> addBoard(@RequestBody Board board, @PathVariable String uname) {
-        if(board == null || isNullOrEmpty(board.key)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        User usr = pwd.retriveUser(uname);
-
-        usr.boards.add(board);
-
-        repo.save(board);
-        userRepo.save(usr);
-
-        return ResponseEntity.ok(board);
+    @PutMapping("/{id}/{component}")
+    public ResponseEntity<?> update(@PathVariable(required = false) String password, @PathVariable String username,
+                                       @PathVariable String id, @PathVariable String component,
+                                       @RequestBody String newValue) {
+        return ResponseEntity.status(service.update(id, component, newValue, username, password)).build();
     }
 
-    @PostMapping("/restricted/{adminPass}/list")
-    public ResponseEntity<List<Board>> getBoards(@PathVariable String adminPass) {
-        if(!pwd.checkAdminPass(adminPass))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-
-        return ResponseEntity.ok(repo.findAll());
+    @GetMapping("/list")
+    public ResponseEntity<List<Board>> all(@PathVariable String username, @PathVariable String password) {
+        return service.getAll(username, password);
     }
 
-    @PostMapping("/secure/{username}/previous")
-    public Set<Board> getPrev(@PathVariable String username) {
-        User usr = pwd.retriveUser(username);
-
-        return usr.boards;
+    @GetMapping("/previous")
+    public ResponseEntity<Set<Board>> previous(@PathVariable String username, @PathVariable String password) {
+        return service.getPrev(username, password);
     }
 
-    @GetMapping("/{id}/forceRefresh")
-    public ResponseEntity<String> forceRefresh(@PathVariable String id) {
-        if(repo.findByKey(id) == null)
-            return ResponseEntity.notFound().build();
-
-        sockets.broadcast(repo.findByKey(id));
-
-        return ResponseEntity.ok("");
-    }
-
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
+    @GetMapping("/force_refresh/{id}")
+    public ResponseEntity<?> previous(@PathVariable String username,
+                                           @PathVariable(required = false) String password,
+                                           @PathVariable String id) {
+        return ResponseEntity.status(service.forceRefresh(id)).build();
     }
 }

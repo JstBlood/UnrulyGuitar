@@ -4,17 +4,16 @@ import java.util.Optional;
 
 import commons.CardList;
 import org.springframework.stereotype.Service;
-import server.api.BoardsController;
 import server.database.CardListRepository;
 
 @Service
 public class CardListService {
     private final CardListRepository cardListRepo;
-    private final BoardsController boardsController;
+    private final BoardsService boards;
 
-    public CardListService(CardListRepository cardListRepo, BoardsController boardsController) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards) {
         this.cardListRepo = cardListRepo;
-        this.boardsController = boardsController;
+        this.boards = boards;
     }
 
     public void add(CardList cardList) throws RuntimeException{
@@ -77,7 +76,7 @@ public class CardListService {
     public void forceRefresh(CardList cardList) {
         //TODO: add functionality for only refreshing a certain cardList
 
-        boardsController.forceRefresh(cardList.parentBoard.key);
+        boards.forceRefresh(cardList.parentBoard.key);
     }
 
     private boolean isNullOrEmpty(String s) {
