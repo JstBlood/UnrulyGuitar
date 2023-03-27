@@ -18,14 +18,26 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus add(Card card, String username, String password) {
-        if (card == null || card.parentCardList == null) {
-            return HttpStatus.NOT_FOUND;
-        }
-        if(isNullOrEmpty(card.title)) {
+        if (card == null || card.parentCardList == null || isNullOrEmpty(card.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        cardRepo.saveAndFlush(card);
+        cardRepo.save(card);
+        forceRefresh(card);
+
+        return HttpStatus.CREATED;
+    }
+
+    public HttpStatus delete(Long id, String username, String password) {
+        Optional<Card> optionalCard = cardRepo.findById(id);
+
+        if(optionalCard.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Card card = optionalCard.get();
+
+        cardRepo.deleteById(id);
         forceRefresh(card);
 
         return HttpStatus.OK;
@@ -40,7 +52,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Card card = optionalCard.get();
 
-        if(isNullOrEmpty(card.title)) {
+        if(newValue == null || isNullOrEmpty(newValue.toString())) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -51,21 +63,6 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.saveAndFlush(card);
-        forceRefresh(card);
-
-        return HttpStatus.OK;
-    }
-
-    public HttpStatus delete(Long id, String username, String password) {
-        Optional<Card> optionalCard = cardRepo.findById(id);
-
-        if(optionalCard.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Card card = optionalCard.get();
-
-        cardRepo.deleteById(id);
         forceRefresh(card);
 
         return HttpStatus.OK;

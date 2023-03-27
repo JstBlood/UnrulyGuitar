@@ -9,7 +9,6 @@ import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Card;
 import commons.CardList;
-import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -92,7 +91,7 @@ public class CardListCtrl implements Initializable {
 
         try {
             server.updateCardList(cardList.id, "title", title.getText());
-        } catch (WebApplicationException e) {
+        } catch (RuntimeException e) {
             UIUtils.showError(e.getMessage());
         }
     }
