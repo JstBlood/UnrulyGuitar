@@ -68,6 +68,8 @@ public class CardService implements StandardEntityService<Card> {
         return HttpStatus.OK;
     }
 
+    //TODO: Move DRAG AND DROP handlers to here
+
     public void forceRefresh(Card card) {
         boardsController.forceRefresh(card.parentCardList.parentBoard.key);
     }
