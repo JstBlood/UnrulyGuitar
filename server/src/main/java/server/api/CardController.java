@@ -23,18 +23,33 @@ public class CardController {
         return ResponseEntity.status(cardService.delete(id)).build();
     }
 
+    @PutMapping("/{id}/index/s")
+    public ResponseEntity<Card> updateIndexS(@PathVariable long id,
+                                       @RequestBody int newValue) {
+        return ResponseEntity.status(cardService.updateIndex(id, newValue, true)).build();
+    }
+
+    @PutMapping("/{id}/index")
+    public ResponseEntity<Card> updateIndex(@PathVariable long id,
+                                            @RequestBody int newValue) {
+        return ResponseEntity.status(cardService.updateIndex(id, newValue, false)).build();
+    }
+
+    @PutMapping("/{id}/parent/s")
+    public ResponseEntity<Card> updateParentS(@PathVariable long id,
+                                            @RequestBody long newValue) {
+        return ResponseEntity.status(cardService.updateParent(id, newValue, true)).build();
+    }
+
+    @PutMapping("/{id}/parent")
+    public ResponseEntity<Card> updateParent(@PathVariable long id,
+                                             @RequestBody long newValue) {
+        return ResponseEntity.status(cardService.updateParent(id, newValue, false)).build();
+    }
+
     @PutMapping("/{id}/{component}")
     public ResponseEntity<Card> update(@PathVariable long id, @PathVariable String component,
                                        @RequestBody String newValue) {
         return ResponseEntity.status(cardService.update(id, component, newValue)).build();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Card> get(@PathVariable long id) {
-        return cardService.get(id);
-    }
-
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
     }
 }

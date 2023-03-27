@@ -108,7 +108,7 @@ public class BoardOverviewCtrl implements Initializable {
 
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
-        if(board.equals(newState)) {
+        if(board.hashCode() == newState.hashCode()) {
             return;
         }
 
@@ -124,7 +124,8 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     private void updateBoard(Board board) {
-        boardTitle.setText(board.title);
+        if(boardTitle.getText() != board.title)
+            boardTitle.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {

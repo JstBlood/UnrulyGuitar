@@ -37,6 +37,7 @@ public class CardControllerTest {
     private Board pBoard;
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
+    private TestCardListRepository clRepo;
     private CardController sut;
 
     @BeforeEach
@@ -44,10 +45,11 @@ public class CardControllerTest {
         pBoard = new Board("parent", "title");
         random = new MyRandom();
         repo = new TestCardRepository();
+        clRepo = new TestCardListRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
         sut = new CardController(new CardService(repo,  new BoardsController(bRepo, uRepo,
-                null, new RepositoryBasedAuthService(uRepo))));
+                null, new RepositoryBasedAuthService(uRepo)), clRepo));
     }
 
     @Test
