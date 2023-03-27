@@ -77,6 +77,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(retType);
     }
+
     private void internalDeleteRequest(String path) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
@@ -85,12 +86,12 @@ public class ServerUtils {
                 .delete();
     }
 
-    private void internalPutRequest(String path, Entity send) {
-        ClientBuilder.newClient(new ClientConfig())
+    private <T> T internalPutRequest(String path, Entity send, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(send);
+                .put(send, retType);
     }
 
     // BOARD RELATED FUNCTIONS
@@ -124,47 +125,55 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    public void editBoardTitle(String key, String newTitle) {
-        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+    public Board updateBoard(String key, String component, String newValue) {
+        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/" + key + "/title",
-                Entity.entity(newTitle, APPLICATION_JSON));
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     // END OF BOARD RELATED FUNCTIONS
 
-    public void addCardList(CardList cardList) {
-        internalPostRequest("api/cardlists/add",
+
+    // CARD LIST RELATED METHODS
+
+    public CardList addCardList(CardList cardList) {
+        return internalPostRequest("api/cardlists/add",
                 Entity.entity(cardList, APPLICATION_JSON),
                 new GenericType<>() {});
     }
 
-    public void editCardList(long id, String component, String newValue) {
-        internalPutRequest("api/cardlists/" + id + "/" + component,
-                Entity.entity(newValue, APPLICATION_JSON));
+    public CardList updateCardList(long id, String component, String newValue) {
+        return internalPutRequest("api/cardlists/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     public void deleteCardList(long id) {
         internalDeleteRequest("api/cardlists/" + id);
     }
 
+    // END OF CARD LIST RELATED METHODS
+
+
     // CARD RELATED FUNCTIONS
 
-    public void addCard(Card card){
-        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/cards/add",
+    public Card addCard(Card card){
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/cards/add",
                 Entity.entity(card, APPLICATION_JSON),
-                new GenericType<String>(){});
+                new GenericType<>(){});
     }
 
-    public void removeCard(long id){
+    public void deleteCard(long id){
         internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
                 store.accessStore().getPassword() + "/cards/" + id);
     }
 
-    public void editCardTitle(long id, String newTitle) {
-        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/cards/" + id + "/title",
-                Entity.entity(newTitle, APPLICATION_JSON));
+    public Card updateCard(long id, String component, String newTitle) {
+        return internalPutRequest("secure/" + store.accessStore().getUsername() +
+                        "/cards/" + id + "/" + component,
+                Entity.entity(newTitle, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
     // END OF CARD RELATED FUNCTIONS

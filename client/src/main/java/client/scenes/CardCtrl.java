@@ -1,16 +1,19 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
 import javax.inject.Inject;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import commons.Card;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.input.KeyCode;
 
 public class CardCtrl implements Initializable {
     private final ServerUtils server;
@@ -30,33 +33,53 @@ public class CardCtrl implements Initializable {
         this.card = c;
     }
 
-    @FXML
+    @Override
     public void initialize(URL location, ResourceBundle rs) {
-        this.title.setText(card.title);
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(card.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
 
-        this.title.focusedProperty().addListener((o, oldV, newV) -> {
-            if(newV == false)
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
                 updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
         });
 
-        this.title.textProperty().addListener((o, oldV, newV) -> {
-            if(oldV != newV)
-                this.title.setStyle("-fx-text-fill: red;");
-        });
+        title.setText(card.title);
 
-        this.description.setText(card.description);
-        this.description.setPrefRowCount((int) card.description.lines().count());
+        description.setText(card.description);
+        description.setPrefRowCount((int) card.description.lines().count());
     }
 
     @FXML
     public void remove() {
-        server.removeCard(this.card.id);
+        server.deleteCard(this.card.id);
     }
 
     public void updateTitle() {
-        this.title.setStyle("-fx-text-fill: white;");
-        this.card.title = title.getText();
+        if(title.getText().isEmpty()) {
+            title.setText(card.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
 
-        server.editCardTitle(card.id, title.getText());
+        title.setStyle("-fx-text-fill: white;");
+
+        card.title = title.getText();
+
+        try {
+            server.updateCard(card.id, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
     }
 }

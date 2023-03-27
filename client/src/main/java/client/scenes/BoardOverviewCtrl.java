@@ -2,11 +2,14 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.*;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +36,7 @@ public class BoardOverviewCtrl implements Initializable {
     private AddCardListCtrl addCardListCtrl;
     private AddCardCtrl addCardCtrl;
     @FXML
-    private TextField boardTitle;
+    private TextField title;
     @FXML
     private GridPane listsGrid;
     @FXML
@@ -50,23 +53,21 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardTitle.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER)) {
-                editTitle();
-            }
-        } );
-
-        boardTitle.focusedProperty().addListener((o, oldV, newV) -> {
-            if(newV == false && !suppress) {
-                editTitle();
-                suppress = true;
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(board.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
             }
         });
 
-        boardTitle.textProperty().addListener((o, oldV, newV) -> {
-            if(oldV != newV) {
-                boardTitle.setStyle("-fx-text-fill: red;");
-                suppress = false;
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
             }
         });
 
@@ -133,22 +134,20 @@ public class BoardOverviewCtrl implements Initializable {
             return;
         }
 
-        System.out.println("Doing refresh");
-
-        board = newState;
-
-        System.out.printf("[REFRESH]: New state: %s", newState);
+        updateBoard(newState);
 
         // Update the CardLists and their Cards using FXML Loaders
-        updateBoard();
         updateCardLists();
     }
 
-    private void updateBoard() {
+    private void updateBoard(Board newState) {
         suppress = true;
 
-        boardTitle.setText(board.title);
-        boardTitle.setStyle("-fx-text-fill: -fx-col-0;");
+        title.setText(board.title);
+        title.setStyle("-fx-text-fill: -fx-col-0;");
+
+        board = newState;
+        title.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {
@@ -168,16 +167,25 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.add(cardListNode, cl.index, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
-
-        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
-    @FXML
-    public void editTitle() {
-        boardTitle.setStyle("-fx-text-fill: -fx-col-0;");
+    public void updateTitle() {
+        if(title.getText().isEmpty()) {
+            title.setText(board.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
 
-        board.title = boardTitle.getText();
-        server.editBoardTitle(board.key, boardTitle.getText());
+        title.setStyle("-fx-text-fill: white;");
+
+        board.title = title.getText();
+
+        try {
+            server.updateBoard(board.key, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
     }
 
     public void openSettings() {

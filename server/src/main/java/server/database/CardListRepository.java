@@ -23,5 +23,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CardListRepository extends JpaRepository<CardList, Long> {
     public List<CardList> findByParentBoard(Board parentBoard);
-    public CardList findById(long id);
 }

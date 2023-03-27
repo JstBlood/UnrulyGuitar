@@ -8,11 +8,12 @@ import server.services.CardService;
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/cards", "/secure/{username}/cards"})
 public class CardController {
-    private CardService cardService;
+    private final CardService cardService;
 
     public CardController(CardService cardService) {
         this.cardService = cardService;
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Card card, @PathVariable String username,
                                       @PathVariable(required = false) String password) {

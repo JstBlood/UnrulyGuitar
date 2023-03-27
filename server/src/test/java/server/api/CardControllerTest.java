@@ -15,6 +15,12 @@
  */
 package server.api;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import java.util.Random;
+
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -23,12 +29,6 @@ import org.junit.jupiter.api.Test;
 import server.services.BoardsService;
 import server.services.CardService;
 import server.services.RepositoryBasedAuthService;
-
-import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class CardControllerTest {
 
@@ -59,9 +59,8 @@ public class CardControllerTest {
 
     @Test
     public void cannotAddNullParentList() {
-        var actual = sut.add(new Card("title", "description", null)
-                , "", "");
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.add(new Card("title", "description", null), "", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test

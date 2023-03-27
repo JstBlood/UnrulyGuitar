@@ -1,5 +1,7 @@
 package server.services;
 
+import java.util.Optional;
+
 import commons.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,10 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus add(Card card, String username, String password) {
-        if (card == null || isNullOrEmpty(card.title) || card.parentCardList == null) {
+        if (card == null || card.parentCardList == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+        if(isNullOrEmpty(card.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -27,32 +32,41 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        if(cardRepo.findById(id) == null)
-            return HttpStatus.NOT_FOUND;
+        Optional<Card> optionalCard = cardRepo.findById(id);
 
-        Card edit = cardRepo.findById((long)id);
+        if(optionalCard.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Card card = optionalCard.get();
+
+        if(isNullOrEmpty(card.title)) {
+            return HttpStatus.BAD_REQUEST;
+        }
 
         try {
-            edit.getClass().getField(component).set(edit, newValue);
+            card.getClass().getField(component).set(card, newValue);
         } catch (Exception e) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        cardRepo.saveAndFlush(edit);
-
-        forceRefresh(edit);
+        cardRepo.saveAndFlush(card);
+        forceRefresh(card);
 
         return HttpStatus.OK;
     }
 
     public HttpStatus delete(Long id, String username, String password) {
-        if(cardRepo.findById(id) == null)
+        Optional<Card> optionalCard = cardRepo.findById(id);
+
+        if(optionalCard.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
 
-        String rem = cardRepo.findById((long)id).parentCardList.parentBoard.key;
+        Card card = optionalCard.get();
 
-        cardRepo.delete(cardRepo.findById((long)id));
-        boards.forceRefresh(rem);
+        cardRepo.deleteById(id);
+        forceRefresh(card);
 
         return HttpStatus.OK;
     }
