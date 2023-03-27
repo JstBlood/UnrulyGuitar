@@ -60,7 +60,7 @@ public class CardControllerTest {
     @Test
     public void cannotAddNullParentList() {
         var actual = sut.add(new Card("title", "description", null), "", "");
-        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

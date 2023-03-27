@@ -18,10 +18,7 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus add(Card card, String username, String password) {
-        if (card == null || card.parentCardList == null) {
-            return HttpStatus.NOT_FOUND;
-        }
-        if(isNullOrEmpty(card.title)) {
+        if (card == null || card.parentCardList == null || isNullOrEmpty(card.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 

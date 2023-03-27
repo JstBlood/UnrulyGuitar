@@ -2,6 +2,7 @@ package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Random;
 
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.services.BoardsService;
 import server.services.SocketRefreshService;
+import server.services.TaskService;
 
 public class TaskControllerTest {
 
@@ -35,52 +37,52 @@ public class TaskControllerTest {
         repo = new TestTaskRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new TaskController(random, repo, new BoardsService(bRepo, uRepo, messages , null));
+        sut = new TaskController(new TaskService(repo ,new BoardsService(bRepo, uRepo, messages , null)));
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getTask(null));
+        var actual = sut.add(getTask(null), "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullParentCard() {
-        var actual = sut.add(new Task("title", null));
+        var actual = sut.add(new Task("title", null), "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
-    public void cannotDeleteNullTask() {
-        var actual = sut.delete(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    public void cannotDeleteInexistentTask() {
+        var actual = sut.delete(-1, "", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
-    public void cannotUpdateNullTask() {
-        var actual = sut.update(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    public void cannotUpdateInexistentTask() {
+        var actual = sut.update(-1, "title", "newTitle", "", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedAdd() {
-        sut.add(getTask("q1"));
+        sut.add(getTask("q1"), "", "");
         repo.calledMethods.contains("save");
     }
 
     @Test
     public void databaseIsUsedDelete() {
         Task task = getTask("q1");
-        sut.add(task);
-        sut.delete(task);
+        sut.add(task, "", "");
+        sut.delete(task.id, "", "");
         repo.calledMethods.contains("deleteById");
     }
 
     @Test
     public void databaseIsUsedUpdate() {
         Task task = getTask("q1");
-        sut.add(task);
-        sut.update(task);
+        sut.add(task, "", "");
+        sut.update(-1, "title", "newTitle", "", "");
         repo.calledMethods.contains("saveAndFlush");
     }
     private static Task getTask(String q) {
