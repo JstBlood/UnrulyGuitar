@@ -15,6 +15,8 @@
  */
 package server.api;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 import java.util.Random;
 
 import commons.Board;
@@ -26,7 +28,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.services.CardListService;
 import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
-public class CardListServiceTest {
+public class CardListControllerTest {
 
     public int nextInt;
     private MyRandom random;
@@ -36,7 +38,7 @@ public class CardListServiceTest {
     private SocketRefreshService sockets;
     private SimpMessagingTemplate simp;
     private RepositoryBasedAuthService pwd;
-    private CardListService sut;
+    private CardListController sut;
 
     @BeforeEach
     public void setup() {
@@ -46,27 +48,27 @@ public class CardListServiceTest {
         uRepo = new TestUserRepository();
         sockets = new SocketRefreshService(simp);
         pwd = new RepositoryBasedAuthService(uRepo);
-        sut = new CardListService(repo, new BoardsController(bRepo, uRepo, sockets, pwd));
+        sut = new CardListController(new CardListService(repo, new BoardsController(bRepo, uRepo, sockets, pwd)));
     }
 
     @Test
     public void cannotAddNullTitle() {
         var actual = sut.add(getCardList(null));
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotDeleteInexistentList() {
         var actual = sut.delete(-1);
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
-    public void cannotUpdateInexsistentComponent() {
+    public void cannotUpdateInexistentComponent() {
         CardList cardList = getCardList("test");
         repo.save(cardList);
         var actual = sut.update(cardList.id, "margin", "12");
-        Assertions.assertFalse(actual);
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

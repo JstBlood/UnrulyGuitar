@@ -5,9 +5,11 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Card;
 import commons.CardList;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,10 +46,8 @@ public class CardListCtrl implements Initializable {
 
     @Override
     public void initialize(URL uri, ResourceBundle rs) {
-        title.setText(cardList.title);
-
         title.textProperty().addListener((o, oldV, newV) -> {
-            if(!Objects.equals(oldV, newV)) {
+            if(!Objects.equals(cardList.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
             }
         });
@@ -64,6 +64,8 @@ public class CardListCtrl implements Initializable {
             }
         });
 
+        title.setText(cardList.title);
+
         for (Card c : cardList.cards) {
             FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c));
@@ -77,10 +79,22 @@ public class CardListCtrl implements Initializable {
         }
     }
     public void updateTitle() {
-        title.setStyle("-fx-text-fill: white;");
+        if(title.getText().isEmpty()) {
+            title.setText(cardList.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
+
         cardList.title = title.getText();
 
-        server.editCardList(cardList.id, "title", title.getText());
+        title.setStyle("-fx-text-fill: white;");
+
+        try {
+            server.updateCardList(cardList.id, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
     }
 
     @FXML

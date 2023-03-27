@@ -50,7 +50,7 @@ public class BoardOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         title.textProperty().addListener((o, oldV, newV) -> {
-            if(!Objects.equals(oldV, newV)) {
+            if(!Objects.equals(board.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
             }
         });
@@ -158,7 +158,6 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void updateTitle() {
-        System.out.println("called");
         title.setStyle("-fx-text-fill: white;");
         board.title = title.getText();
 
