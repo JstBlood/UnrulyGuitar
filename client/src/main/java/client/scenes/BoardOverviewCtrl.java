@@ -2,6 +2,7 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
@@ -33,7 +34,7 @@ public class BoardOverviewCtrl implements Initializable {
     private AddCardListCtrl addCardListCtrl;
     private AddCardCtrl addCardCtrl;
     @FXML
-    private TextField boardTitle;
+    private TextField title;
     @FXML
     private GridPane listsGrid;
     @FXML
@@ -48,11 +49,24 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardTitle.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER)) {
-                editTitle();
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(oldV, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
             }
         } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -112,10 +126,6 @@ public class BoardOverviewCtrl implements Initializable {
             return;
         }
 
-        board = newState;
-
-        //System.out.printf("[REFRESH]: New state: %s", newState);
-
         updateBoard(newState);
 
         // Update the CardLists and their Cards using FXML Loaders
@@ -123,8 +133,9 @@ public class BoardOverviewCtrl implements Initializable {
 
     }
 
-    private void updateBoard(Board board) {
-        boardTitle.setText(board.title);
+    private void updateBoard(Board newState) {
+        board = newState;
+        title.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {
@@ -144,14 +155,14 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.add(cardListNode, cl.index, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
-
-        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
-    @FXML
-    public void editTitle() {
-        server.editBoardTitle(board.key, boardTitle.getText());
-        
+    public void updateTitle() {
+        System.out.println("called");
+        title.setStyle("-fx-text-fill: white;");
+        board.title = title.getText();
+
+        server.editBoardTitle(board.key, title.getText());
     }
 
     public void openSettings() {
