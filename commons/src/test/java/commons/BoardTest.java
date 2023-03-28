@@ -1,21 +1,27 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class BoardTest {
-    private static final Board SOME_BOARD = new Board("board", "myBoard");
+    private final Board SOME_BOARD = new Board("board", "myBoard");
 
     @Test
     public void checkConstructor() {
         var b = new Board("myBoard", "work");
         assertEquals("myBoard", b.key);
         assertEquals("work", b.title);
+    }
+
+    @Test
+    public void checkEmptyConstructor() {
+        var b = new Board();
+        assertNotEquals(null, b);
     }
 
     @Test

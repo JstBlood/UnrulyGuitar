@@ -1,12 +1,12 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class UserTest {
 
@@ -15,6 +15,13 @@ public class UserTest {
         var u = new User("Mickey Mouse");
         assertEquals("Mickey Mouse", u.username);
     }
+
+    @Test
+    public void checkEmptyConstructor() {
+        var u = new User();
+        assertNotEquals(null, u);
+    }
+
     @Test
     public void checkIndex() {
         var u = new User("Mickey Mouse");
