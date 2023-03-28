@@ -63,7 +63,7 @@ public class CardListController {
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id,
                                            @PathVariable String component,
-                                           @RequestBody String newValue) {
+                                           @RequestBody Object newValue) {
         try {
             CardList updatedCardList = cardListService.update(id, component, newValue);
             return ResponseEntity.ok(updatedCardList);

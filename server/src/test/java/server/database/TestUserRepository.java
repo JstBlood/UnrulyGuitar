@@ -1,22 +1,36 @@
-package server.api;
+/*
+ * Copyright 2021 Delft University of Technology
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package server.database;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import commons.Task;
+import commons.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-import server.database.TaskRepository;
 
 
-public class TestTaskRepository implements TaskRepository {
+public class TestUserRepository implements UserRepository {
 
-    public final List<Task> tasks = new ArrayList<>();
+    public final List<User> cardLists = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
@@ -24,25 +38,25 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findAll() {
+    public List<User> findAll() {
         calledMethods.add("findAll");
-        return tasks;
+        return cardLists;
     }
 
     @Override
-    public List<Task> findAll(Sort sort) {
+    public List<User> findAll(Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<Task> findAllById(Iterable<Long> ids) {
+    public List<User> findAllById(Iterable<Long> ids) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> List<S> saveAll(Iterable<S> entities) {
+    public <S extends User> List<S> saveAll(Iterable<S> entities) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -54,19 +68,19 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public <S extends Task> S saveAndFlush(S entity) {
+    public <S extends User> S saveAndFlush(S entity) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends User> List<S> saveAllAndFlush(Iterable<S> entities) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<Task> entities) {
+    public void deleteAllInBatch(Iterable<User> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -84,50 +98,51 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public Task getOne(Long id) {
+    public User getOne(Long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Task getById(Long id) {
+    public User getById(Long id) {
         call("getById");
         return find(id).get();
     }
 
-    private Optional<Task> find(Long id) {
-        return tasks.stream().filter(q -> q.id == id).findFirst();
+    private Optional<User> find(Long id) {
+        return cardLists.stream().filter(q -> q.id == id).findFirst();
     }
 
     @Override
-    public <S extends Task> List<S> findAll(Example<S> example) {
+    public <S extends User> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends User> List<S> findAll(Example<S> example, Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Page<Task> findAll(Pageable pageable) {
+    public Page<User> findAll(Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> S save(S entity) {
+    public <S extends User> S save(S entity) {
         call("save");
-        entity.id = (long) tasks.size();
-        tasks.add(entity);
+        entity.id = (long) cardLists.size();
+        cardLists.add(entity);
         return entity;
     }
 
     @Override
-    public Optional<Task> findById(Long id) {
-        return find(id);
+    public Optional<User> findById(Long id) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -138,7 +153,7 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public long count() {
-        return tasks.size();
+        return cardLists.size();
     }
 
     @Override
@@ -148,7 +163,7 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void delete(Task entity) {
+    public void delete(User entity) {
         // TODO Auto-generated method stub
 
     }
@@ -160,7 +175,7 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Task> entities) {
+    public void deleteAll(Iterable<? extends User> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -172,33 +187,37 @@ public class TestTaskRepository implements TaskRepository {
     }
 
     @Override
-    public <S extends Task> Optional<S> findOne(Example<S> example) {
+    public <S extends User> Optional<S> findOne(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends User> Page<S> findAll(Example<S> example, Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Task> long count(Example<S> example) {
+    public <S extends User> long count(Example<S> example) {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public <S extends Task> boolean exists(Example<S> example) {
+    public <S extends User> boolean exists(Example<S> example) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public <S extends Task, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends User, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
+    public User findByUsername(String username) {
+        return null;
+    }
 }
