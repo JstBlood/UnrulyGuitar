@@ -27,6 +27,8 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import client.scenes.MainCtrl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -143,14 +145,21 @@ public class ServerUtils {
                 new GenericType<>() {});
     }
 
-    public CardList updateCardList(long id, String component, String newValue) {
-        return internalPutRequest("api/cardlists/" + id + "/" + component,
-                Entity.entity(newValue, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
     public void deleteCardList(long id) {
         internalDeleteRequest("api/cardlists/" + id);
+    }
+
+    public CardList updateCardList(long id, String component, Object newValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonValue = null;
+        try {
+            jsonValue = objectMapper.writeValueAsString(newValue);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return internalPutRequest("api/cardlists/" + id + "/" + component,
+                Entity.json(jsonValue),
+                new GenericType<>(){});
     }
 
     // END OF CARD LIST RELATED METHODS
@@ -169,10 +178,18 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/cards/" + id);
     }
 
-    public Card updateCard(long id, String component, String newTitle) {
+    public Card updateCard(long id, String component, Object newValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonValue = null;
+        try {
+            jsonValue = objectMapper.writeValueAsString(newValue);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(jsonValue);
         return internalPutRequest("secure/" + store.accessStore().getUsername() +
                         "/cards/" + id + "/" + component,
-                Entity.entity(newTitle, APPLICATION_JSON),
+                Entity.json(jsonValue),
                 new GenericType<>(){});
     }
 

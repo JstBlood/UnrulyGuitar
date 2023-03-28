@@ -28,7 +28,7 @@ public class CardController {
 
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                       @RequestBody String newValue, @PathVariable String username,
+                                       @RequestBody Object newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.update(id, component, newValue, username, password)).build();
     }

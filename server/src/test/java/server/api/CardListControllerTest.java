@@ -15,7 +15,7 @@
  */
 package server.api;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 import java.util.Random;
 
@@ -24,38 +24,75 @@ import commons.CardList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.database.TestBoardsRepository;
+import server.database.TestCardListRepository;
+import server.database.TestUserRepository;
 import server.services.BoardsService;
 import server.services.CardListService;
 import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
 public class CardListControllerTest {
 
+    private final Board SOME_BOARD = new Board("key", "title");
+    private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     public int nextInt;
     private MyRandom random;
     private TestCardListRepository repo;
-    private TestBoardsRepository bRepo;
-    private TestUserRepository uRepo;
-    private SocketRefreshService sockets;
-    private SimpMessagingTemplate simp;
-    private RepositoryBasedAuthService pwd;
     private CardListController sut;
 
     @BeforeEach
     public void setup() {
         random = new MyRandom();
         repo = new TestCardListRepository();
-        bRepo = new TestBoardsRepository();
-        uRepo = new TestUserRepository();
-        sockets = new SocketRefreshService(simp);
-        pwd = new RepositoryBasedAuthService(uRepo);
-        sut = new CardListController(new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd)));
+
+        TestBoardsRepository bRepo = new TestBoardsRepository();
+        TestUserRepository uRepo = new TestUserRepository();
+        SocketRefreshService sockets = new SocketRefreshService(null);
+        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
+        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd));
+
+        sut = new CardListController(service);
+    }
+
+    @Test
+    public void cannotAddNullList() {
+        var actual = sut.add(null);
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddNullParent() {
+        var actual = sut.add(new CardList("title", null));
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getCardList(null));
+        var actual = sut.add(new CardList(null, SOME_BOARD));
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void databaseIsUsedAdd() {
+        var actual = sut.add(SOME_CARDLIST);
+
+        Assertions.assertTrue(repo.calledMethods.contains("save"));
+        Assertions.assertEquals(CREATED, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotGetInexistentList() {
+        var actual = sut.get(-1);
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void databaseIsUsedGet() {
+        repo.save(SOME_CARDLIST);
+        var actual = sut.get(SOME_CARDLIST.id);
+
+        Assertions.assertTrue(repo.calledMethods.contains("findById"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
     @Test
@@ -65,37 +102,41 @@ public class CardListControllerTest {
     }
 
     @Test
-    public void cannotUpdateInexistentComponent() {
-        CardList cardList = getCardList("test");
-        repo.save(cardList);
-        var actual = sut.update(cardList.id, "margin", "12");
+    public void databaseIsUsedDelete() {
+        repo.save(SOME_CARDLIST);
+        var actual = sut.delete(SOME_CARDLIST.id);
+
+        Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateInexistentList() {
+        var actual = sut.update(-1, "title", "newTitle");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
-    public void databaseIsUsedAdd() {
-        sut.add(getCardList("q1"));
-        Assertions.assertTrue(repo.calledMethods.contains("save"));
+    public void cannotUpdateBadValue() {
+        repo.save(SOME_CARDLIST);
+        var actual = sut.update(SOME_CARDLIST.id, "title", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
-    public void databaseIsUsedDelete() {
-        CardList cardList = getCardList("q1");
-        sut.add(cardList);
-        sut.delete(cardList.id);
-        Assertions.assertFalse(repo.calledMethods.contains("deleteById"));
+    public void cannotUpdateBadComponent() {
+        repo.save(SOME_CARDLIST);
+        var actual = sut.update(SOME_CARDLIST.id, "margin", "12");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedUpdate() {
-        CardList cardList = getCardList("q1");
-        repo.save(cardList);
-        System.out.println(sut.update(cardList.id, "title", "newTitle"));
+        repo.save(SOME_CARDLIST);
+        var actual = sut.update(SOME_CARDLIST.id, "title", "newTitle");
+
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-    }
-    private CardList getCardList(String q) {
-        Board pBoard = new Board("key", "title");
-        return new CardList(q, pBoard);
+        Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
     @SuppressWarnings("serial")

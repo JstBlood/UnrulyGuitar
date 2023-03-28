@@ -12,6 +12,9 @@ import commons.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.database.TestBoardsRepository;
+import server.database.TestTaskRepository;
+import server.database.TestUserRepository;
 import server.services.BoardsService;
 import server.services.SocketRefreshService;
 

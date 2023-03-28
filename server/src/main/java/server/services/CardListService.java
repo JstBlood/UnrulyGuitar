@@ -49,7 +49,7 @@ public class CardListService {
         forceRefresh(cardList.get());
     }
 
-    public CardList update(long id, String component, String newValue) throws RuntimeException {
+    public CardList update(long id, String component, Object newValue) throws RuntimeException {
         Optional<CardList> optionalCardList = cardListRepo.findById(id);
 
         if (optionalCardList.isEmpty()) {
@@ -58,7 +58,7 @@ public class CardListService {
 
         CardList cardList = optionalCardList.get();
 
-        if (isNullOrEmpty(newValue)) {
+        if (newValue == null || isNullOrEmpty(newValue.toString())) {
             throw new RuntimeException("New value cannot be null or empty");
         }
 
