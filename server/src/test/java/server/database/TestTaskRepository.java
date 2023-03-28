@@ -21,6 +21,10 @@ public class TestTaskRepository implements TaskRepository {
     private void call(String name) {
         calledMethods.add(name);
     }
+    private Optional<Task> find(Long id) {
+        return tasks.stream().filter(q -> q.id == id).findFirst();
+    }
+
 
     @Override
     public List<Task> findAll() {
@@ -54,8 +58,9 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public <S extends Task> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
-        return null;
+        calledMethods.add("saveAndFlush");
+        tasks.set(entity.index, entity);
+        return entity;
     }
 
     @Override
@@ -94,10 +99,6 @@ public class TestTaskRepository implements TaskRepository {
         return find(id).get();
     }
 
-    private Optional<Task> find(Long id) {
-        return tasks.stream().filter(q -> q.id == id).findFirst();
-    }
-
     @Override
     public <S extends Task> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
@@ -119,7 +120,7 @@ public class TestTaskRepository implements TaskRepository {
     @Override
     public <S extends Task> S save(S entity) {
         call("save");
-        entity.id = (long) tasks.size();
+        entity.id = tasks.size();
         tasks.add(entity);
         return entity;
     }
@@ -142,8 +143,9 @@ public class TestTaskRepository implements TaskRepository {
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-
+        call("deleteById");
+        Optional<Task> task = find(id);
+        task.ifPresent(tasks::remove);
     }
 
     @Override

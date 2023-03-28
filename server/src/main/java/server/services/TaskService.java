@@ -23,7 +23,23 @@ public class TaskService implements StandardEntityService<Task, Long>{
             return HttpStatus.BAD_REQUEST;
         }
 
-        taskRepo.saveAndFlush(task);
+        taskRepo.save(task);
+        forceRefresh(task);
+
+        return HttpStatus.CREATED;
+    }
+
+    @Override
+    public HttpStatus delete(Long id, String username, String password) {
+        Optional<Task> optionalTask = taskRepo.findById(id);
+
+        if(optionalTask.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Task task = optionalTask.get();
+
+        taskRepo.deleteById(id);
         forceRefresh(task);
 
         return HttpStatus.OK;
@@ -39,7 +55,7 @@ public class TaskService implements StandardEntityService<Task, Long>{
 
         Task task = optionalTask.get();
 
-        if(isNullOrEmpty(task.title)) {
+        if(newValue == null || isNullOrEmpty(newValue.toString())) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -50,22 +66,6 @@ public class TaskService implements StandardEntityService<Task, Long>{
         }
 
         taskRepo.saveAndFlush(task);
-        forceRefresh(task);
-
-        return HttpStatus.OK;
-    }
-
-    @Override
-    public HttpStatus delete(Long id, String username, String password) {
-        Optional<Task> optionalTask = taskRepo.findById(id);
-
-        if(optionalTask.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Task task = optionalTask.get();
-
-        taskRepo.deleteById(id);
         forceRefresh(task);
 
         return HttpStatus.OK;
