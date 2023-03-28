@@ -40,6 +40,9 @@ Hear what the TA has to say about our previous work before moving on.
     - Choose issues at meeting//take one whenever you feel like doing it?
     - Make sure we plan and divide the tasks such that we make the deadline!! *7th of April*
     - Finish mandatory issues in the next **2-3 days** if we want to stay on track
+  - My client to remember the joined boards, so I see the same workspace when I reconnect - Vlad
+- Product Pitch and Self-Reflection
+  - Ask TA/Discuss
 - Proposition: **New reviewing system**
   - Very few people do good code reviews frequently, me included
   - Choose min 1//2 (?) reviewers
