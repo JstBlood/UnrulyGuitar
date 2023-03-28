@@ -10,13 +10,15 @@ import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.*;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -25,6 +27,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -42,7 +45,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private TextField title;
     @FXML
-    private MenuItem inviteKey;
+    private MenuButton inviteKey;
     @FXML
     private GridPane listsGrid;
     @FXML
@@ -50,7 +53,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void setBoard(Board board) {
         this.board = board;
-        inviteKey.setText(board.key);
+        inviteKey.getItems().get(0).setText(board.key);
     }
 
     public Board getBoard() {
@@ -178,7 +181,20 @@ public class BoardOverviewCtrl implements Initializable {
         ClipboardContent content = new ClipboardContent();
         content.putString(board.key);
         clipboard.setContent(content);
-        UIUtils.showMessage("Copied to clipboard!");
+        Platform.runLater(()->
+        {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, event -> {
+                        inviteKey.setText("Copied to clipboard!");
+                        inviteKey.setStyle("-fx-background-color: green;");
+                    }),
+                    new KeyFrame(Duration.seconds(2), event -> {
+                        inviteKey.setText("Invite Key");
+                        inviteKey.setStyle("-fx-background-color: white;");
+                    })
+            );
+            timeline.play();
+        });
     }
     @FXML
     public void openSettings() {

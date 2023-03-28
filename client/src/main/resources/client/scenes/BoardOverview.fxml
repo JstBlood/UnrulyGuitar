@@ -78,9 +78,9 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
-      <MenuButton mnemonicParsing="false" onAction="#getInviteKey" text="Invite Key" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+      <MenuButton fx:id="inviteKey" mnemonicParsing="false" onAction="#getInviteKey" text="Invite Key" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
         <items>
-          <MenuItem fx:id="inviteKey" mnemonicParsing="false" onAction="#getInviteKey" />
+          <MenuItem mnemonicParsing="false" onAction="#getInviteKey" />
         </items>
          <GridPane.margin>
             <Insets right="10.0" />
