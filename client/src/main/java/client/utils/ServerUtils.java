@@ -27,6 +27,8 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import client.scenes.MainCtrl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -77,6 +79,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(retType);
     }
+
     private void internalDeleteRequest(String path) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
@@ -85,96 +88,117 @@ public class ServerUtils {
                 .delete();
     }
 
-    private void internalPutRequest(String path, Entity send) {
-        ClientBuilder.newClient(new ClientConfig())
+    private <T> T internalPutRequest(String path, Entity send, GenericType<T> retType) {
+        return ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(send);
+                .put(send, retType);
     }
+
+    // BOARD RELATED FUNCTIONS
 
     public List<Board> getBoards() {
         if(!store.accessStore().isAdmin())
             throw new ForbiddenException();
 
-        return internalPostRequest("api/boards/restricted/" + store.accessStore().getPassword() + "/list",
-                Entity.entity(null, APPLICATION_JSON),
+        return internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/list",
                 new GenericType<>() {});
     }
 
     public Set<Board> getPrevious() {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/previous",
-                Entity.entity(null, APPLICATION_JSON),
+        return internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/previous",
                 new GenericType<>() {});
     }
 
     public Board addBoard(Board board) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/create",
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/add",
                 Entity.entity(board, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public Board getBoard(String key) {
-        return internalPostRequest("api/boards/secure/" + store.accessStore().getUsername() + "/" + key + "/join",
+    public Board joinBoard(String key) {
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/join/" + key,
                 Entity.entity(null, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public void addCardList(CardList cardList) {
-        internalPostRequest("api/cardlists/add",
-                Entity.entity(cardList, APPLICATION_JSON),
-                new GenericType<>() {});
+    public Board updateBoard(String key, String component, String newValue) {
+        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/title",
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
     }
 
-    public void editCardList(long id, String component, String newValue) {
-        internalPutRequest("api/cardlists/" + id + "/" + component,
-                Entity.entity(newValue, APPLICATION_JSON));
+    // END OF BOARD RELATED FUNCTIONS
+
+
+    // CARD LIST RELATED METHODS
+
+    public CardList addCardList(CardList cardList) {
+        return internalPostRequest("api/cardlists/add",
+                Entity.entity(cardList, APPLICATION_JSON),
+                new GenericType<>() {});
     }
 
     public void deleteCardList(long id) {
         internalDeleteRequest("api/cardlists/" + id);
     }
 
-    public void editBoardTitle(String key, String newTitle) {
-        internalPostRequest("api/boards/restricted/" + store.accessStore().getUsername()
-                        + "/" + key + "/edit/title",
-                Entity.entity(newTitle, APPLICATION_JSON),
+    public CardList updateCardList(long id, String component, Object newValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonValue = null;
+        try {
+            jsonValue = objectMapper.writeValueAsString(newValue);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return internalPutRequest("api/cardlists/" + id + "/" + component,
+                Entity.json(jsonValue),
                 new GenericType<>(){});
     }
+
+    // END OF CARD LIST RELATED METHODS
 
 
     // CARD RELATED FUNCTIONS
 
-    public void addCard(Card card){
-        internalPostRequest("api/cards/add",
+    public Card addCard(Card card){
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/cards/add",
                 Entity.entity(card, APPLICATION_JSON),
-                new GenericType<String>(){});
+                new GenericType<>(){});
     }
 
-    public void removeCard(long id){
-        internalDeleteRequest("api/cards/" + id);
+    public void deleteCard(long id){
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/cards/" + id);
     }
 
-    public void editCardTitle(long id, String newTitle) {
-        internalPutRequest("api/cards/" + id + "/title",
-                Entity.entity(newTitle, APPLICATION_JSON));
-    }
-
-    public void editCardIndexS(long id, int newIndex) {
-        internalPutRequest("api/cards/" + id + "/index/s",
-                Entity.entity(newIndex, APPLICATION_JSON));
-    }
-
-    public void editCardParentS(long id, long newParent) {
-        internalPutRequest("api/cards/" + id + "/parent/s",
-                Entity.entity(newParent, APPLICATION_JSON));
+    public Card updateCard(long id, String component, Object newValue) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonValue = null;
+        try {
+            jsonValue = objectMapper.writeValueAsString(newValue);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(jsonValue);
+        return internalPutRequest("secure/" + store.accessStore().getUsername() +
+                        "/cards/" + id + "/" + component,
+                Entity.json(jsonValue),
+                new GenericType<>(){});
     }
 
     // END OF CARD RELATED FUNCTIONS
 
     public void forceRefresh(String key) {
-        internalGetRequest("api/boards/" + key + "/forceRefresh",
-                new GenericType<String>(){});
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/boards/force_refresh/" + key,
+                new GenericType<>(){});
     }
 
 
@@ -210,6 +234,12 @@ public class ServerUtils {
             }
         });
     }
+
+    public <T> void deregister() {
+        if(this.session != null)
+            session.disconnect();
+    }
+
     public void send(String dest, Object o) {
         session.send(dest, o);
     }

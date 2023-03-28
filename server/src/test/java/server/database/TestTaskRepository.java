@@ -1,37 +1,21 @@
-/*
- * Copyright 2021 Delft University of Technology
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package server.api;
-
-import commons.Board;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-import server.database.BoardRepository;
+package server.database;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import commons.Task;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-public class TestBoardsRepository implements BoardRepository {
 
-    public final List<Board> cardLists = new ArrayList<>();
+public class TestTaskRepository implements TaskRepository {
+
+    public final List<Task> tasks = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
@@ -39,25 +23,25 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public List<Board> findAll() {
+    public List<Task> findAll() {
         calledMethods.add("findAll");
-        return cardLists;
+        return tasks;
     }
 
     @Override
-    public List<Board> findAll(Sort sort) {
+    public List<Task> findAll(Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<Board> findAllById(Iterable<Long> ids) {
+    public List<Task> findAllById(Iterable<Long> ids) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> List<S> saveAll(Iterable<S> entities) {
+    public <S extends Task> List<S> saveAll(Iterable<S> entities) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -69,19 +53,19 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board> S saveAndFlush(S entity) {
+    public <S extends Task> S saveAndFlush(S entity) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends Task> List<S> saveAllAndFlush(Iterable<S> entities) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<Board> entities) {
+    public void deleteAllInBatch(Iterable<Task> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -99,49 +83,49 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public Board getOne(Long id) {
+    public Task getOne(Long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Board getById(Long id) {
+    public Task getById(Long id) {
         call("getById");
         return find(id).get();
     }
 
-    private Optional<Board> find(Long id) {
-        return cardLists.stream().filter(q -> q.id == id).findFirst();
+    private Optional<Task> find(Long id) {
+        return tasks.stream().filter(q -> q.id == id).findFirst();
     }
 
     @Override
-    public <S extends Board> List<S> findAll(Example<S> example) {
+    public <S extends Task> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends Task> List<S> findAll(Example<S> example, Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Page<Board> findAll(Pageable pageable) {
+    public Page<Task> findAll(Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> S save(S entity) {
+    public <S extends Task> S save(S entity) {
         call("save");
-        entity.id = (long) cardLists.size();
-        cardLists.add(entity);
+        entity.id = (long) tasks.size();
+        tasks.add(entity);
         return entity;
     }
 
     @Override
-    public Optional<Board> findById(Long id) {
+    public Optional<Task> findById(Long id) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -154,7 +138,7 @@ public class TestBoardsRepository implements BoardRepository {
 
     @Override
     public long count() {
-        return cardLists.size();
+        return tasks.size();
     }
 
     @Override
@@ -164,7 +148,7 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public void delete(Board entity) {
+    public void delete(Task entity) {
         // TODO Auto-generated method stub
 
     }
@@ -176,7 +160,7 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Board> entities) {
+    public void deleteAll(Iterable<? extends Task> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -188,37 +172,33 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board> Optional<S> findOne(Example<S> example) {
+    public <S extends Task> Optional<S> findOne(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends Task> Page<S> findAll(Example<S> example, Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends Board> long count(Example<S> example) {
+    public <S extends Task> long count(Example<S> example) {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public <S extends Board> boolean exists(Example<S> example) {
+    public <S extends Task> boolean exists(Example<S> example) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public <S extends Board, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Task, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public Board findByKey(String username) {
-        return null;
-    }
 }

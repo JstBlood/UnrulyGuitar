@@ -2,11 +2,14 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.*;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,8 +35,9 @@ public class BoardOverviewCtrl implements Initializable {
     private Board board;
     private AddCardListCtrl addCardListCtrl;
     private AddCardCtrl addCardCtrl;
+
     @FXML
-    private TextField boardTitle;
+    private TextField title;
     @FXML
     private GridPane listsGrid;
     @FXML
@@ -48,11 +52,24 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        boardTitle.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER)) {
-                editTitle();
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(board.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
             }
         } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -66,8 +83,10 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void prepare(Board board) {
         this.board = board;
+        this.board.title = "";
         setBoard(board);
 
+        server.deregister();
         server.connect();
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
             Platform.runLater(() -> {
@@ -82,7 +101,7 @@ public class BoardOverviewCtrl implements Initializable {
         server.forceRefresh(board.key);
     }
 
-    private void performRelinkage(Board newState) {
+    private void performRelink(Board newState) {
         for(CardList cl : newState.cardLists) {
             cl.parentBoard = newState;
 
@@ -101,7 +120,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void refresh(Board newState) throws IOException {
-        performRelinkage(newState);
+        performRelink(newState);
 
         // If our data is already up-to-date
         // we forgo this update
@@ -109,23 +128,23 @@ public class BoardOverviewCtrl implements Initializable {
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
         if(board.hashCode() == newState.hashCode()) {
+
             return;
         }
-
-        board = newState;
-
-        //System.out.printf("[REFRESH]: New state: %s", newState);
 
         updateBoard(newState);
 
         // Update the CardLists and their Cards using FXML Loaders
         updateCardLists();
-
     }
 
-    private void updateBoard(Board board) {
-        if(boardTitle.getText() != board.title)
-            boardTitle.setText(board.title);
+    private void updateBoard(Board newState) {
+
+        title.setText(board.title);
+        title.setStyle("-fx-text-fill: -fx-col-0;");
+
+        board = newState;
+        title.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {
@@ -145,14 +164,25 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.add(cardListNode, cl.index, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
-
-        System.out.printf("listsGrid now has %d columns. \n", listsGrid.getColumnCount());
     }
 
-    @FXML
-    public void editTitle() {
-        server.editBoardTitle(board.key, boardTitle.getText());
-        
+    public void updateTitle() {
+        if(title.getText().isEmpty()) {
+            title.setText(board.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
+
+        title.setStyle("-fx-text-fill: white;");
+
+        board.title = title.getText();
+
+        try {
+            server.updateBoard(board.key, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
     }
 
     public void openSettings() {

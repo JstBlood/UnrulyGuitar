@@ -12,6 +12,10 @@ import commons.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import server.database.TestBoardsRepository;
+import server.database.TestTaskRepository;
+import server.database.TestUserRepository;
+import server.services.BoardsService;
 import server.services.SocketRefreshService;
 
 public class TaskControllerTest {
@@ -34,7 +38,7 @@ public class TaskControllerTest {
         repo = new TestTaskRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new TaskController(random, repo, new BoardsController(bRepo, uRepo, messages , null));
+        sut = new TaskController(random, repo, new BoardsService(bRepo, uRepo, messages , null));
     }
 
     @Test

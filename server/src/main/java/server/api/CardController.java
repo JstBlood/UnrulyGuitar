@@ -6,21 +6,24 @@ import org.springframework.web.bind.annotation.*;
 import server.services.CardService;
 
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping(value = {"/secure/{username}/{password}/cards", "/secure/{username}/cards"})
 public class CardController {
-    private CardService cardService;
+    private final CardService cardService;
 
     public CardController(CardService cardService) {
         this.cardService = cardService;
     }
+
     @PostMapping("/add")
-    public ResponseEntity<Card> add(@RequestBody Card card) {
-        return ResponseEntity.status(cardService.add(card)).build();
+    public ResponseEntity<?> add(@RequestBody Card card, @PathVariable String username,
+                                      @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.add(card, username, password)).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Card> delete(@PathVariable long id) {
-        return ResponseEntity.status(cardService.delete(id)).build();
+    public ResponseEntity<?> delete(@PathVariable long id, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.delete(id, username, password)).build();
     }
 
     @PutMapping("/{id}/index/s")
@@ -48,8 +51,9 @@ public class CardController {
     }
 
     @PutMapping("/{id}/{component}")
-    public ResponseEntity<Card> update(@PathVariable long id, @PathVariable String component,
-                                       @RequestBody String newValue) {
-        return ResponseEntity.status(cardService.update(id, component, newValue)).build();
+    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
+                                       @RequestBody Object newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.update(id, component, newValue, username, password)).build();
     }
 }

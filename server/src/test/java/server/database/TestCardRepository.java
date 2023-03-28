@@ -1,4 +1,9 @@
-package server.api;
+package server.database;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import commons.Card;
 import org.springframework.data.domain.Example;
@@ -6,12 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-import server.database.CardRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 
 public class TestCardRepository implements CardRepository {
@@ -21,6 +20,10 @@ public class TestCardRepository implements CardRepository {
 
     private void call(String name) {
         calledMethods.add(name);
+    }
+
+    private Optional<Card> find(Long id) {
+        return cards.stream().filter(q -> q.id == id).findFirst();
     }
 
     @Override
@@ -55,8 +58,9 @@ public class TestCardRepository implements CardRepository {
 
     @Override
     public <S extends Card> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
-        return null;
+        calledMethods.add("saveAndFlush");
+        cards.set(entity.index, entity);
+        return entity;
     }
 
     @Override
@@ -95,10 +99,6 @@ public class TestCardRepository implements CardRepository {
         return find(id).get();
     }
 
-    private Optional<Card> find(Long id) {
-        return cards.stream().filter(q -> q.id == id).findFirst();
-    }
-
     @Override
     public <S extends Card> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
@@ -120,15 +120,14 @@ public class TestCardRepository implements CardRepository {
     @Override
     public <S extends Card> S save(S entity) {
         call("save");
-        entity.id = (long) cards.size();
+        entity.id = cards.size();
         cards.add(entity);
         return entity;
     }
 
     @Override
     public Optional<Card> findById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        return find(id);
     }
 
     @Override
@@ -144,8 +143,9 @@ public class TestCardRepository implements CardRepository {
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-
+        call("deleteById");
+        Optional<Card> card = find(id);
+        card.ifPresent(cards::remove);
     }
 
     @Override
@@ -202,8 +202,4 @@ public class TestCardRepository implements CardRepository {
         return null;
     }
 
-    @Override
-    public Card findById(long id) {
-        return null;
-    }
 }

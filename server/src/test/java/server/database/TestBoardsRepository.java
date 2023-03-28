@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package server.api;
+package server.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +21,16 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import commons.Board;
-import commons.CardList;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
-import server.database.CardListRepository;
 
 
-public class TestCardListRepository implements CardListRepository {
+public class TestBoardsRepository implements BoardRepository {
 
-    public final List<CardList> cardLists = new ArrayList<>();
+    public final List<Board> cardLists = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
@@ -40,25 +38,25 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public List<CardList> findAll() {
+    public List<Board> findAll() {
         calledMethods.add("findAll");
         return cardLists;
     }
 
     @Override
-    public List<CardList> findAll(Sort sort) {
+    public List<Board> findAll(Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<CardList> findAllById(Iterable<Long> ids) {
+    public List<Board> findAllById(Iterable<Long> ids) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends CardList> List<S> saveAll(Iterable<S> entities) {
+    public <S extends Board> List<S> saveAll(Iterable<S> entities) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -66,23 +64,23 @@ public class TestCardListRepository implements CardListRepository {
     @Override
     public void flush() {
         // TODO Auto-generated method stub
+
     }
 
     @Override
-    public <S extends CardList> S saveAndFlush(S entity) {
-        calledMethods.add("saveAndFlush");
-        cardLists.set(entity.index, entity);
-        return entity;
-    }
-
-    @Override
-    public <S extends CardList> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends Board> S saveAndFlush(S entity) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<CardList> entities) {
+    public <S extends Board> List<S> saveAllAndFlush(Iterable<S> entities) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deleteAllInBatch(Iterable<Board> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -100,41 +98,41 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public CardList getOne(Long id) {
+    public Board getOne(Long id) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public CardList getById(Long id) {
+    public Board getById(Long id) {
         call("getById");
         return find(id).get();
     }
 
-    private Optional<CardList> find(Long id) {
+    private Optional<Board> find(Long id) {
         return cardLists.stream().filter(q -> q.id == id).findFirst();
     }
 
     @Override
-    public <S extends CardList> List<S> findAll(Example<S> example) {
+    public <S extends Board> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends CardList> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends Board> List<S> findAll(Example<S> example, Sort sort) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Page<CardList> findAll(Pageable pageable) {
+    public Page<Board> findAll(Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends CardList> S save(S entity) {
+    public <S extends Board> S save(S entity) {
         call("save");
         entity.id = (long) cardLists.size();
         cardLists.add(entity);
@@ -142,9 +140,9 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public Optional<CardList> findById(Long id) {
-        call("findById");
-        return find(id);
+    public Optional<Board> findById(Long id) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -165,7 +163,7 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public void delete(CardList entity) {
+    public void delete(Board entity) {
         // TODO Auto-generated method stub
 
     }
@@ -177,7 +175,7 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends CardList> entities) {
+    public void deleteAll(Iterable<? extends Board> entities) {
         // TODO Auto-generated method stub
 
     }
@@ -189,44 +187,37 @@ public class TestCardListRepository implements CardListRepository {
     }
 
     @Override
-    public <S extends CardList> Optional<S> findOne(Example<S> example) {
+    public <S extends Board> Optional<S> findOne(Example<S> example) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends CardList> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends Board> Page<S> findAll(Example<S> example, Pageable pageable) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public <S extends CardList> long count(Example<S> example) {
+    public <S extends Board> long count(Example<S> example) {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public <S extends CardList> boolean exists(Example<S> example) {
+    public <S extends Board> boolean exists(Example<S> example) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public <S extends CardList, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Board, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<CardList> findByParentBoard(Board parentBoard) {
+    public Board findByKey(String username) {
         return null;
-    }
-
-    @Override
-    public CardList findById(long id) {
-        call("findById");
-        Optional<CardList> c = find(id);
-        return c.orElse(null);
     }
 }

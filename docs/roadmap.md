@@ -1,6 +1,6 @@
 # Roadmap for Group 22 "Unruly Guitar"
 
-*Mikolaj Gazeel, Vlad Dragontiou, Madeline Sebastian, Michael da Roche Frota Fokkens, Bogdan Micu, Matiss Berzins*
+*Mikolaj Gazeel, Vlad Dragontiou, Madeline Sebastian, Michael da Rocha Frota Fokkens, Bogdan Micu, Matiss Berzins*
 
 ## Description
 

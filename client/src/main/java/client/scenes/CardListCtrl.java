@@ -1,6 +1,13 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Card;
 import commons.CardList;
@@ -8,16 +15,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the CardList scene,
@@ -52,19 +54,9 @@ public class CardListCtrl implements Initializable {
 
 
     @FXML
-    @SuppressWarnings("checkstyle:MethodLength")
+    @Override
     public void initialize(URL uri, ResourceBundle rs) {
-        title.setText(cardList.title);
-
-        title.setOnKeyPressed(e -> {
-            if (e.getCode().equals(KeyCode.ENTER)) {
-                editTitle();
-            }
-        });
-
-
-        //DRAG AND DROP HANDLERS
-
+        prepareTitleField();
         this.mainContainer.setOnDragOver(e -> {
 
             if (e.getGestureSource() != this.cardsContainer &&
@@ -76,7 +68,6 @@ public class CardListCtrl implements Initializable {
         });
 
         this.mainContainer.setOnDragEntered(e -> {
-
             if (e.getGestureSource() != this.mainContainer &&
                     e.getDragboard().hasString()) {
 
@@ -89,39 +80,17 @@ public class CardListCtrl implements Initializable {
         });
 
         this.mainContainer.setOnDragExited(e -> {
-
             this.mainContainer.setStyle("-fx-effect: none");
-
             e.consume();
         });
 
         this.mainContainer.setOnDragDropped(e -> {
-            Dragboard db = e.getDragboard();
-            var id = Long.parseLong(db.getString());
-            boolean success = false;
-
-            System.out.println("DEBUG: Initialized DragBoard and newCard id");
-
-            if (db.hasString()) {
-                var node = (VBox)e.getGestureSource();
-
-                moveToList(node);
-
-                server.forceRefresh(cardList.parentBoard.key);
-
-                System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
-                        " DB and to current cardList at last index");
-
-                success = true;
-            }
-
-            e.setDropCompleted(success);
+            handleDragEvent(e);
             e.consume();
         });
 
         //END OF DRAG AND DROP HANDLERS
         var cardsOrdered = new ArrayList<>(cardList.cards);
-
         cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
 
         for (Card c : cardsOrdered) {
@@ -137,6 +106,69 @@ public class CardListCtrl implements Initializable {
         }
     }
 
+    private void prepareTitleField() {
+        title.setText(cardList.title);
+
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(cardList.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+    }
+
+    private void handleDragEvent(DragEvent e) {
+        Dragboard db = e.getDragboard();
+        var id = Long.parseLong(db.getString());
+        boolean success = false;
+
+        System.out.println("DEBUG: Initialized DragBoard and newCard id");
+
+        if (db.hasString()) {
+            var node = (VBox) e.getGestureSource();
+
+            moveToList(node);
+
+            server.forceRefresh(cardList.parentBoard.key);
+
+            System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
+                    " DB and to current cardList at last index");
+
+            success = true;
+        }
+
+        e.setDropCompleted(success);
+    }
+
+    public void updateTitle() {
+        if (title.getText().isEmpty()) {
+            title.setText(cardList.title);
+            title.setStyle("-fx-text-fill: white;");
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
+        cardList.title = title.getText();
+
+        title.setStyle("-fx-text-fill: white;");
+
+        try {
+            server.updateCardList(cardList.id, "title", title.getText());
+        } catch (RuntimeException e) {
+            UIUtils.showError(e.getMessage());
+        }
+    }
+
     private void moveToList(VBox node) {
         var them = ((Card) node.getUserData()).id;
         var theirParent = ((Card) node.getUserData()).parentCardList.id;
@@ -145,20 +177,11 @@ public class CardListCtrl implements Initializable {
 
         var maxIndex = cardList.cards.stream().map(x -> x.index).max(Integer::compareTo);
 
-        server.editCardIndexS(them, maxIndex.isEmpty() ? 0 : maxIndex.get()+1);
+        server.updateCard(them, "index/s", maxIndex.isEmpty() ? 0 : maxIndex.get()+1);
 
         if(theirParent != me) {
-            server.editCardParentS(them, me);
+            server.updateCard(them, "parent/s", me);
         }
-    }
-
-    //TODO: move this into constructor and initialize methods
-    public void setup(CardList cardList) {
-        this.cardList = cardList;
-        title.setText(cardList.title);
-    }
-    public void editTitle() {
-        server.editCardList(cardList.id, "title", title.getText());
     }
 
     @FXML
