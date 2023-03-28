@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
 
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 /**
@@ -96,22 +98,19 @@ public class CardListCtrl implements Initializable {
         this.mainContainer.setOnDragDropped(e -> {
             Dragboard db = e.getDragboard();
             var id = Long.parseLong(db.getString());
-
             boolean success = false;
 
             System.out.println("DEBUG: Initialized DragBoard and newCard id");
 
             if (db.hasString()) {
-                Card newCard = server.getCard(id);
-                newCard.parentCardList = this.cardList;
+                var node = (VBox)e.getGestureSource();
 
-                server.removeCard(id);
-                server.addCard(newCard);
+                moveToList(node);
 
-                this.cardList.cards.add(this.cardList.cards.size(), newCard);
+                server.forceRefresh(cardList.parentBoard.key);
 
                 System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
-                        " DB and to current cardList at last index !!TODO: Implement Indexing!!");
+                        " DB and to current cardList at last index");
 
                 success = true;
             }
@@ -121,18 +120,35 @@ public class CardListCtrl implements Initializable {
         });
 
         //END OF DRAG AND DROP HANDLERS
+        var cardsOrdered = new ArrayList<>(cardList.cards);
 
+        cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
 
-        for (Card c : cardList.cards) {
+        for (Card c : cardsOrdered) {
             FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
 
             try {
                 VBox cardNode = cardLoader.load();
-                this.cardsContainer.getChildren().add(cardNode);
+                cardsContainer.getChildren().add(cardNode);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void moveToList(VBox node) {
+        var them = ((Card) node.getUserData()).id;
+        var theirParent = ((Card) node.getUserData()).parentCardList.id;
+
+        var me = cardList.id;
+
+        var maxIndex = cardList.cards.stream().map(x -> x.index).max(Integer::compareTo);
+
+        server.editCardIndexS(them, maxIndex.isEmpty() ? 0 : maxIndex.get()+1);
+
+        if(theirParent != me) {
+            server.editCardParentS(them, me);
         }
     }
 

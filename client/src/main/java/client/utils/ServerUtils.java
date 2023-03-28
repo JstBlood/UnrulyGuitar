@@ -160,19 +160,22 @@ public class ServerUtils {
                 Entity.entity(newTitle, APPLICATION_JSON));
     }
 
-    public Card getCard(long id) {
-        return internalGetRequest("api/cards/" + id, new GenericType<>(){});
+    public void editCardIndexS(long id, int newIndex) {
+        internalPutRequest("api/cards/" + id + "/index/s",
+                Entity.entity(newIndex, APPLICATION_JSON));
+    }
+
+    public void editCardParentS(long id, long newParent) {
+        internalPutRequest("api/cards/" + id + "/parent/s",
+                Entity.entity(newParent, APPLICATION_JSON));
     }
 
     // END OF CARD RELATED FUNCTIONS
-
 
     public void forceRefresh(String key) {
         internalGetRequest("api/boards/" + key + "/forceRefresh",
                 new GenericType<String>(){});
     }
-
-
 
 
     public void connect() {
