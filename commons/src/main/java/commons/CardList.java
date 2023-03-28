@@ -53,6 +53,10 @@ public class CardList {
         cards.add(newCard);
     }
 
+    public void removeCard(Card cardToRemove) {
+        cards.remove(cardToRemove);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);

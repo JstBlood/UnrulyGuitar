@@ -35,14 +35,13 @@ public class BoardOverviewCtrl implements Initializable {
     private Board board;
     private AddCardListCtrl addCardListCtrl;
     private AddCardCtrl addCardCtrl;
+
     @FXML
     private TextField title;
     @FXML
     private GridPane listsGrid;
     @FXML
     private HBox section;
-
-    private boolean suppress = true;
 
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -128,9 +127,8 @@ public class BoardOverviewCtrl implements Initializable {
 
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
-
         if(board.hashCode() == newState.hashCode()) {
-            System.out.println("Skipping refresh");
+
             return;
         }
 
@@ -141,7 +139,6 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     private void updateBoard(Board newState) {
-        suppress = true;
 
         title.setText(board.title);
         title.setStyle("-fx-text-fill: -fx-col-0;");

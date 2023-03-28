@@ -5,16 +5,19 @@ import java.util.Optional;
 import commons.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import server.database.CardListRepository;
 import server.database.CardRepository;
 
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
+    private final CardListRepository cardListRepo;
     private final BoardsService boards;
 
-    public CardService(CardRepository cardRepo, BoardsService boards) {
+    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
+        this.cardListRepo = cardListRepo;
     }
 
     public HttpStatus add(Card card, String username, String password) {
@@ -67,6 +70,91 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         return HttpStatus.OK;
     }
+
+    public HttpStatus update(long id, String component, Object newValue) {
+        if(cardRepo.findById(id).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
+        Card edit = cardRepo.findById(id).get();
+
+        try {
+            edit.getClass().getField(component).set(edit, newValue);
+        } catch (Exception e) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        cardRepo.saveAndFlush(edit);
+
+        forceRefresh(edit);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateIndex(long id, int newValue, boolean silent) {
+        if(cardRepo.findById(id).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
+        Card edit = cardRepo.findById(id).get();
+
+        edit.index = newValue;
+
+        cardRepo.saveAndFlush(edit);
+
+        if(!silent)
+            forceRefresh(edit);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateParent(long id, long newParent, boolean silent){
+        if(cardListRepo.findById(newParent).isEmpty())
+            return HttpStatus.NOT_FOUND;
+        if(cardRepo.findById(id).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
+        Card edit = cardRepo.findById(id).get();
+
+
+        var oldParent = edit.parentCardList.id;
+
+        var cEdit = cardListRepo.findById(oldParent).get();
+        cEdit.cards.remove(edit);
+
+        cardListRepo.saveAndFlush(cEdit);
+
+
+
+        edit.parentCardList = cardListRepo.findById(newParent).get();
+
+        cardRepo.saveAndFlush(edit);
+
+
+        cEdit = cardListRepo.findById(newParent).get();
+        cEdit.cards.add(edit);
+
+        cardListRepo.saveAndFlush(cEdit);
+
+        if(!silent)
+            forceRefresh(edit);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus delete(long id) {
+        if(cardRepo.findById(id).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
+        String rem = cardRepo.findById(id).get().parentCardList.parentBoard.key;
+
+        cardRepo.delete(cardRepo.findById(id).get());
+        boards.forceRefresh(rem);
+
+        return HttpStatus.OK;
+    }
+
+
+    //TODO: Move DRAG AND DROP handlers to here
+
 
     private void forceRefresh(Card card) {
         boards.forceRefresh(card.parentCardList.parentBoard.key);

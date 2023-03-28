@@ -48,7 +48,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 public class ServerUtils {
 
     private final int mlimit = 1024 * 1024;
-    private final MainCtrl store;
+    private  MainCtrl store;
     private StompSession session;
 
     @Inject
@@ -56,7 +56,7 @@ public class ServerUtils {
         this.store = store;
     }
 
-    private String getServer() {
+    private  String getServer() {
         return "http://" + store.accessStore().getUrl() + "/";
     }
 
