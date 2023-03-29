@@ -47,7 +47,6 @@ public class BoardsController {
     @PostMapping("/join/{id}")
     public ResponseEntity<Board> join(@PathVariable String username,
                                       @PathVariable(required = false) String password, @PathVariable String id) {
-
         var status = service.join(id, username, password);
 
         if(status != HttpStatus.OK)
@@ -56,11 +55,23 @@ public class BoardsController {
         return ResponseEntity.ok(service.getBoard(id));
     }
 
+    @PostMapping("/leave/{id}")
+    public ResponseEntity<?> leave(@PathVariable String username,
+                                      @PathVariable(required = false) String password, @PathVariable String id) {
+        return ResponseEntity.status(service.leave(id, username, password)).build();
+    }
+
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable(required = false) String password, @PathVariable String username,
                                        @PathVariable String id, @PathVariable String component,
                                        @RequestBody String newValue) {
         return ResponseEntity.status(service.update(id, component, newValue, username, password)).build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> remove(@PathVariable(required = false) String password, @PathVariable String username,
+                                    @PathVariable String id) {
+        return ResponseEntity.status(service.delete(id, username, password)).build();
     }
 
     @GetMapping("/list")

@@ -56,10 +56,6 @@ public class BoardOverviewCtrl implements Initializable {
         inviteKey.getItems().get(0).setText(board.key);
     }
 
-    public Board getBoard() {
-        return this.board;
-    }
-
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -90,7 +86,6 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
 
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
             loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
@@ -106,6 +101,13 @@ public class BoardOverviewCtrl implements Initializable {
         setBoard(board);
 
         server.connect();
+
+        server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoards();
+            });
+        });
+
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
             Platform.runLater(() -> {
                 try {
@@ -115,6 +117,7 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
         });
+
 
         server.forceRefresh(board.key);
     }
@@ -196,10 +199,12 @@ public class BoardOverviewCtrl implements Initializable {
             timeline.play();
         });
     }
+
     @FXML
     public void openSettings() {
         mainCtrl.showBoardSettings();
     }
+
     @FXML
     public void back() {
         server.deregister();
@@ -209,12 +214,12 @@ public class BoardOverviewCtrl implements Initializable {
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: white;");
+            title.setStyle("-fx-text-fill: -fx-col-0;");
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: white;");
+        title.setStyle("-fx-text-fill: -fx-col-0;");
 
         board.title = title.getText();
 
@@ -223,5 +228,20 @@ public class BoardOverviewCtrl implements Initializable {
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
         }
+    }
+
+    public Board getBoard() {
+        return this.board;
+    }
+
+    @FXML
+    public void removeBoard() {
+        server.deleteBoard(board.key);
+    }
+
+    @FXML
+    public void leaveBoard() {
+        server.leaveBoard(board.key);
+        mainCtrl.showBoards();
     }
 }

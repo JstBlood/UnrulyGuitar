@@ -61,6 +61,21 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return HttpStatus.OK;
     }
 
+    public HttpStatus leave(String id, String username, String password) {
+        User usr = pwd.retriveUser(username);
+
+        if(repo.findByKey(id) == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Board toBeLeft = repo.findByKey(id);
+
+        usr.boards.removeIf(x -> x.id == toBeLeft.id);
+        userRepo.saveAndFlush(usr);
+
+        return HttpStatus.OK;
+    }
+
     public HttpStatus update(String id, String component, Object newValue, String username, String password) {
         if(repo.findByKey(id) == null)
             return HttpStatus.NOT_FOUND;
@@ -86,10 +101,17 @@ public class BoardsService implements StandardEntityService<Board, String> {
         if(repo.findByKey(id) == null)
             return HttpStatus.NOT_FOUND;
 
-        String rem = repo.findByKey(id).key;
+        Board rem = repo.findByKey(id);
 
-        repo.delete(repo.findByKey(id));
-        forceRefresh(rem);
+        for(User usr : rem.users) {
+            Board fRem = rem;
+            usr.boards.removeIf(x -> x.id == fRem.id);
+            userRepo.saveAndFlush(usr);
+        }
+
+        repo.delete(rem);
+
+        sockets.broadcastRemoval(rem);
 
         return HttpStatus.OK;
     }

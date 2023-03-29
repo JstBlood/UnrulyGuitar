@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<GridPane prefHeight="477.0" prefWidth="675.0" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+<GridPane prefHeight="477.0" prefWidth="675.0" vgap="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <stylesheets>
       <URL value="@/client/css/mainStyle.css" />
       <URL value="@/client/css/BoardOverviewStyle.css" />
@@ -78,6 +71,15 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
+      <Button mnemonicParsing="false" onAction="#leaveBoard" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets top="100.0" />
+         </GridPane.margin></Button>
+      <Button mnemonicParsing="false" onAction="#removeBoard" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets top="180.0" />
+         </GridPane.margin>
+      </Button>
       <MenuButton fx:id="inviteKey" mnemonicParsing="false" onAction="#getInviteKey" text="Invite Key" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#getInviteKey" />
