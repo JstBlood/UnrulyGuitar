@@ -48,7 +48,11 @@ public class CardCtrl implements Initializable {
         });
 
         this.cardBox.setUserData(card);
-
+        this.cardBox.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+                mainCtrl.showCardDetails(card);
+            }
+        });
         title.setOnKeyPressed(e -> {
             if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
                 updateTitle();
@@ -82,9 +86,7 @@ public class CardCtrl implements Initializable {
         this.cardBox.setOnDragDropped(e -> {
             handleDrop(e);
         });
-
         //END OF DRAG AND DROP HANDLER
-
         this.description.setText(card.description);
         this.description.setPrefRowCount((int) card.description.lines().count());
     }

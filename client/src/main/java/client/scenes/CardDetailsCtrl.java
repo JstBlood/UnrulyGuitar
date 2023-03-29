@@ -1,25 +1,26 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
-import client.utils.UIUtils;
 import commons.*;
-import jakarta.ws.rs.WebApplicationException;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 
-public class AddCardCtrl {
+public class CardDetailsCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private CardList parentCardList;
+    private Card card;
 
     @FXML
     private TextField title;
@@ -44,18 +45,28 @@ public class AddCardCtrl {
     private List<Task> subtasks;
 
     @Inject
-    public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public CardDetailsCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
-    public void prepare(){
+    public void prepare(Card c){
+        this.card = c;
+        refresh(c, true);
+
+        server.connect();
+        server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key, Board.class, q -> {
+            Platform.runLater(() -> {
+                refresh(q.cardLists.stream().filter(x -> x.id == c.parentCardList.id)
+                        .findFirst().get().cards.stream().filter(x -> x.id == c.id).findFirst().get(), false);
+            });
+        });
+
         EventHandler<ActionEvent> removeTagEvent = e -> {
             this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
         };
         EventHandler<ActionEvent> addTagEvent = e -> {
             String tagName = ((MenuItem) e.getSource()).getText();
-            System.out.println(this.tagsBar.getButtons().size() - 1);
             if (this.tagsBar.getButtons().stream().anyMatch(
                     b -> (b instanceof ToggleButton) && ((ToggleButton) b).getText().equals(tagName)))
                 return;
@@ -71,6 +82,10 @@ public class AddCardCtrl {
 
             tagsBar.getButtons().add(tagButton);
         };
+
+        addUpdateHandler(title, () -> updateTitle(), "title", true);
+        addUpdateHandler(description, () -> updateDescription(), "description", false);
+
         for(Tag tag : mainCtrl.getCurrentBoard().tags){
             MenuItem mi = new MenuItem(tag.name);
             mi.setOnAction(addTagEvent);
@@ -78,33 +93,67 @@ public class AddCardCtrl {
         }
     }
 
-    public void setParentCardList(CardList parentCardList) {
-        this.parentCardList = parentCardList;
+    private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
+        r.textProperty().addListener((o, oldV, newV) -> {
+            try {
+                if (!Objects.equals(card.getClass().getField(ff), newV)) {
+                    r.setStyle("-fx-text-fill: red;");
+                }
+            } catch (Exception e) {
+
+            }
+        });
+
+        if(onEnter) {
+            r.setOnKeyPressed(e -> {
+                if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
+                    run.run();
+                }
+            } );
+        }
+
+        r.focusedProperty().addListener((o, oldV, newV) -> {
+            if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
+                run.run();
+            }
+        });
     }
 
-    public void submitCard(){
-        // communicate it to the parent List
-        if (this.title.getText().equals("")) {
-            this.submit.setText("Please provide a title!");
-            this.submit.setStyle("-fx-text-fill: red;");
+    private void updateTitle() {
+        title.setStyle("-fx-text-fill: white;");
+        server.updateCard(card.id, "title", title.getText());
+    }
+
+    private void updateDescription() {
+        description.setStyle("-fx-text-fill: black;");
+        server.updateCard(card.id, "description", description.getText());
+    }
+
+    private void relink(Card newState) {
+        for(Task t : newState.tasks)
+            t.parentCard = newState;
+    }
+
+    private void refresh(Card newState, boolean pass) {
+        relink(newState);
+
+        if(newState.hashCode() == card.hashCode() && !pass) {
             return;
         }
 
-        // communicate it to the server
-        try {
-            Card newCard = generateCard();
-            server.addCard(newCard);
-        } catch (WebApplicationException e) {
-            UIUtils.showError(e.getMessage());
-        }
+        title.setStyle("-fx-text-fill: white;");
+        description.setStyle("-fx-text-fill: black;");
+        title.setText(newState.title);
+        description.setText(newState.description);
+    }
 
+    public void submitCard(){
         // go back to the overview
         clearFields();
         mainCtrl.showBoardOverview();
     }
 
     public void addSubtask(){
-
         System.out.println("Grid: " + this.subtaskPane.toString());
         ImageView iv = new ImageView("file:/client/images/trashcan_icon.png");
         iv.setFitHeight(50);
@@ -132,10 +181,6 @@ public class AddCardCtrl {
         for (Node child : this.subtaskPane.getChildren()) {
             System.out.println(child.toString());
         }
-    }
-
-    public Card generateCard(){
-        return new Card(this.title.getText(), this.description.getText(), this.parentCardList);
     }
 
     public void clearFields(){

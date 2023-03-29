@@ -30,7 +30,7 @@ public class MyModule implements Module {
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
         binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardOverviewCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AddCardCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CardDetailsCtrl.class).in(Scopes.SINGLETON);
         binder.bind(Board.class).in(Scopes.SINGLETON);
     }
 }

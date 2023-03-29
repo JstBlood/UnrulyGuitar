@@ -34,7 +34,7 @@ public class BoardOverviewCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
-    private AddCardCtrl addCardCtrl;
+    private CardDetailsCtrl cardDetailsCtrl;
 
     @FXML
     private TextField title;
@@ -47,7 +47,7 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.addCardCtrl = new AddCardCtrl(server, mainCtrl);
+        this.cardDetailsCtrl = new CardDetailsCtrl(server, mainCtrl);
     }
 
     @Override

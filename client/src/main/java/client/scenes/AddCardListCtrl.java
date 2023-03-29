@@ -37,6 +37,9 @@ public class AddCardListCtrl implements Initializable{
     }
 
     public void ok() {
+        if(title.getText() == "")
+            return;
+
         try {
             server.addCardList(getCardList());
         } catch (WebApplicationException e) {
