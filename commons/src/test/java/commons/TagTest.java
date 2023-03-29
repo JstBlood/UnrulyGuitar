@@ -1,13 +1,10 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class TagTest {
 
@@ -16,6 +13,12 @@ public class TagTest {
         var t = new Tag("urgent", new Color(0, 0, 0));
         assertEquals("urgent", t.name);
         assertEquals(new Color(0, 0, 0), t.color);
+    }
+
+    @Test
+    public void checkEmptyConstructor() {
+        var t = new Tag();
+        assertNotEquals(null, t);
     }
 
     @Test

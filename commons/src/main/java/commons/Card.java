@@ -1,16 +1,16 @@
 package commons;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity(name = "Card")
 @Table(name = "card")
@@ -34,8 +34,6 @@ public class Card {
             cascade = CascadeType.ALL)
     public List<Task> tasks = new ArrayList<>();
 
-
-
     /**
      * @param title The entry's text.
      * @param description The entry's description
@@ -49,12 +47,17 @@ public class Card {
     }
 
     @SuppressWarnings("unused")
-    protected Card() {
-
-    }
+    protected Card() {}
 
     public void addTask(Task newTask) {
         tasks.add(newTask);
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
@@ -70,13 +73,5 @@ public class Card {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 }

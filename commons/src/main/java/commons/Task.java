@@ -1,12 +1,12 @@
 package commons;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import javax.persistence.*;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Task")
 @Table(name = "task")
@@ -24,7 +24,7 @@ public class Task {
             nullable = false)
     public Card parentCard;
     @SuppressWarnings("unused")
-    private Task() {}
+    protected Task() {}
 
     /**
      * @param title The subentry's text.
