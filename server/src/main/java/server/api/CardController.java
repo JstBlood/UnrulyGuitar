@@ -28,26 +28,16 @@ public class CardController {
 
     @PutMapping("/{id}/index/s")
     public ResponseEntity<Card> updateIndexS(@PathVariable long id,
-                                       @RequestBody int newValue) {
-        return ResponseEntity.status(cardService.updateIndex(id, newValue, true)).build();
-    }
-
-    @PutMapping("/{id}/index")
-    public ResponseEntity<Card> updateIndex(@PathVariable long id,
-                                            @RequestBody int newValue) {
-        return ResponseEntity.status(cardService.updateIndex(id, newValue, false)).build();
+                                       @RequestBody int newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateIndex(id, newValue, true, username, password)).build();
     }
 
     @PutMapping("/{id}/parent/s")
     public ResponseEntity<Card> updateParentS(@PathVariable long id,
-                                            @RequestBody long newValue) {
-        return ResponseEntity.status(cardService.updateParent(id, newValue, true)).build();
-    }
-
-    @PutMapping("/{id}/parent")
-    public ResponseEntity<Card> updateParent(@PathVariable long id,
-                                             @RequestBody long newValue) {
-        return ResponseEntity.status(cardService.updateParent(id, newValue, false)).build();
+                                            @RequestBody long newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateParent(id, newValue, true, username, password)).build();
     }
 
     @PutMapping("/{id}/{component}")

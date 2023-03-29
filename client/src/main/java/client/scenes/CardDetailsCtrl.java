@@ -6,14 +6,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
+import javafx.scene.layout.RowConstraints;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,11 +98,10 @@ public class CardDetailsCtrl {
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
         r.textProperty().addListener((o, oldV, newV) -> {
             try {
-                if (!Objects.equals(card.getClass().getField(ff), newV)) {
+                if (!Objects.equals(card.getClass().getField(ff).get(card), newV)) {
                     r.setStyle("-fx-text-fill: red;");
                 }
             } catch (Exception e) {
-
             }
         });
 
@@ -141,10 +142,27 @@ public class CardDetailsCtrl {
             return;
         }
 
+        card = newState;
+
         title.setStyle("-fx-text-fill: white;");
         description.setStyle("-fx-text-fill: black;");
         title.setText(newState.title);
         description.setText(newState.description);
+
+        subtaskPane.getRowConstraints().clear();
+        subtaskPane.getChildren().clear();
+
+        for(Task t : card.tasks) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
+                loader.setControllerFactory(c -> new TaskCtrl(server, mainCtrl, t));
+                Parent root = loader.load();
+                subtaskPane.add(root, 0, t.index);
+                subtaskPane.getRowConstraints().add(new RowConstraints());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void submitCard(){
@@ -153,34 +171,12 @@ public class CardDetailsCtrl {
         mainCtrl.showBoardOverview();
     }
 
+    private Task generateTask() {
+        return new Task("New Task", card);
+    }
+
     public void addSubtask(){
-        System.out.println("Grid: " + this.subtaskPane.toString());
-        ImageView iv = new ImageView("file:/client/images/trashcan_icon.png");
-        iv.setFitHeight(50);
-        iv.setFitWidth(50);
-        TextField subtaskTitle = new TextField();
-        subtaskTitle.setPrefWidth(300);
-        subtaskTitle.setPrefHeight(50);
-        subtaskTitle.setStyle("-fx-background-color: yellow;");
-        subtaskTitle.setPromptText("Add subtask title...");
-        TextArea subtaskDescription = new TextArea();
-        subtaskDescription.setPrefWidth(300);
-        subtaskDescription.setPrefHeight(100);
-        subtaskDescription.setStyle("-fx-background-color: red;");
-        subtaskDescription.setPromptText("Add description...");
-
-        this.subtaskPane.add(new Text("SHOW URSELF"), 0, 0);
-        this.subtaskPane.add(subtaskTitle, 1, 0);
-        this.subtaskPane.add(new Text("PLEASE"), 0, 1);
-        this.subtaskPane.add(subtaskDescription, 1, 1);
-
-        System.out.println("Grid is now: "
-                + this.subtaskPane.getRowCount()
-                + " by "
-                + this.subtaskPane.getColumnCount());
-        for (Node child : this.subtaskPane.getChildren()) {
-            System.out.println(child.toString());
-        }
+        server.addBoard(generateTask());
     }
 
     public void clearFields(){

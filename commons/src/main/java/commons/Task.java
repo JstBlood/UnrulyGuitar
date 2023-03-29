@@ -19,12 +19,14 @@ public class Task {
     @Column(nullable = false)
     public String title;
 
+    public boolean isDone;
+
     @ManyToOne
     @JoinColumn(name = "card_id",
             nullable = false)
     public Card parentCard;
     @SuppressWarnings("unused")
-    private Task() {}
+    protected Task() {}
 
     /**
      * @param title The subentry's text.
@@ -33,6 +35,7 @@ public class Task {
     public Task(String title, Card parentCard) {
         this.title = title;
         this.parentCard = parentCard;
+        this.isDone = false;
         if(parentCard != null) index = parentCard.tasks.size();
     }
 

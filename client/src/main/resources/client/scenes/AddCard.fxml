@@ -11,7 +11,7 @@
 
 <ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
    <content>
-      <AnchorPane fx:id="root" prefHeight="285.0" prefWidth="609.0" styleClass="anchor-plane">
+      <AnchorPane fx:id="root" prefHeight="380.0" prefWidth="603.0" styleClass="anchor-plane">
          <stylesheets>
             <URL value="@/client/css/AddCardStyle.css" />
          </stylesheets>
@@ -79,7 +79,7 @@
                   <Insets />
                </opaqueInsets>
             </TextArea>
-            <GridPane fx:id="subtaskPane" layoutX="6.0" layoutY="241.0" prefHeight="40.0" prefWidth="502.0">
+            <GridPane fx:id="subtaskPane" layoutX="3.0" layoutY="274.0" prefHeight="104.0" prefWidth="523.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
@@ -87,7 +87,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <Button fx:id="submit" layoutX="516.0" layoutY="251.0" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
+            <Button fx:id="submit" layoutX="533.0" layoutY="343.0" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
             <Label layoutX="87.0" layoutY="247.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
             <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="56.0" layoutY="246.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
                <image>

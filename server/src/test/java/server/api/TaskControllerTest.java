@@ -2,6 +2,7 @@ package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Random;
 
@@ -12,11 +13,10 @@ import commons.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import server.database.TestBoardsRepository;
-import server.database.TestTaskRepository;
-import server.database.TestUserRepository;
+import server.database.*;
 import server.services.BoardsService;
 import server.services.SocketRefreshService;
+import server.services.TaskService;
 
 public class TaskControllerTest {
 
@@ -24,6 +24,7 @@ public class TaskControllerTest {
     private MyRandom random;
     private TestTaskRepository repo;
     private Board pBoard;
+    private CardRepository cRepo;
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
     private TaskController sut;
@@ -34,56 +35,56 @@ public class TaskControllerTest {
     public void setup() {
         messages = new SocketRefreshService(simp);
         pBoard = new Board("parent", "title");
-        random = new MyRandom();
         repo = new TestTaskRepository();
+        cRepo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
-        sut = new TaskController(random, repo, new BoardsService(bRepo, uRepo, messages , null));
+        sut = new TaskController(new TaskService(cRepo, repo, new BoardsService(bRepo, uRepo, messages , null)));
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(getTask(null));
+        var actual = sut.add(getTask(null), "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullParentCard() {
-        var actual = sut.add(new Task("title", null));
+        var actual = sut.add(new Task("title", null), "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotDeleteNullTask() {
-        var actual = sut.delete(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.delete(-1, "", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateNullTask() {
-        var actual = sut.update(null);
-        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        var actual = sut.update(-1, "title", "", "", "");
+        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedAdd() {
-        sut.add(getTask("q1"));
+        sut.add(getTask("q1"), "", "");
         repo.calledMethods.contains("save");
     }
 
     @Test
     public void databaseIsUsedDelete() {
         Task task = getTask("q1");
-        sut.add(task);
-        sut.delete(task);
+        sut.add(task, "", "");
+        sut.delete(task.id, "", "");
         repo.calledMethods.contains("deleteById");
     }
 
     @Test
     public void databaseIsUsedUpdate() {
         Task task = getTask("q1");
-        sut.add(task);
-        sut.update(task);
+        sut.add(task, "", "");
+        sut.update(task.id, "title", "", "", "");
         repo.calledMethods.contains("saveAndFlush");
     }
     private static Task getTask(String q) {

@@ -138,8 +138,10 @@ public class CardListCtrl implements Initializable {
 
     @FXML
     public void cardAdd() {
-        if(cardName.getText() == "")
+        if(cardName.getText() == "") {
             UIUtils.showError("Card name cannot be empty");
+            return;
+        }
 
         try {
             Card newCard = generateCard();

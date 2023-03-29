@@ -127,7 +127,7 @@ public class TestTaskRepository implements TaskRepository {
     @Override
     public Optional<Task> findById(Long id) {
         // TODO Auto-generated method stub
-        return null;
+        return Optional.empty();
     }
 
     @Override
