@@ -10,18 +10,24 @@ import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.*;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  * This class is the controller of the BoardOverview scene,
@@ -29,9 +35,9 @@ import javafx.scene.layout.VBox;
  */
 
 public class BoardOverviewCtrl implements Initializable {
-
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final Clipboard clipboard;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
     private AddCardCtrl addCardCtrl;
@@ -39,15 +45,25 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private TextField title;
     @FXML
+    private MenuButton inviteKey;
+    @FXML
     private GridPane listsGrid;
     @FXML
     private HBox section;
+
+    public void setBoard(Board board) {
+        this.board = board;
+        inviteKey.getItems().get(0).setText(board.key);
+    }
 
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.addCardCtrl = new AddCardCtrl(server, mainCtrl);
+        //TODO: I do not think the next line should be in here :))
+        addCardCtrl = new AddCardCtrl(server, mainCtrl);
+
+        clipboard = Clipboard.getSystemClipboard();
     }
 
     @Override
@@ -82,11 +98,8 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void prepare(Board board) {
-        this.board = board;
-        this.board.title = "";
         setBoard(board);
 
-        server.deregister();
         server.connect();
 
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
@@ -109,24 +122,6 @@ public class BoardOverviewCtrl implements Initializable {
         server.forceRefresh(board.key);
     }
 
-    private void performRelink(Board newState) {
-        for(CardList cl : newState.cardLists) {
-            cl.parentBoard = newState;
-
-            for(Card c : cl.cards) {
-                c.parentCardList = cl;
-
-                for(Task t : c.tasks)
-                    t.parentCard = c;
-            }
-
-        }
-
-        for(Tag u : newState.tags) {
-            u.board = newState;
-        }
-    }
-
     public void refresh(Board newState) throws IOException {
         performRelink(newState);
 
@@ -140,18 +135,30 @@ public class BoardOverviewCtrl implements Initializable {
         }
 
         updateBoard(newState);
-
-        // Update the CardLists and their Cards using FXML Loaders
         updateCardLists();
     }
 
+    private void performRelink(Board newState) {
+        for(CardList cl : newState.cardLists) {
+            cl.parentBoard = newState;
+
+            for(Card c : cl.cards) {
+                c.parentCardList = cl;
+
+                for(Task t : c.tasks)
+                    t.parentCard = c;
+            }
+        }
+        for(Tag u : newState.tags) {
+            u.board = newState;
+        }
+    }
+
     private void updateBoard(Board newState) {
+        setBoard(newState);
 
         title.setText(board.title);
         title.setStyle("-fx-text-fill: -fx-col-0;");
-
-        board = newState;
-        title.setText(board.title);
     }
 
     private void updateCardLists() throws IOException {
@@ -171,6 +178,37 @@ public class BoardOverviewCtrl implements Initializable {
             listsGrid.add(cardListNode, cl.index, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
+    }
+    @FXML
+    public void getInviteKey() {
+        ClipboardContent content = new ClipboardContent();
+        content.putString(board.key);
+        clipboard.setContent(content);
+        Platform.runLater(()->
+        {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, event -> {
+                        inviteKey.setText("Copied to clipboard!");
+                        inviteKey.setStyle("-fx-background-color: green;");
+                    }),
+                    new KeyFrame(Duration.seconds(2), event -> {
+                        inviteKey.setText("Invite Key");
+                        inviteKey.setStyle("-fx-background-color: white;");
+                    })
+            );
+            timeline.play();
+        });
+    }
+
+    @FXML
+    public void openSettings() {
+        mainCtrl.showBoardSettings();
+    }
+
+    @FXML
+    public void back() {
+        server.deregister();
+        mainCtrl.showBoards();
     }
 
     public void updateTitle() {
@@ -192,20 +230,8 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
-    public void openSettings() {
-        mainCtrl.showBoardSettings();
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
     public Board getBoard() {
         return this.board;
-    }
-
-    public void back(){
-        mainCtrl.showBoards();
     }
 
     @FXML

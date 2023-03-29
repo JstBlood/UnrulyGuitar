@@ -3,60 +3,33 @@ package server.api;
 import commons.Task;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import server.database.TaskRepository;
-import server.services.BoardsService;
-
-import java.util.Random;
+import server.services.TaskService;
 
 @RestController
-@RequestMapping("/api/tasks/")
+@RequestMapping(value = {"/secure/{username}/{password}/tasks", "/secure/{username}/tasks"})
 public class TaskController {
-    private final Random random;
-    private final TaskRepository taskRepo;
-    private BoardsService boards;
+    private final TaskService taskService;
 
-    public TaskController(Random rng, TaskRepository taskRepo, BoardsService boards) {
-        this.random = rng;
-        this.taskRepo = taskRepo;
-        this.boards = boards;
-    }
-    @PostMapping("/secure/{username}/{id}/add")
-    public ResponseEntity<Task> add(@RequestBody Task task) {
-        if (task == null || isNullOrEmpty(task.title) || task.parentCard == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Task saved = taskRepo.save(task);
-
-        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(saved);
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
-    @PostMapping("/secure/{username}/{id}/delete")
-    public ResponseEntity<Task> delete(@RequestBody Task task) {
-        if (task == null || task.parentCard == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        taskRepo.deleteById(task.id);
-
-        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(task);
+    @PostMapping("/add")
+    public ResponseEntity<?> add(@RequestBody Task task, @PathVariable String username,
+                                 @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.add(task, username, password)).build();
     }
 
-    @PutMapping("/secure/{username}/{id}/update")
-    public ResponseEntity<Task> update(@RequestBody Task task) {
-        if (task == null || task.title == null || task.parentCard == null){
-            return ResponseEntity.badRequest().build();
-        }
-        taskRepo.saveAndFlush(task);
-
-        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
-
-        return ResponseEntity.ok(task);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable long id, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.delete(id, username, password)).build();
     }
 
-    private static boolean isNullOrEmpty(String s) {
-        return s == null || s.isEmpty();
+    @PutMapping("/{id}/{component}")
+    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
+                                    @RequestBody String newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.update(id, component, newValue, username, password)).build();
     }
 }
