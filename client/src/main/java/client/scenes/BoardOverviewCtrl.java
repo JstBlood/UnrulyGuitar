@@ -88,6 +88,13 @@ public class BoardOverviewCtrl implements Initializable {
 
         server.deregister();
         server.connect();
+
+        server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoards();
+            });
+        });
+
         server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
             Platform.runLater(() -> {
                 try {
@@ -97,6 +104,7 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
         });
+
 
         server.forceRefresh(board.key);
     }
@@ -128,7 +136,6 @@ public class BoardOverviewCtrl implements Initializable {
         // Just as a side note: hashCode does not help with speed here
         // since we already have to go through every field.
         if(board.hashCode() == newState.hashCode()) {
-
             return;
         }
 
@@ -198,6 +205,17 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void back(){
+        mainCtrl.showBoards();
+    }
+
+    @FXML
+    public void removeBoard() {
+        server.deleteBoard(board.key);
+    }
+
+    @FXML
+    public void leaveBoard() {
+        server.leaveBoard(board.key);
         mainCtrl.showBoards();
     }
 }

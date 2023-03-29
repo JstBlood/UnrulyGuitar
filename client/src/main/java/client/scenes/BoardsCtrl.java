@@ -50,7 +50,6 @@ public class BoardsCtrl {
             }
         } else {
             listLabel.setText("Previously joined boards:");
-            System.out.println("listing " + server.getPrevious());
             for(var board : server.getPrevious()) {
                 previous.getItems().add(board.key);
             }
