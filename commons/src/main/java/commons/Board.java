@@ -3,9 +3,9 @@ package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -31,13 +31,13 @@ public class Board {
     public List<CardList> cardLists = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards")
-    public Set<User> users = new HashSet<>();
+    public Set<User> users = ConcurrentHashMap.newKeySet();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    public Set<Tag> tags = new HashSet<>();
+    public Set<Tag> tags = ConcurrentHashMap.newKeySet();
 
     @SuppressWarnings("unused")
     protected Board() {

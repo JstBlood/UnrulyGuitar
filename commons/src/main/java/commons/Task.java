@@ -24,7 +24,7 @@ public class Task {
             nullable = false)
     public Card parentCard;
     @SuppressWarnings("unused")
-    private Task() {}
+    protected Task() {}
 
     /**
      * @param title The subentry's text.
