@@ -67,10 +67,13 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
-      <Button mnemonicParsing="false" onAction="#leaveBoard" text="Leave board" textFill="#da0606" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <Button mnemonicParsing="false" onAction="#removeBoard" text="Remove board" textFill="#eb0e0e" GridPane.columnIndex="2" GridPane.rowIndex="2">
+      <Button mnemonicParsing="false" onAction="#leaveBoard" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <GridPane.margin>
-            <Insets top="80.0" />
+            <Insets top="100.0" />
+         </GridPane.margin></Button>
+      <Button mnemonicParsing="false" onAction="#removeBoard" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets top="180.0" />
          </GridPane.margin>
       </Button>
    </children>

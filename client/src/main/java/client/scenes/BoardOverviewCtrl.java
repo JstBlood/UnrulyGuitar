@@ -176,12 +176,12 @@ public class BoardOverviewCtrl implements Initializable {
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: white;");
+            title.setStyle("-fx-text-fill: -fx-col-0;");
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: white;");
+        title.setStyle("-fx-text-fill: -fx-col-0;");
 
         board.title = title.getText();
 
