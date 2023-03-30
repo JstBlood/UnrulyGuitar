@@ -15,9 +15,9 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody Task card, @PathVariable String username,
+    public ResponseEntity<?> add(@RequestBody Task task, @PathVariable String username,
                                  @PathVariable(required = false) String password) {
-        return ResponseEntity.status(taskService.add(card, username, password)).build();
+        return ResponseEntity.status(taskService.add(task, username, password)).build();
     }
 
     @DeleteMapping("/{id}")

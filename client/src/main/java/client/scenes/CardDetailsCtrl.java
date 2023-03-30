@@ -59,8 +59,12 @@ public class CardDetailsCtrl {
         server.connect();
         server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key, Board.class, q -> {
             Platform.runLater(() -> {
-                refresh(q.cardLists.stream().filter(x -> x.id == c.parentCardList.id)
-                        .findFirst().get().cards.stream().filter(x -> x.id == c.id).findFirst().get(), false);
+                try {
+                    refresh(q.cardLists.stream().filter(x -> x.id == c.parentCardList.id)
+                            .findFirst().get().cards.stream().filter(x -> x.id == c.id).findFirst().get(), false);
+                } catch (Exception e) {
+                    // skip this because this means that the controller is hidden
+                }
             });
         });
 

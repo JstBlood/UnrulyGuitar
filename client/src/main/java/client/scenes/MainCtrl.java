@@ -15,6 +15,8 @@
  */
 package client.scenes;
 
+import java.util.Objects;
+
 import client.shared.CredentialsStore;
 import commons.Board;
 import commons.Card;
@@ -23,8 +25,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
-import java.util.Objects;
 
 public class MainCtrl {
 
@@ -41,15 +41,13 @@ public class MainCtrl {
     private BoardOverviewCtrl boardOverviewCtrl;
     private Scene boardOverview;
 
-    private CardListCtrl cardListCtrl;
-    private Scene cardList;
-
     private AddCardListCtrl addCardListCtrl;
     private Scene addCardList;
 
     private CardDetailsCtrl cardDetailsCtrl;
     private Scene cardDetails;
 
+    private CardListCtrl cardListCtrl;
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
@@ -64,9 +62,9 @@ public class MainCtrl {
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
-                           Pair<CardListCtrl, Parent> cardList,
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<CardDetailsCtrl, Parent> addCard,
+                           Pair<CardListCtrl, Parent> cardList,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            CredentialsStore cStore) {
 
@@ -81,14 +79,12 @@ public class MainCtrl {
         this.boardOverviewCtrl = boardOverview.getKey();
         this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.cardListCtrl = cardList.getKey();
-        this.cardList = new Scene(cardList.getValue());
-
         this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
         this.cardDetailsCtrl = addCard.getKey();
         this.cardDetails = new Scene(addCard.getValue());
+        this.cardListCtrl = cardList.getKey();
 
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
@@ -124,26 +120,21 @@ public class MainCtrl {
     public void showBoardOverview() {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
-
-        // NO!
-        // primaryStage.setFullScreen(true);
     }
 
-    public void showCardList() {
-        primaryStage.setTitle("Lists");
-        primaryStage.setScene(cardList);
+    public void showAddCardList() {
+        primaryStage.setTitle("Add a new List");
+        primaryStage.setScene(addCardList);
     }
 
     public void showBoard() {
         primaryStage.setTitle("BOARD NAME");
         primaryStage.setScene(boardOverview);
-        primaryStage.setFullScreen(true);
     }
 
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
-        primaryStage.setFullScreen(true);
     }
 
     public void setCurrentBoard(Board board) {

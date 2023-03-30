@@ -21,6 +21,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.websocket.ContainerProvider;
@@ -37,6 +39,7 @@ import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -128,6 +131,18 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+    public void leaveBoard(String key) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/leave/" + key,
+                Entity.entity(null, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteBoard(String key) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key);
+    }
+
     public Board updateBoard(String key, String component, Object newValue) {
         return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/" + key + "/" + component,
@@ -215,6 +230,30 @@ public class ServerUtils {
                         "/cards/" + id + "/" + component,
                 Entity.json(jsonValue),
                 new GenericType<>(){});
+    }
+
+    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+
+    public void registerForUpdates(Consumer<Card> consumer) {
+        EXEC.submit(() -> {
+            while(!Thread.interrupted()) {
+                var res = ClientBuilder.newClient(new ClientConfig())
+                        .target(getServer()).path("secure/" + store.accessStore().getUsername() +
+                                "/cards/updates")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+                if(res.getStatus() == 204) {
+                    continue;
+                }
+                var c = res.readEntity(Card.class);
+                consumer.accept(c);
+            }
+        });
+    }
+
+    public void stop() {
+        EXEC.shutdownNow();
     }
 
     // END OF CARD RELATED FUNCTIONS

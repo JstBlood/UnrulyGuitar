@@ -1,30 +1,46 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class CardListTest {
-    private static final Board SOME_BOARD = new Board("board1", "myBoard");
+    private final Board SOME_BOARD = new Board("board1", "myBoard");
     @Test
     public void checkConstructor() {
         var c = new CardList("myCard", SOME_BOARD);
         assertEquals("myCard", c.title);
         assertEquals(SOME_BOARD, c.parentBoard);
     }
+
     @Test
-    public void addEntry() {
+    public void checkEmptyConstructor() {
+        var c= new CardList();
+        assertNotEquals(null, c);
+    }
+
+    @Test
+    public void addCard() {
         var c = new CardList("myCard", SOME_BOARD);
-        var testEntry1 = new Card("todo1", "", c);
-        var testEntry2 = new Card("todo2", "", c);
-        List<Card> SOME_ENTRIES = new ArrayList<>(Arrays.asList(testEntry1, testEntry2));
-        c.addCard(testEntry1);
-        c.addCard(testEntry2);
-        assertEquals(SOME_ENTRIES, c.cards);
+        var testCardList1 = new Card("todo1", "", c);
+        var testCardList2 = new Card("todo2", "", c);
+        List<Card> SOME_CARDLISTS = new ArrayList<>(Arrays.asList(testCardList1, testCardList2));
+        c.addCard(testCardList1);
+        c.addCard(testCardList2);
+        assertEquals(SOME_CARDLISTS, c.cards);
+    }
+
+    @Test
+    public void removeCard() {
+        var cl = new CardList("myCard", SOME_BOARD);
+        var c = new Card("title", "", cl);
+        cl.addCard(c);
+        cl.removeCard(c);
+        assertTrue(cl.cards.isEmpty());
     }
 
     @Test

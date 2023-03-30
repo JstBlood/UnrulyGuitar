@@ -1,15 +1,14 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
 public class CardTest {
-    private final static CardList SOME_CARDLIST = new CardList("myCard",
+    private static CardList SOME_CARDLIST = new CardList("myCard",
             new Board("board1", "myBoard"));
 
     @Test
@@ -17,16 +16,38 @@ public class CardTest {
         var e = new Card("blabla", "", SOME_CARDLIST);
         assertEquals("blabla", e.title);
         assertEquals(SOME_CARDLIST, e.parentCardList);
+        assertEquals("", e.description);
+        assertEquals(SOME_CARDLIST.cards.size(), e.index);
     }
+
     @Test
-    public void addSubentry() {
+    public void checkEmptyConstructor() {
+        var c = new Card();
+        assertNotEquals(null, c);
+    }
+
+    @Test
+    public void addTask() {
         var e = new Card("blabla", "", SOME_CARDLIST);
-        var testTask1 = new Task("todo1",  e);
-        var testTask2 = new Task("todo2",  e);
-        List<Task> SOME_SUBENTRIES = new ArrayList<>(Arrays.asList(testTask1, testTask2));
-        e.addTask(testTask1);
-        e.addTask(testTask2);
+        var testTask = new Task("todo1",  e);
+        List<Task> SOME_SUBENTRIES = new ArrayList<>();
+        SOME_SUBENTRIES.add(testTask);
+        e.addTask(testTask);
         assertEquals(SOME_SUBENTRIES, e.tasks);
+    }
+
+    @Test
+    public void setDescription() {
+        var c = new Card("blabla", "", SOME_CARDLIST);
+        c.setDescription("abc");
+        assertEquals("abc", c.description);
+    }
+
+    @Test
+    public void setTitle() {
+        var c = new Card("blabla", "", SOME_CARDLIST);
+        c.setTitle("title");
+        assertEquals("title", c.title);
     }
 
     @Test
@@ -47,8 +68,10 @@ public class CardTest {
 
     @Test
     public void hasToString() {
-        var e = new Card("blabla", "", SOME_CARDLIST).toString();
+        var e = new Card("blabla", "description", SOME_CARDLIST).toString();
         assertTrue(e.contains(Card.class.getSimpleName()));
+        assertTrue(e.contains("description"));
+        assertTrue(e.contains("blabla"));
         assertTrue(e.contains("\n"));
         assertTrue(e.contains("tasks"));
     }

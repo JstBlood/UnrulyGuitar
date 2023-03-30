@@ -1,12 +1,12 @@
 package commons;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 public class TaskTest {
 
-    private final static Card SOME_CARD = new Card("blabla", "",
+    private final Card SOME_CARD = new Card("blabla", "",
             new CardList("abc", new Board("abc", "123")));
 
     @Test
@@ -14,6 +14,12 @@ public class TaskTest {
         var s = new Task("Nothing yet", SOME_CARD);
         assertEquals("Nothing yet", s.title);
         assertEquals(SOME_CARD, s.parentCard);
+    }
+
+    @Test
+    public void checkEmptyConstructor() {
+        var t = new Task();
+        assertNotEquals(null, t);
     }
 
     @Test

@@ -13,15 +13,15 @@
          </content>
       </ScrollPane>
       <BorderPane>
-         <left>
-            <Button mnemonicParsing="false" onAction="#cardAdd" styleClass="button-1" text="Add a card " BorderPane.alignment="CENTER" />
-         </left>
-         <right>
-            <Button mnemonicParsing="false" onAction="#deleteCardList" styleClass="button-1" text="Remove" BorderPane.alignment="CENTER" />
-         </right>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
+         <right>
+            <Button mnemonicParsing="false" onAction="#cardAdd" styleClass="button-1" text="Add a card " BorderPane.alignment="CENTER" />
+         </right>
+         <left>
+            <Button mnemonicParsing="false" onAction="#deleteCardList" styleClass="button-1" text="Remove" BorderPane.alignment="CENTER" />
+         </left>
       </BorderPane>
       <TextField fx:id="cardName" onAction="#cardAdd" prefHeight="23.0" prefWidth="139.0" promptText="Card title" />
    </children>

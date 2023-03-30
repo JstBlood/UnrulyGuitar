@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<GridPane prefHeight="477.0" prefWidth="675.0" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+<GridPane vgap="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <stylesheets>
       <URL value="@/client/css/mainStyle.css" />
       <URL value="@/client/css/BoardOverviewStyle.css" />
    </stylesheets>
    <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" />
-      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-      <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="NEVER" prefWidth="104.0" />
+      <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="575.0" />
+      <ColumnConstraints hgrow="NEVER" prefWidth="175.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints vgrow="SOMETIMES" />
@@ -28,13 +23,25 @@
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <TextField fx:id="title" styleClass="subtitle" text="Board title" GridPane.columnIndex="1" />
+      <TextField fx:id="title" focusTraversable="false" style="-fx-font-size: 40;" styleClass="subtitle" text="Board title" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+         <GridPane.margin>
+            <Insets right="120.0" />
+         </GridPane.margin>
+      </TextField>
       <ImageView fx:id="allBoards" fitHeight="73.0" fitWidth="61.0" onMouseClicked="#back" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.halignment="LEFT" GridPane.valignment="CENTER">
          <image>
             <Image url="@/client/images/simple_arrow_reverse.png" />
          </image>
          <GridPane.margin>
             <Insets right="30.0" />
+         </GridPane.margin>
+      </ImageView>
+      <ImageView fx:id="settings" fitHeight="57.0" fitWidth="61.0" onMouseClicked="#openSettings" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.columnIndex="2" GridPane.halignment="CENTER">
+         <image>
+            <Image url="@/client/images/gear_icon.png" />
+         </image>
+         <GridPane.margin>
+            <Insets left="40.0" />
          </GridPane.margin>
       </ImageView>
       <HBox fx:id="section" styleClass="section" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
@@ -52,16 +59,32 @@
                   <String fx:value="lists-grid-root" />
                </styleClass>
             </ScrollPane>
+            <GridPane fx:id="rightBar" alignment="BOTTOM_RIGHT" minHeight="-Infinity" prefHeight="354.0" prefWidth="146.0">
+              <columnConstraints>
+                  <ColumnConstraints halignment="RIGHT" hgrow="NEVER" percentWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints percentHeight="-2.0" valignment="TOP" vgrow="ALWAYS" />
+                  <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="0.0" prefHeight="0.0" vgrow="ALWAYS" />
+                  <RowConstraints maxHeight="57.0" minHeight="38.0" percentHeight="11.0" prefHeight="39.0" vgrow="NEVER" />
+                  <RowConstraints maxHeight="79.0" minHeight="35.0" prefHeight="40.0" vgrow="NEVER" />
+              </rowConstraints>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#leaveBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                     <GridPane.margin>
+                        <Insets top="100.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#removeBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                     <GridPane.margin>
+                        <Insets top="180.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#addCardList" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
+               </children>
+            </GridPane>
          </children>
       </HBox>
-      <ImageView fx:id="settings" fitHeight="57.0" fitWidth="61.0" onMouseClicked="#openSettings" pickOnBounds="true" preserveRatio="true" styleClass="icon" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
-         <image>
-            <Image url="@/client/images/gear_icon.png" />
-         </image>
-         <GridPane.margin>
-            <Insets left="40.0" />
-         </GridPane.margin>
-      </ImageView>
       <ImageView fitHeight="71.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="RIGHT">
          <image>
             <Image url="@/client/images/bracket.png" />
@@ -72,5 +95,13 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
+      <MenuButton fx:id="inviteKey" mnemonicParsing="false" onAction="#getInviteKey" styleClass="button-1" text="Invite Key" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+        <items>
+          <MenuItem mnemonicParsing="false" onAction="#getInviteKey" />
+        </items>
+         <GridPane.margin>
+            <Insets right="10.0" />
+         </GridPane.margin>
+      </MenuButton>
    </children>
 </GridPane>

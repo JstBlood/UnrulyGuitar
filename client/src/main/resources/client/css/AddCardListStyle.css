@@ -1,0 +1,37 @@
+* {
+    -fx-col-0: rgb(255, 0, 181);
+    -fx-col-1: rgb(5, 0, 255);
+    -fx-col-2: rgb(0, 255, 255);
+}
+
+.root {
+    -fx-background-image: url('../images/bg_0.png');
+    -fx-border-color: -fx-col-0;
+    -fx-border-insets: 5px;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5;
+}
+
+.insert {
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER;
+}
+
+.text-0 {
+    -fx-text-fill: -fx-col-2;
+    -fx-font-size: 24px;
+}
+
+.button {
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
+    -fx-background-color: -fx-col-0;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
+.button:hover {
+    -fx-effect: dropshadow(three-pass-box, white, 10, 0.7, 0, 0);
+}
+
+

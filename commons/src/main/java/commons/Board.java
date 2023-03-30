@@ -33,7 +33,7 @@ public class Board {
     @ManyToMany(mappedBy = "boards")
     public Set<User> users = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "board_tag",
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))

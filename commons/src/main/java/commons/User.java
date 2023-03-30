@@ -26,7 +26,6 @@ public class User {
 
     public String passwd = null;
 
-    //@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @ManyToMany
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),

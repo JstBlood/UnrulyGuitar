@@ -37,16 +37,20 @@ public class AddCardListCtrl implements Initializable{
     }
 
     public void ok() {
-        if(title.getText() == "")
-            return;
 
-        try {
-            server.addCardList(getCardList());
-        } catch (WebApplicationException e) {
-            UIUtils.showError(e.getMessage());
+        if (this.title.getText().trim().equals("")) {
+            UIUtils.showError("Card List name can't be empty!");
         }
+        else {
+            try {
+                server.addCardList(getCardList());
+            } catch (WebApplicationException e) {
+                UIUtils.showError(e.getMessage());
+            }
 
-        clearFields();
+            clearFields();
+            mainCtrl.showBoardOverview();
+        }
     }
 
     private CardList getCardList() {
@@ -55,6 +59,7 @@ public class AddCardListCtrl implements Initializable{
 
     public void cancel() {
         clearFields();
+        mainCtrl.showBoardOverview();
     }
 
     private void clearFields() {

@@ -23,6 +23,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
+
 
 /**
  * This class is the controller of the Logon scene,
@@ -56,6 +58,11 @@ public class LogonCtrl {
     public LogonCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+    }
+
+    public void initialize() {
+        this.ip.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressedIP);
+        this.admin.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressedAdmin);
     }
 
     public void unveilAdmin() {
@@ -94,4 +101,33 @@ public class LogonCtrl {
 
         mainCtrl.showBoards();
     }
+
+    public void keyPressedIP(KeyEvent e) {
+
+        if (!adminChk.isSelected()) {
+            switch (e.getCode()) {
+                case ENTER:
+                    tryLogon();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    public void keyPressedAdmin(KeyEvent e) {
+
+        if (adminChk.isSelected()) {
+            switch (e.getCode()) {
+                case ENTER:
+                    tryLogon();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
 }

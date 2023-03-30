@@ -6,10 +6,13 @@ import com.google.inject.Inject;
 import commons.Board;
 import jakarta.ws.rs.NotFoundException;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -29,7 +32,7 @@ public class BoardsCtrl {
     private TextField key;
 
     @FXML
-    private ListView<String> previous;
+    private ListView<Parent> previous;
 
     @FXML
     private Label listLabel;
@@ -46,14 +49,26 @@ public class BoardsCtrl {
         if(mainCtrl.accessStore().isAdmin()) {
             listLabel.setText("All boards:");
             for(var board : server.getBoards()) {
-                previous.getItems().add(board.key);
+                addToPreviousList(board, true);
             }
         } else {
             listLabel.setText("Previously joined boards:");
-            System.out.println("listing " + server.getPrevious());
             for(var board : server.getPrevious()) {
-                previous.getItems().add(board.key);
+                addToPreviousList(board, false);
             }
+        }
+    }
+
+    private void addToPreviousList(Board board, boolean isAdmin) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/" +
+                    (isAdmin ? "AdminBoard.fxml" :  "NonAdminBoard.fxml")));
+            loader.setControllerFactory(c -> new AdminBoardCtrl(server, mainCtrl, board));
+            Parent root = loader.load();
+            root.setUserData(board);
+            previous.getItems().add(root);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -73,6 +88,8 @@ public class BoardsCtrl {
             UIUtils.showError("An unexpected error occurred");
         }
 
+        clearFields();
+
         mainCtrl.setupBoardOverview(receivedBoard);
         mainCtrl.showBoardOverview();
     }
@@ -86,8 +103,12 @@ public class BoardsCtrl {
         System.out.println("[DEBUG] Received board: " + created);
     }
 
+    public void clearFields() {
+        this.key.clear();
+    }
+
     public void fillIn() {
-        key.setText(previous.getSelectionModel().getSelectedItem());
+        key.setText(((Board)previous.getSelectionModel().getSelectedItem().getUserData()).key);
     }
 
     public void back() {

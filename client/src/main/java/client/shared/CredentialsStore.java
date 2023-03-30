@@ -17,7 +17,7 @@ public class CredentialsStore {
     }
 
     public String getUsername() {
-        return username;
+        return isAdmin() ? username + "_admin" : username;
     }
 
     public void setUsername(String username) {

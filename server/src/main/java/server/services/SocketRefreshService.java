@@ -16,4 +16,8 @@ public class SocketRefreshService {
         messages.convertAndSend("/topic/board/" + b.key, b);
     }
 
+    public void broadcastRemoval(Board b) {
+        messages.convertAndSend("/topic/board/" + b.key + "/deletion", b);
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 import commons.Card;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
 
@@ -26,11 +27,12 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.save(card);
-        forceRefresh(card);
+        //forceRefresh(card);
 
         return HttpStatus.CREATED;
     }
 
+    @Transactional
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Card> optionalCard = cardRepo.findById(id);
 
@@ -41,6 +43,9 @@ public class CardService implements StandardEntityService<Card, Long> {
         Card card = optionalCard.get();
 
         cardRepo.deleteById(id);
+
+        cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
+
         forceRefresh(card);
 
         return HttpStatus.OK;
@@ -66,6 +71,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.saveAndFlush(card);
+
         forceRefresh(card);
 
         return HttpStatus.OK;
@@ -121,9 +127,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-
     //TODO: Move DRAG AND DROP handlers to here
-
 
     private void forceRefresh(Card card) {
         boards.forceRefresh(card.parentCardList.parentBoard.key);
