@@ -130,12 +130,12 @@ public class CardCtrl implements Initializable {
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(card.title);
-            title.setStyle("-fx-text-fill: white;");
+            title.setStyle("-fx-text-fill: -fx-col-0;");
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: white;");
+        title.setStyle("-fx-text-fill: -fx-col-0;");
 
         card.title = title.getText();
 

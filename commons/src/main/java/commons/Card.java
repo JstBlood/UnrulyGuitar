@@ -35,8 +35,6 @@ public class Card {
             cascade = CascadeType.ALL)
     public List<Task> tasks = new ArrayList<>();
 
-
-
     /**
      * @param title The entry's text.
      * @param description The entry's description
@@ -50,12 +48,17 @@ public class Card {
     }
 
     @SuppressWarnings("unused")
-    protected Card() {
-
-    }
+    protected Card() {}
 
     public void addTask(Task newTask) {
         tasks.add(newTask);
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
@@ -71,13 +74,5 @@ public class Card {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 }

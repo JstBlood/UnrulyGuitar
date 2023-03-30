@@ -127,6 +127,18 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+    public void leaveBoard(String key) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/leave/" + key,
+                Entity.entity(null, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteBoard(String key) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key);
+    }
+
     public Board updateBoard(String key, String component, String newValue) {
         return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/" + key + "/title",
