@@ -20,6 +20,7 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
+    @Column
     public int index;
     @Column(nullable = false)
     public String title;
