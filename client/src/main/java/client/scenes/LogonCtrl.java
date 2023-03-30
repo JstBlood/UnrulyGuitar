@@ -25,8 +25,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the Logon scene,

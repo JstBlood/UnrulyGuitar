@@ -4,8 +4,6 @@ import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.CardList;
-import jakarta.ws.rs.WebApplicationException;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
