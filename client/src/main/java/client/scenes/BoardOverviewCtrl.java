@@ -166,7 +166,8 @@ public class BoardOverviewCtrl implements Initializable {
         listsGrid.getColumnConstraints().clear();
         listsGrid.setAlignment(Pos.TOP_CENTER);
 
-        for (CardList cl : board.cardLists) {
+        for (int i = 0; i < board.cardLists.size(); i++) {
+            CardList cl = board.cardLists.get(i);
             FXMLLoader cardListLoader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
 
             cardListLoader.setControllerFactory(c ->
@@ -175,7 +176,7 @@ public class BoardOverviewCtrl implements Initializable {
 
             VBox cardListNode = cardListLoader.load();
 
-            listsGrid.add(cardListNode, cl.index, 0);
+            listsGrid.add(cardListNode, i, 0);
             listsGrid.getColumnConstraints().add(new ColumnConstraints());
         }
     }
