@@ -61,9 +61,8 @@ public class LogonCtrl {
     }
 
     public void initialize() {
-        this.ip.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
-        this.username.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
-        this.admin.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
+        this.ip.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressedIP);
+        this.admin.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressedAdmin);
     }
 
     public void unveilAdmin() {
@@ -103,14 +102,32 @@ public class LogonCtrl {
         mainCtrl.showBoards();
     }
 
-    public void keyPressed(KeyEvent e) {
-        switch (e.getCode()) {
-            case ENTER:
-                tryLogon();
-                break;
-            default:
-                break;
+    public void keyPressedIP(KeyEvent e) {
+
+        if (!adminChk.isSelected()) {
+            switch (e.getCode()) {
+                case ENTER:
+                    tryLogon();
+                    break;
+                default:
+                    break;
+            }
         }
+
+    }
+
+    public void keyPressedAdmin(KeyEvent e) {
+
+        if (adminChk.isSelected()) {
+            switch (e.getCode()) {
+                case ENTER:
+                    tryLogon();
+                    break;
+                default:
+                    break;
+            }
+        }
+
     }
 
 }
