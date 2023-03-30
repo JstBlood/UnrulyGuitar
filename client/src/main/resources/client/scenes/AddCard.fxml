@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<ScrollPane hbarPolicy="NEVER" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
+<ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
    <content>
-      <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" styleClass="anchor-plane">
+      <AnchorPane fx:id="root" prefHeight="380.0" prefWidth="603.0" styleClass="anchor-plane">
          <stylesheets>
             <URL value="@/client/css/AddCardStyle.css" />
          </stylesheets>
@@ -66,45 +66,7 @@
                   <Insets left="20.0" right="20.0" />
                </padding>
             </ButtonBar>
-            <BorderPane layoutY="106.0" prefHeight="47.0" prefWidth="604.0">
-               <left>
-                  <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@/client/images/location_icon.png" />
-                     </image>
-                     <BorderPane.margin>
-                        <Insets left="20.0" />
-                     </BorderPane.margin>
-                  </ImageView>
-               </left>
-               <center>
-                  <TextField promptText="Add Location" styleClass="text-1" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets left="20.0" right="20.0" />
-                     </BorderPane.margin>
-                  </TextField>
-               </center>
-            </BorderPane>
-            <BorderPane layoutY="166.0" prefHeight="40.0" prefWidth="604.0">
-               <center>
-                  <TextField promptText="Add Date and Time" styleClass="text-1" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets left="20.0" right="20.0" />
-                     </BorderPane.margin>
-                  </TextField>
-               </center>
-               <left>
-                  <ImageView fitHeight="42.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                     <image>
-                        <Image url="@/client/images/time_icon.png" />
-                     </image>
-                     <BorderPane.margin>
-                        <Insets left="20.0" />
-                     </BorderPane.margin>
-                  </ImageView>
-               </left>
-            </BorderPane>
-            <TextArea fx:id="description" layoutX="-1.0" layoutY="221.0" prefHeight="127.0" prefWidth="609.0" promptText="Add a description">
+            <TextArea fx:id="description" layoutY="115.0" prefHeight="127.0" prefWidth="609.0" promptText="Add a description">
                <styleClass>
                   <String fx:value="plane-0" />
                   <String fx:value="text-1" />
@@ -117,46 +79,21 @@
                   <Insets />
                </opaqueInsets>
             </TextArea>
-            <VBox layoutY="348.0" prefHeight="54.0" prefWidth="602.0">
-               <children>
-                  <GridPane fx:id="subtaskPane" prefHeight="20.0" prefWidth="602.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
-                    </columnConstraints>
-                  </GridPane>
-                  <BorderPane prefHeight="57.0" prefWidth="602.0">
-                     <left>
-                        <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                           <image>
-                              <Image url="@/client/images/plus_icon.png" />
-                           </image>
-                           <BorderPane.margin>
-                              <Insets left="20.0" />
-                           </BorderPane.margin>
-                        </ImageView>
-                     </left>
-                     <center>
-                        <Label onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." BorderPane.alignment="CENTER" />
-                     </center>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <padding>
-                        <Insets left="20.0" right="20.0" />
-                     </padding>
-                     <right>
-                        <HBox prefHeight="46.0" prefWidth="131.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#cancelCard" styleClass="submit" text="Cancel" />
-                              <VBox prefHeight="46.0" prefWidth="28.0" />
-                              <Button fx:id="submit" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
-                           </children>
-                        </HBox>
-                     </right>
-                  </BorderPane>
-               </children>
-            </VBox>
+            <GridPane fx:id="subtaskPane" layoutX="3.0" layoutY="274.0" prefHeight="104.0" prefWidth="523.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <Button fx:id="submit" layoutX="533.0" layoutY="343.0" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
+            <Label layoutX="87.0" layoutY="247.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
+            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="56.0" layoutY="246.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/client/images/plus_icon.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </content>

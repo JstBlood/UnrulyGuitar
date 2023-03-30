@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.Board;
 import commons.Card;
 import commons.CardList;
+import commons.Task;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -142,14 +143,37 @@ public class ServerUtils {
                         store.accessStore().getPassword() + "/boards/" + key);
     }
 
-    public Board updateBoard(String key, String component, String newValue) {
+    public Board updateBoard(String key, String component, Object newValue) {
         return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/boards/" + key + "/title",
+                        store.accessStore().getPassword() + "/boards/" + key + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
     // END OF BOARD RELATED FUNCTIONS
+
+    // START OF TASK RELATED FUNCTIONS
+
+    public void addBoard(Task task) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/add",
+                Entity.entity(task, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateTask(long key, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteTask(long id){
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/tasks/" + id);
+    }
+
+    // END OF TASK RELATED FUNCTIONS
 
 
     // CARD LIST RELATED METHODS

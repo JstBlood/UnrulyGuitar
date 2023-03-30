@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.CardList;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -41,7 +42,11 @@ public class AddCardListCtrl implements Initializable{
             UIUtils.showError("Card List name can't be empty!");
         }
         else {
-            server.addCardList(getCardList());
+            try {
+                server.addCardList(getCardList());
+            } catch (WebApplicationException e) {
+                UIUtils.showError(e.getMessage());
+            }
 
             clearFields();
             mainCtrl.showBoardOverview();

@@ -39,7 +39,7 @@ public class BoardOverviewCtrl implements Initializable {
     private final Clipboard clipboard;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
-    private AddCardCtrl addCardCtrl;
+    private CardDetailsCtrl cardDetailsCtrl;
 
     @FXML
     private TextField title;
@@ -61,8 +61,7 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        //TODO: I do not think the next line should be in here :))
-        addCardCtrl = new AddCardCtrl(server, mainCtrl);
+        this.cardDetailsCtrl = new CardDetailsCtrl(server, mainCtrl);
 
         clipboard = Clipboard.getSystemClipboard();
     }

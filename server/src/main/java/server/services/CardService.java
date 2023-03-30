@@ -77,26 +77,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus update(long id, String component, Object newValue) {
-        if(cardRepo.findById(id).isEmpty())
-            return HttpStatus.NOT_FOUND;
-
-        Card edit = cardRepo.findById(id).get();
-
-        try {
-            edit.getClass().getField(component).set(edit, newValue);
-        } catch (Exception e) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        cardRepo.saveAndFlush(edit);
-
-        forceRefresh(edit);
-
-        return HttpStatus.OK;
-    }
-
-    public HttpStatus updateIndex(long id, int newValue, boolean silent) {
+    public HttpStatus updateIndex(long id, int newValue, boolean silent, String username, String password) {
         if(cardRepo.findById(id).isEmpty())
             return HttpStatus.NOT_FOUND;
 
@@ -112,7 +93,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus updateParent(long id, long newParent, boolean silent){
+    public HttpStatus updateParent(long id, long newParent, boolean silent, String username, String password){
         if(cardListRepo.findById(newParent).isEmpty())
             return HttpStatus.NOT_FOUND;
         if(cardRepo.findById(id).isEmpty())
@@ -147,7 +128,6 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     //TODO: Move DRAG AND DROP handlers to here
-
 
     private void forceRefresh(Card card) {
         boards.forceRefresh(card.parentCardList.parentBoard.key);

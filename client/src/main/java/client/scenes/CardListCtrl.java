@@ -11,6 +11,7 @@ import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Card;
 import commons.CardList;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +42,9 @@ public class CardListCtrl implements Initializable {
     private VBox cardsContainer;
     @FXML
     private TextField title;
+
+    @FXML
+    private TextField cardName;
     
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -142,6 +146,25 @@ public class CardListCtrl implements Initializable {
         });
     }
 
+    private Card generateCard() {
+        return new Card(cardName.getText(), "", this.cardList);
+    }
+
+    @FXML
+    public void cardAdd() {
+        if(cardName.getText() == "") {
+            UIUtils.showError("Card name cannot be empty");
+            return;
+        }
+
+        try {
+            Card newCard = generateCard();
+            server.addCard(newCard);
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
+    }
+
     private void handleDragEvent(DragEvent e) {
         Dragboard db = e.getDragboard();
         var id = Long.parseLong(db.getString());
@@ -202,14 +225,7 @@ public class CardListCtrl implements Initializable {
     public void deleteCardList() {
         server.deleteCardList(cardList.id);
     }
-
-    @FXML
-    public void addCard() {
-        this.mainCtrl.showAddCard(this.cardList);
-    }
-
     public void stop() {
         server.stop();
     }
-
 }

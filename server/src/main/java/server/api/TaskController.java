@@ -28,8 +28,22 @@ public class TaskController {
 
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                    @RequestBody String newValue, @PathVariable String username,
+                                    @RequestBody Object newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
         return ResponseEntity.status(taskService.update(id, component, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/title")
+    public ResponseEntity<?> update(@PathVariable long id,
+                                    @RequestBody String newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.update(id, "title", newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/isDone")
+    public ResponseEntity<?> update(@PathVariable long id,
+                                    @RequestBody boolean newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.update(id, "isDone", newValue, username, password)).build();
     }
 }

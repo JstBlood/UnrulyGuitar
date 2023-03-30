@@ -1,25 +1,24 @@
 package server.services;
 
-import java.util.Optional;
-
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.TaskRepository;
 
-@Service
-public class TaskService implements StandardEntityService<Task, Long>{
-    private final TaskRepository taskRepo;
-    private final BoardsService boardsService;
+import java.util.Optional;
 
-    public TaskService(TaskRepository taskRepo, BoardsService boardsService) {
+@Service
+public class TaskService implements StandardEntityService<Task, Long> {
+    private final TaskRepository taskRepo;
+    private final BoardsService boards;
+
+    public TaskService(TaskRepository taskRepo, BoardsService boards) {
         this.taskRepo = taskRepo;
-        this.boardsService = boardsService;
+        this.boards = boards;
     }
 
-    @Override
     public HttpStatus add(Task task, String username, String password) {
-        if (task == null || task.parentCard == null|| isNullOrEmpty(task.title)) {
+        if (task == null || task.parentCard == null || isNullOrEmpty(task.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -55,7 +54,7 @@ public class TaskService implements StandardEntityService<Task, Long>{
 
         Task task = optionalTask.get();
 
-        if(newValue == null || isNullOrEmpty(newValue.toString())) {
+        if(newValue == null) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -72,7 +71,7 @@ public class TaskService implements StandardEntityService<Task, Long>{
     }
 
     private void forceRefresh(Task task) {
-        boardsService.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
+        boards.forceRefresh(task.parentCard.parentCardList.parentBoard.key);
     }
 
     public Boolean isNullOrEmpty(String s) {

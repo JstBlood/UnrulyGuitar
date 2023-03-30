@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import client.shared.CredentialsStore;
 import commons.Board;
-import commons.CardList;
+import commons.Card;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -44,10 +44,10 @@ public class MainCtrl {
     private AddCardListCtrl addCardListCtrl;
     private Scene addCardList;
 
+    private CardDetailsCtrl cardDetailsCtrl;
+    private Scene cardDetails;
+
     private CardListCtrl cardListCtrl;
-    private AddCardCtrl addCardCtrl;
-    private Scene addCard;
-    private CardCtrl cardCtrl;
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
@@ -63,8 +63,8 @@ public class MainCtrl {
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<AddCardListCtrl, Parent> addCardList,
+                           Pair<CardDetailsCtrl, Parent> addCard,
                            Pair<CardListCtrl, Parent> cardList,
-                           Pair<AddCardCtrl, Parent> addCard,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            CredentialsStore cStore) {
 
@@ -82,10 +82,9 @@ public class MainCtrl {
         this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
+        this.cardDetailsCtrl = addCard.getKey();
+        this.cardDetails = new Scene(addCard.getValue());
         this.cardListCtrl = cardList.getKey();
-
-        this.addCardCtrl = addCard.getKey();
-        this.addCard = new Scene(addCard.getValue());
 
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
@@ -112,11 +111,10 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    public void showAddCard(CardList parentCardList) {
-        addCardCtrl.setParentCardList(parentCardList);
-        addCardCtrl.prepare();
+    public void showCardDetails(Card about) {
+        cardDetailsCtrl.prepare(about);
         primaryStage.setTitle("Adding Card");
-        primaryStage.setScene(addCard);
+        primaryStage.setScene(cardDetails);
     }
 
     public void showBoardOverview() {
