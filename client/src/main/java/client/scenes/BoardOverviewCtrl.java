@@ -99,6 +99,12 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void prepare(Board board) {
         setBoard(board);
+        this.board.id = -1;
+        try {
+            refresh(board);
+        } catch (Exception e) {
+
+        }
 
         server.connect();
 
