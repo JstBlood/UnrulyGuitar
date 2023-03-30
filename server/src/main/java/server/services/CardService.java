@@ -27,7 +27,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.save(card);
-        forceRefresh(card);
+        //forceRefresh(card);
 
         return HttpStatus.CREATED;
     }

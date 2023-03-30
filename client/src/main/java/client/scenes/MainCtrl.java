@@ -15,6 +15,8 @@
  */
 package client.scenes;
 
+import java.util.Objects;
+
 import client.shared.CredentialsStore;
 import commons.Board;
 import commons.CardList;
@@ -23,8 +25,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
-import java.util.Objects;
 
 public class MainCtrl {
 
@@ -40,16 +40,11 @@ public class MainCtrl {
 
     private BoardOverviewCtrl boardOverviewCtrl;
     private Scene boardOverview;
-
-    private CardListCtrl cardListCtrl;
-    private Scene cardList;
-
     private AddCardListCtrl addCardListCtrl;
-    private Scene addCardList;
-
+    private CardListCtrl cardListCtrl;
     private AddCardCtrl addCardCtrl;
     private Scene addCard;
-
+    private CardCtrl cardCtrl;
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
@@ -64,8 +59,8 @@ public class MainCtrl {
                            Pair<LogonCtrl, Parent> logon,
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
-                           Pair<CardListCtrl, Parent> cardList,
                            Pair<AddCardListCtrl, Parent> addCardList,
+                           Pair<CardListCtrl, Parent> cardList,
                            Pair<AddCardCtrl, Parent> addCard,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            CredentialsStore cStore) {
@@ -81,11 +76,9 @@ public class MainCtrl {
         this.boardOverviewCtrl = boardOverview.getKey();
         this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.cardListCtrl = cardList.getKey();
-        this.cardList = new Scene(cardList.getValue());
-
         this.addCardListCtrl = addCardList.getKey();
-        this.addCardList = new Scene(addCardList.getValue());
+
+        this.cardListCtrl = cardList.getKey();
 
         this.addCardCtrl = addCard.getKey();
         this.addCard = new Scene(addCard.getValue());
@@ -125,20 +118,6 @@ public class MainCtrl {
     public void showBoardOverview() {
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
-
-        // NO!
-        // primaryStage.setFullScreen(true);
-    }
-
-    public void showCardList() {
-        primaryStage.setTitle("Lists");
-        primaryStage.setScene(cardList);
-    }
-
-    public void showBoard() {
-        primaryStage.setTitle("BOARD NAME");
-        primaryStage.setScene(boardOverview);
-        primaryStage.setFullScreen(true);
     }
 
     public void showBoardSettings() {
