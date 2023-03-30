@@ -7,8 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -30,7 +30,7 @@ public class User {
     @JoinTable(name = "user_board",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "board_id"))
-    public Set<Board> boards = new HashSet<>();
+    public Set<Board> boards = ConcurrentHashMap.newKeySet();
 
     @SuppressWarnings("unused")
     protected User() {}
