@@ -88,7 +88,6 @@ public class CardListCtrl implements Initializable {
             handleDragEvent(e);
             e.consume();
         });
-
         //END OF DRAG AND DROP HANDLERS
 
         prepare();

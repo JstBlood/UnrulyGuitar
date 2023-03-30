@@ -138,6 +138,10 @@ public class AddCardCtrl {
         return new Card(this.title.getText(), this.description.getText(), this.parentCardList);
     }
 
+    public void cancelCard() {
+        mainCtrl.showBoard();
+    }
+
     public void clearFields(){
         this.title.clear();
         this.description.clear();

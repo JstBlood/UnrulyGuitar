@@ -40,7 +40,10 @@ public class MainCtrl {
 
     private BoardOverviewCtrl boardOverviewCtrl;
     private Scene boardOverview;
+
     private AddCardListCtrl addCardListCtrl;
+    private Scene addCardList;
+
     private CardListCtrl cardListCtrl;
     private AddCardCtrl addCardCtrl;
     private Scene addCard;
@@ -77,6 +80,7 @@ public class MainCtrl {
         this.boardOverview = new Scene(boardOverview.getValue());
 
         this.addCardListCtrl = addCardList.getKey();
+        this.addCardList = new Scene(addCardList.getValue());
 
         this.cardListCtrl = cardList.getKey();
 
@@ -120,10 +124,19 @@ public class MainCtrl {
         primaryStage.setScene(boardOverview);
     }
 
+    public void showAddCardList() {
+        primaryStage.setTitle("Add a new List");
+        primaryStage.setScene(addCardList);
+    }
+
+    public void showBoard() {
+        primaryStage.setTitle("BOARD NAME");
+        primaryStage.setScene(boardOverview);
+    }
+
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
-        primaryStage.setFullScreen(true);
     }
 
     public void setCurrentBoard(Board board) {

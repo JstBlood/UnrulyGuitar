@@ -88,6 +88,8 @@ public class BoardsCtrl {
             UIUtils.showError("An unexpected error occurred");
         }
 
+        clearFields();
+
         mainCtrl.setupBoardOverview(receivedBoard);
         mainCtrl.showBoardOverview();
     }
@@ -99,6 +101,10 @@ public class BoardsCtrl {
         mainCtrl.setupBoardOverview(server.addBoard(created));
         mainCtrl.showBoardOverview();
         System.out.println("[DEBUG] Received board: " + created);
+    }
+
+    public void clearFields() {
+        this.key.clear();
     }
 
     public void fillIn() {
