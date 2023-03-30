@@ -15,16 +15,16 @@
  */
 package client;
 
+import static com.google.inject.Guice.createInjector;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import client.scenes.*;
 import client.shared.CredentialsStore;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
 
@@ -37,7 +37,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        var login = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
+        var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
         var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
         var cardList = FXML.load(CardListCtrl.class, "client", "scenes", "CardList.fxml");
@@ -50,13 +50,17 @@ public class Main extends Application {
         var cStore = new CredentialsStore();
 
         mainCtrl.initialize(primaryStage,
-                login,
+                logon,
                 boards,
                 boardOverview,
-                cardList,
                 addCardList,
+                cardList,
                 addCard,
                 boardSettings,
                 cStore);
+
+        primaryStage.setOnCloseRequest(e -> {
+            cardList.getKey().stop();
+        });
     }
 }
