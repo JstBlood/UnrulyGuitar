@@ -13,9 +13,9 @@
       <URL value="@/client/css/BoardOverviewStyle.css" />
    </stylesheets>
    <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" />
-      <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
-      <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.0" minWidth="102.0" prefWidth="162.0" />
+      <ColumnConstraints hgrow="NEVER" prefWidth="104.0" />
+      <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="575.0" />
+      <ColumnConstraints hgrow="NEVER" prefWidth="175.0" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints vgrow="SOMETIMES" />
@@ -59,7 +59,7 @@
                   <String fx:value="lists-grid-root" />
                </styleClass>
             </ScrollPane>
-            <GridPane fx:id="rightBar" alignment="BOTTOM_RIGHT" minHeight="-Infinity" prefHeight="329.0" prefWidth="130.0">
+            <GridPane fx:id="rightBar" alignment="BOTTOM_RIGHT" minHeight="-Infinity" prefHeight="354.0" prefWidth="146.0">
               <columnConstraints>
                   <ColumnConstraints halignment="RIGHT" hgrow="NEVER" percentWidth="100.0" />
               </columnConstraints>
@@ -70,17 +70,17 @@
                   <RowConstraints maxHeight="79.0" minHeight="35.0" prefHeight="40.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" onAction="#leaveBoard" prefHeight="29.0" prefWidth="101.0" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                  <Button mnemonicParsing="false" onAction="#leaveBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets top="100.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#removeBoard" prefHeight="19.0" prefWidth="117.0" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                  <Button mnemonicParsing="false" onAction="#removeBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets top="180.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#addCardList" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
+                  <Button mnemonicParsing="false" onAction="#addCardList" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
                </children>
             </GridPane>
          </children>
