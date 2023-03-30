@@ -26,7 +26,10 @@ import commons.CardList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.*;
+import server.database.TestBoardsRepository;
+import server.database.TestCardListRepository;
+import server.database.TestCardRepository;
+import server.database.TestUserRepository;
 import server.services.BoardsService;
 import server.services.CardService;
 import server.services.RepositoryBasedAuthService;
@@ -91,9 +94,11 @@ public class CardControllerTest {
     @Test
     public void databaseIsUsedDelete() {
         repo.save(SOME_CARD);
+        repo.shiftCardsUp(SOME_CARD.index, SOME_CARD.parentCardList.id);
         var actual = sut.delete(SOME_CARD.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
+        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 

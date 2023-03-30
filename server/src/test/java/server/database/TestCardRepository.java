@@ -202,4 +202,13 @@ public class TestCardRepository implements CardRepository {
         return null;
     }
 
+    @Override
+    public void shiftCardsUp(int index, long listId) {
+        call("shiftCardsUp");
+        cards.stream()
+                .filter(c -> c.parentCardList.id == listId)
+                .filter(c -> c.index > index)
+                .forEach(c -> c.id--);
+    }
+
 }
