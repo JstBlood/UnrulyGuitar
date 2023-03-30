@@ -11,9 +11,12 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
+import java.util.ResourceBundle;
 
 /**
  * This class is the controller of the Boards scene,
@@ -88,6 +91,8 @@ public class BoardsCtrl {
             UIUtils.showError("An unexpected error occurred");
         }
 
+        clearFields();
+
         mainCtrl.setupBoardOverview(receivedBoard);
         mainCtrl.showBoardOverview();
     }
@@ -99,6 +104,10 @@ public class BoardsCtrl {
         mainCtrl.setupBoardOverview(server.addBoard(created));
         mainCtrl.showBoardOverview();
         System.out.println("[DEBUG] Received board: " + created);
+    }
+
+    public void clearFields() {
+        this.key.clear();
     }
 
     public void fillIn() {

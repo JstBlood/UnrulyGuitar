@@ -17,28 +17,31 @@
           <items>
             <VBox alignment="TOP_CENTER" fillWidth="false" spacing="20.0" styleClass="section">
                <children>
-                  <Label styleClass="subtitle" text="Join a board..." />
-                  <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="199.0" spacing="15.0" VBox.vgrow="ALWAYS">
+                  <Label prefHeight="47.0" prefWidth="273.0" styleClass="subtitle" text="Join a board" />
+                  <VBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="161.0" prefWidth="271.0" spacing="15.0" VBox.vgrow="ALWAYS">
                      <children>
                         <Label styleClass="text-0" text="Board key" />
-                        <TextField fx:id="key" promptText="eg. emsiz24" />
+                        <TextField fx:id="key" alignment="CENTER" prefHeight="40.0" prefWidth="271.0" promptText="eg. emsiz42">
+                           <font>
+                              <Font size="16.0" />
+                           </font></TextField>
                         <Button fx:id="submit" mnemonicParsing="false" onAction="#join" styleClass="button-1" text="Join!" textAlignment="CENTER" textFill="#153618">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
                         </Button>
-                        <Label fx:id="listLabel" styleClass="text-0" text="Previously joined:">
+                        <Label fx:id="listLabel" prefHeight="30.0" prefWidth="271.0" styleClass="text-0" text="Previously joined boards:">
                            <font>
                               <Font size="11.0" />
                            </font></Label>
                      </children>
                   </VBox>
-                  <ListView fx:id="previous" onMouseClicked="#fillIn" prefHeight="291.0" prefWidth="294.0" style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-border-color: -fx-col-1 transparent -fx-col-1 transparent;" />
+                  <ListView fx:id="previous" onMouseClicked="#fillIn" prefHeight="220.0" prefWidth="269.0" style="-fx-background-color: rgba(255, 255, 255, 0.2); -fx-border-color: -fx-col-1 transparent -fx-col-1 transparent;" />
                </children>
             </VBox>
             <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="section">
                <children>
-                  <Label styleClass="subtitle" text="Or create  one" />
+                  <Label styleClass="subtitle" text="Or create one" />
                   <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
                      <children>
                         <Button mnemonicParsing="false" onAction="#create" styleClass="button-1" text="Create a board" />
@@ -57,7 +60,10 @@
                   <Image url="@/client/images/simple_arrow_reverse.png" />
                </image>
             </ImageView>
-            <Label contentDisplay="CENTER" maxHeight="1.7976931348623157E308" styleClass="text-2" text="Back" />
+            <Label contentDisplay="CENTER" maxHeight="1.7976931348623157E308" prefHeight="50.0" prefWidth="47.0" styleClass="text-2" text="Back">
+               <font>
+                  <Font size="18.0" />
+               </font></Label>
          </children>
       </HBox>
    </top>

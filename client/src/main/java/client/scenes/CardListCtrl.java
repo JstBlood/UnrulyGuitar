@@ -88,8 +88,8 @@ public class CardListCtrl implements Initializable {
             handleDragEvent(e);
             e.consume();
         });
-
         //END OF DRAG AND DROP HANDLERS
+
         var cardsOrdered = new ArrayList<>(cardList.cards);
         cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
 

@@ -50,6 +50,8 @@ public class BoardOverviewCtrl implements Initializable {
     private GridPane listsGrid;
     @FXML
     private HBox section;
+    @FXML
+    private GridPane rightBar;
 
     public void setBoard(Board board) {
         this.board = board;
@@ -86,15 +88,6 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/AddCardList.fxml"));
-            loader.setControllerFactory(c -> new AddCardListCtrl(server, mainCtrl));
-            Parent root = loader.load();
-            this.addCardListCtrl = loader.getController();
-            section.getChildren().add(root);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void prepare(Board board) {
@@ -193,7 +186,7 @@ public class BoardOverviewCtrl implements Initializable {
                     }),
                     new KeyFrame(Duration.seconds(2), event -> {
                         inviteKey.setText("Invite Key");
-                        inviteKey.setStyle("-fx-background-color: white;");
+                        inviteKey.setStyle("-fx-background-color: -fx-col-0");
                     })
             );
             timeline.play();
@@ -232,6 +225,11 @@ public class BoardOverviewCtrl implements Initializable {
 
     public Board getBoard() {
         return this.board;
+    }
+
+    @FXML
+    public void addCardList() {
+        this.mainCtrl.showAddCardList();
     }
 
     @FXML

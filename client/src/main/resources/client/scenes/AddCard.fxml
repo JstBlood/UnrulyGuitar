@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import java.lang.*?>
-<?import java.net.URL?>
-<ScrollPane hbarPolicy="NEVER" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
+<?import javafx.scene.text.*?>
+
+<ScrollPane hbarPolicy="NEVER" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
    <content>
       <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" styleClass="anchor-plane">
          <stylesheets>
@@ -138,15 +139,21 @@
                      <center>
                         <Label onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." BorderPane.alignment="CENTER" />
                      </center>
-                     <right>
-                        <Button fx:id="submit" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" BorderPane.alignment="CENTER" />
-                     </right>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                      <padding>
                         <Insets left="20.0" right="20.0" />
                      </padding>
+                     <right>
+                        <HBox prefHeight="46.0" prefWidth="131.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#cancelCard" styleClass="submit" text="Cancel" />
+                              <VBox prefHeight="46.0" prefWidth="28.0" />
+                              <Button fx:id="submit" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
+                           </children>
+                        </HBox>
+                     </right>
                   </BorderPane>
                </children>
             </VBox>

@@ -130,6 +130,11 @@ public class MainCtrl {
         // primaryStage.setFullScreen(true);
     }
 
+    public void showAddCardList() {
+        primaryStage.setTitle("Add a new List");
+        primaryStage.setScene(addCardList);
+    }
+
     public void showCardList() {
         primaryStage.setTitle("Lists");
         primaryStage.setScene(cardList);
@@ -138,13 +143,11 @@ public class MainCtrl {
     public void showBoard() {
         primaryStage.setTitle("BOARD NAME");
         primaryStage.setScene(boardOverview);
-        primaryStage.setFullScreen(true);
     }
 
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
-        primaryStage.setFullScreen(true);
     }
 
     public void setCurrentBoard(Board board) {
