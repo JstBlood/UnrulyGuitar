@@ -117,26 +117,17 @@ public class CardCtrl implements Initializable {
 
         if (db.hasString()) {
             var node = (VBox) e.getGestureSource();
+            var sourceID = ((Card) node.getUserData()).id;
 
-            performDrop(node);
-
-            server.forceRefresh(card.parentCardList.parentBoard.key);
+            if (sourceID != card.id) {
+                server.updateCard(sourceID, "dragAndDrop", card.id);
+                server.forceRefresh(card.parentCardList.parentBoard.key);
+            }
 
             success = true;
         }
-
         e.setDropCompleted(success);
         e.consume();
-    }
-
-    private void performDrop(VBox node) {
-        var sourceID = ((Card) node.getUserData()).id;
-        var targetID = card.id;
-
-        if (sourceID != targetID) {
-            server.updateCard(sourceID, "dragAndDrop", targetID);
-        }
-
     }
 
     public void updateTitle() {

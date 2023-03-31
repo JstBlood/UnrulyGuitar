@@ -61,63 +61,12 @@ public class CardListCtrl implements Initializable {
     @FXML
     @Override
     public void initialize(URL uri, ResourceBundle rs) {
-        this.mainContainer.setOnDragOver(e -> {
-
-            if (e.getGestureSource() != this.cardsContainer &&
-                    e.getDragboard().hasString()) {
-                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-
-            e.consume();
-        });
-
-        this.mainContainer.setOnDragEntered(e -> {
-            if (e.getGestureSource() != this.mainContainer &&
-                    e.getDragboard().hasString()) {
-
-                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, " +
-                        "rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
-
-            }
-
-            e.consume();
-        });
-
-        this.mainContainer.setOnDragExited(e -> {
-            this.mainContainer.setStyle("-fx-effect: none");
-            e.consume();
-        });
-
-        this.mainContainer.setOnDragDropped(e -> {
-
-            handleDragEvent(e);
-        });
-
-        this.mainContainer.setOnDragDone(e -> {
-            e.consume();
-        });
         //END OF DRAG AND DROP HANDLERS
 
         prepare();
         prepareTitleField();
+        prepareDragAndDrop();
         showCards();
-    }
-
-    public void showCards() {
-        var cardsOrdered = new ArrayList<>(cardList.cards);
-        cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
-
-        for (Card c : cardsOrdered) {
-            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
-
-            try {
-                VBox cardNode = cardLoader.load();
-                cardsContainer.getChildren().add(cardNode);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public void prepare() {
@@ -150,13 +99,63 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    private Card generateCard() {
-        return new Card(cardName.getText(), "", this.cardList);
+    private void prepareDragAndDrop() {
+        this.mainContainer.setOnDragOver(e -> {
+            if (e.getGestureSource() != this.cardsContainer &&
+                    e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragEntered(e -> {
+            if (e.getGestureSource() != this.mainContainer &&
+                    e.getDragboard().hasString()) {
+
+                this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, " +
+                        "rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
+
+            }
+
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragExited(e -> {
+            this.mainContainer.setStyle("-fx-effect: none");
+            e.consume();
+        });
+
+        this.mainContainer.setOnDragDropped(e -> {
+            handleDragEvent(e);
+        });
+
+        this.mainContainer.setOnDragDone(e -> {
+            e.consume();
+        });
     }
+
+    public void showCards() {
+        var cardsOrdered = new ArrayList<>(cardList.cards);
+        cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
+
+        for (Card c : cardsOrdered) {
+            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
+
+            try {
+                VBox cardNode = cardLoader.load();
+                cardsContainer.getChildren().add(cardNode);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 
     @FXML
     public void cardAdd() {
-        if(cardName.getText() == "") {
+        if(cardName.getText().equals("")) {
             UIUtils.showError("Card name cannot be empty");
             return;
         }
@@ -171,21 +170,17 @@ public class CardListCtrl implements Initializable {
 
     private void handleDragEvent(DragEvent e) {
         Dragboard db = e.getDragboard();
-        var id = Long.parseLong(db.getString());
         boolean success = false;
-
-        System.out.println("DEBUG: Initialized DragBoard and newCard id");
 
         if (db.hasString()) {
             var node = (VBox) e.getGestureSource();
-            moveToList(node);
+            var sourceCardId = ((Card) node.getUserData()).id;
 
-            System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
-                    " DB and to current cardList at last index");
+            server.updateCard(sourceCardId, "listDragAndDrop", cardList.id);
+            server.forceRefresh(cardList.parentBoard.key);
 
             success = true;
         }
-
         e.setDropCompleted(success);
         e.consume();
     }
@@ -208,13 +203,8 @@ public class CardListCtrl implements Initializable {
         }
     }
 
-    private void moveToList(VBox node) {
-        var sourceCardId = ((Card) node.getUserData()).id;
-
-        var targetCardListId = this.cardList.id;
-
-        server.updateCard(sourceCardId, "listDragAndDrop", targetCardListId);
-
+    private Card generateCard() {
+        return new Card(cardName.getText(), "", this.cardList);
     }
 
     @FXML
