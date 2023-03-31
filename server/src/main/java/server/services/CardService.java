@@ -102,16 +102,29 @@ public class CardService implements StandardEntityService<Card, Long> {
                 card.index = newIndex;
                 return HttpStatus.OK;
 
-            case "DD":
+            case "dragAndDrop":
                 long targetId = Long.parseLong(String.valueOf(newValue));
                 Optional<Card> optionalTargetCard = cardRepo.findById(targetId);
+
                 if (optionalTargetCard.isEmpty()) {
                     return HttpStatus.BAD_REQUEST;
                 }
+
                 Card targetCard = optionalTargetCard.get();
+                long targetCardListId = targetCard.parentCardList.id;
+
+                Optional<CardList> targetCardList = cardListRepo.findById(targetCardListId);
+                if (targetCardList.isEmpty()) {
+                    return HttpStatus.BAD_REQUEST;
+                }
+
                 cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
+
+                card.parentCardList = targetCardList.get();
+
                 cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
                 card.index = targetCard.index;
+
                 return HttpStatus.OK;
         }
         return HttpStatus.BAD_REQUEST;

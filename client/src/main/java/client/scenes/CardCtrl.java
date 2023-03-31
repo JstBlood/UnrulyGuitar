@@ -111,7 +111,7 @@ public class CardCtrl implements Initializable {
         if (db.hasString()) {
             var node = (VBox) e.getGestureSource();
 
-            performSwap(node);
+            performDrop(node);
 
             server.forceRefresh(card.parentCardList.parentBoard.key);
 
@@ -122,28 +122,19 @@ public class CardCtrl implements Initializable {
         e.consume();
     }
 
-    private void performSwap(VBox node) {
-        var theirs = ((Card) node.getUserData()).index;
-        var them = ((Card) node.getUserData()).id;
-        var theirParent = ((Card) node.getUserData()).parentCardList.id;
+    private void performDrop(VBox node) {
+        var targetID = ((Card) node.getUserData()).id;
+        var targetIndex = ((Card) node.getUserData()).index;
+        var targetParent = ((Card) node.getUserData()).parentCardList.id;
 
-        var me = card.id;
-        var mine = card.index;
-        var myParent = card.parentCardList.id;
+        var sourceID = card.id;
+        var sourceIndex = card.index;
+        var sourceParent = card.parentCardList.id;
 
-        if(theirs != mine) {
-            Platform.runLater(() -> {
-                server.updateCard(them, "index", mine);
-                server.updateCard(me, "index", theirs);
-            });
-        }
+        if (targetID != sourceID)
+            server.updateCard(sourceID, "dragAndDrop", targetID);
 
-        if(theirParent != myParent) {
-            Platform.runLater(() -> {
-                server.updateCard(them, "parentCardList", myParent);
-                server.updateCard(me, "parentCardList", theirParent);
-            });
-        }
+
     }
 
     public void updateTitle() {
