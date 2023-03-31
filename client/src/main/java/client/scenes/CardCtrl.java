@@ -123,17 +123,12 @@ public class CardCtrl implements Initializable {
     }
 
     private void performDrop(VBox node) {
-        var targetID = ((Card) node.getUserData()).id;
-        var targetIndex = ((Card) node.getUserData()).index;
-        var targetParent = ((Card) node.getUserData()).parentCardList.id;
+        var sourceID = ((Card) node.getUserData()).id;
+        var targetID = card.id;
 
-        var sourceID = card.id;
-        var sourceIndex = card.index;
-        var sourceParent = card.parentCardList.id;
-
-        if (targetID != sourceID)
+        if (sourceID != targetID) {
             server.updateCard(sourceID, "dragAndDrop", targetID);
-
+        }
 
     }
 

@@ -174,10 +174,7 @@ public class CardListCtrl implements Initializable {
 
         if (db.hasString()) {
             var node = (VBox) e.getGestureSource();
-
             moveToList(node);
-
-            server.forceRefresh(cardList.parentBoard.key);
 
             System.out.println("DEBUG: Removed oldCard from DB using id and " + "added newCard to" +
                     " DB and to current cardList at last index");
@@ -207,24 +204,23 @@ public class CardListCtrl implements Initializable {
     }
 
     private void moveToList(VBox node) {
-        var them = ((Card) node.getUserData()).id;
-        var theirParent = ((Card) node.getUserData()).parentCardList.id;
+        var sourceCardId = ((Card) node.getUserData()).id;
+//        var sourceCardListId = ((Card) node.getUserData()).parentCardList.id;
 
-        var me = cardList.id;
+        var targetCardListId = this.cardList.id;
 
-        var maxIndex = cardList.cards.stream().map(x -> x.index).max(Integer::compareTo);
+        server.updateCard(sourceCardId, "listDragAndDrop", targetCardListId);
 
-        server.updateCard(them, "index/s", maxIndex.isEmpty() ? 0 : maxIndex.get()+1);
-
-        if(theirParent != me) {
-            server.updateCard(them, "parent/s", me);
-        }
+//        if(sourceCardListId != targetCardListId) {
+//            server.updateCard(sourceCardId, "sameListDragAndDrop", targetCardListId);
+//        }
     }
 
     @FXML
     public void deleteCardList() {
         server.deleteCardList(cardList.id);
     }
+
     public void stop() {
         server.stop();
     }
