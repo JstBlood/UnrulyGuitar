@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
 
-import javax.swing.text.html.Option;
-
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
@@ -68,7 +66,7 @@ public class CardService implements StandardEntityService<Card, Long> {
             return HttpStatus.BAD_REQUEST;
         }
 
-        HttpStatus res = updateSwitch(component, newValue, sourceCard);
+        HttpStatus res = handleSwitch(component, newValue, sourceCard);
         if (res.equals(HttpStatus.BAD_REQUEST)) return res;
 
         cardRepo.saveAndFlush(sourceCard);
@@ -79,83 +77,103 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     @Transactional
-    public HttpStatus updateSwitch(String component, Object newValue, Card sourceCard) {
+    public HttpStatus handleSwitch(String component, Object newValue, Card sourceCard) {
         switch (component) {
             case "title":
-                String newTitle = String.valueOf(newValue);
-                if(isNullOrEmpty(newTitle)) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                sourceCard.title = newTitle;
-                return HttpStatus.OK;
+                return caseTitle(newValue, sourceCard);
 
             case "parentCardList":
-                long parentCardListId = Long.parseLong(String.valueOf(newValue));
-                Optional<CardList> parentCardList = cardListRepo.findById(parentCardListId);
-                if (parentCardList.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                sourceCard.parentCardList = parentCardList.get();
-                return HttpStatus.OK;
+                return caseParentCardList(newValue, sourceCard);
 
             case "index":
-                int newIndex = Integer.parseInt(String.valueOf(newValue));
-                if (newIndex < 0) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                sourceCard.index = newIndex;
-                return HttpStatus.OK;
+                return caseIndex(newValue, sourceCard);
 
             case "dragAndDrop":
-                long targetId = Long.parseLong(String.valueOf(newValue));
-                Optional<Card> optionalTargetCard = cardRepo.findById(targetId);
-
-                if (optionalTargetCard.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-
-                Card targetCard = optionalTargetCard.get();
-                long targetCardListId = targetCard.parentCardList.id;
-
-                Optional<CardList> optionalTargetCardList = cardListRepo.findById(targetCardListId);
-                if (optionalTargetCardList.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-
-                CardList targetCardList = optionalTargetCardList.get();
-
-                cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
-                cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
-
-                sourceCard.parentCardList = targetCardList;
-                sourceCard.index = targetCard.index;
-
-                return HttpStatus.OK;
+                return caseDragAndDrop(newValue, sourceCard);
 
             case "listDragAndDrop":
-                long targetListId = Long.parseLong(String.valueOf(newValue));
-                Optional<CardList> optionalTargetList = cardListRepo.findById(targetListId);
-
-                if (optionalTargetList.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-
-                CardList targetList = optionalTargetList.get();
-
-                cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
-
-                if(Objects.equals(targetList, sourceCard.parentCardList)) {
-                    sourceCard.index = targetList.cards.size() - 1;
-                }
-                else {
-                    sourceCard.parentCardList = targetList;
-                    sourceCard.index = targetList.cards.size();
-                }
-
-                return HttpStatus.OK;
+                return caseList(newValue, sourceCard);
 
         }
         return HttpStatus.BAD_REQUEST;
+    }
+
+    private HttpStatus caseTitle(Object newValue, Card sourceCard) {
+        String newTitle = String.valueOf(newValue);
+        if(isNullOrEmpty(newTitle)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        sourceCard.title = newTitle;
+        return HttpStatus.OK;
+    }
+
+    private HttpStatus caseParentCardList(Object newValue, Card sourceCard) {
+        long parentCardListId = Long.parseLong(String.valueOf(newValue));
+        Optional<CardList> parentCardList = cardListRepo.findById(parentCardListId);
+        if (parentCardList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        sourceCard.parentCardList = parentCardList.get();
+        return HttpStatus.OK;
+    }
+
+    private static HttpStatus caseIndex(Object newValue, Card sourceCard) {
+        int newIndex = Integer.parseInt(String.valueOf(newValue));
+        if (newIndex < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        sourceCard.index = newIndex;
+        return HttpStatus.OK;
+    }
+
+    private HttpStatus caseDragAndDrop(Object newValue, Card sourceCard) {
+        long targetId = Long.parseLong(String.valueOf(newValue));
+        Optional<Card> optionalTargetCard = cardRepo.findById(targetId);
+
+        if (optionalTargetCard.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Card targetCard = optionalTargetCard.get();
+        long targetCardListId = targetCard.parentCardList.id;
+
+        Optional<CardList> optionalTargetCardList = cardListRepo.findById(targetCardListId);
+        if (optionalTargetCardList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        CardList targetCardList = optionalTargetCardList.get();
+
+        cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
+        cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
+
+        sourceCard.parentCardList = targetCardList;
+        sourceCard.index = targetCard.index;
+
+        return HttpStatus.OK;
+    }
+
+    private HttpStatus caseList(Object newValue, Card sourceCard) {
+        long targetListId = Long.parseLong(String.valueOf(newValue));
+        Optional<CardList> optionalTargetList = cardListRepo.findById(targetListId);
+
+        if (optionalTargetList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        CardList targetList = optionalTargetList.get();
+
+        cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
+
+        if(Objects.equals(targetList, sourceCard.parentCardList)) {
+            sourceCard.index = targetList.cards.size() - 1;
+        }
+        else {
+            sourceCard.parentCardList = targetList;
+            sourceCard.index = targetList.cards.size();
+        }
+
+        return HttpStatus.OK;
     }
 
     private void forceRefresh(Card card) {
