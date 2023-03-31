@@ -10,7 +10,6 @@ import client.utils.UIUtils;
 import commons.Card;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
