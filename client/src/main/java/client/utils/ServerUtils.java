@@ -225,7 +225,6 @@ public class ServerUtils {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(jsonValue);
         return internalPutRequest("secure/" + store.accessStore().getUsername() +
                         "/cards/" + id + "/" + component,
                 Entity.json(jsonValue),
@@ -263,7 +262,6 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/boards/force_refresh/" + key,
                 new GenericType<>(){});
     }
-
 
     public void connect() {
         if(store.accessStore().getUrl() == null)
