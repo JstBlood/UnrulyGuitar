@@ -84,6 +84,7 @@ public class CardCtrl implements Initializable {
         });
 
         this.cardBox.setOnDragDone(e -> {
+            this.cardBox.setStyle("-fx-opacity: 1");
             e.consume();
         });
 
