@@ -142,15 +142,16 @@ public class CardService implements StandardEntityService<Card, Long> {
 
                 CardList targetList = optionalTargetList.get();
 
-                if(!Objects.equals(targetList, sourceCard.parentCardList)) {
-                    cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
+                cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
+
+                if(Objects.equals(targetList, sourceCard.parentCardList)) {
+                    sourceCard.index = targetList.cards.size() - 1;
+                }
+                else {
                     sourceCard.parentCardList = targetList;
                     sourceCard.index = targetList.cards.size();
                 }
-                else {
-                    cardRepo.shiftCardsUp(sourceCard.index, sourceCard.parentCardList.id);
-                    sourceCard.index = targetList.cards.size();
-                }
+
                 return HttpStatus.OK;
 
         }

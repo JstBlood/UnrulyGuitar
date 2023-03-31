@@ -89,7 +89,11 @@ public class CardListCtrl implements Initializable {
         });
 
         this.mainContainer.setOnDragDropped(e -> {
+
             handleDragEvent(e);
+        });
+
+        this.mainContainer.setOnDragDone(e -> {
             e.consume();
         });
         //END OF DRAG AND DROP HANDLERS
@@ -183,6 +187,7 @@ public class CardListCtrl implements Initializable {
         }
 
         e.setDropCompleted(success);
+        e.consume();
     }
 
     public void updateTitle() {
@@ -205,15 +210,11 @@ public class CardListCtrl implements Initializable {
 
     private void moveToList(VBox node) {
         var sourceCardId = ((Card) node.getUserData()).id;
-//        var sourceCardListId = ((Card) node.getUserData()).parentCardList.id;
 
         var targetCardListId = this.cardList.id;
 
         server.updateCard(sourceCardId, "listDragAndDrop", targetCardListId);
 
-//        if(sourceCardListId != targetCardListId) {
-//            server.updateCard(sourceCardId, "sameListDragAndDrop", targetCardListId);
-//        }
     }
 
     @FXML
