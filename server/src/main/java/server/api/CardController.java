@@ -35,23 +35,9 @@ public class CardController {
         return ResponseEntity.status(cardService.delete(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/index/s")
-    public ResponseEntity<Card> updateIndexS(@PathVariable long id,
-                                       @RequestBody int newValue, @PathVariable String username,
-                                         @PathVariable(required = false) String password) {
-        return ResponseEntity.status(cardService.updateIndex(id, newValue, true, username, password)).build();
-    }
-
-    @PutMapping("/{id}/parent/s")
-    public ResponseEntity<Card> updateParentS(@PathVariable long id,
-                                            @RequestBody long newValue, @PathVariable String username,
-                                         @PathVariable(required = false) String password) {
-        return ResponseEntity.status(cardService.updateParent(id, newValue, true, username, password)).build();
-    }
-
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                       @RequestBody Object newValue, @PathVariable String username,
+                                       @RequestBody String newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.update(id, component, newValue, username, password)).build();
     }

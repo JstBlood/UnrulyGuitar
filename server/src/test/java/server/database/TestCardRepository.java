@@ -211,4 +211,13 @@ public class TestCardRepository implements CardRepository {
                 .forEach(c -> c.id--);
     }
 
+    @Override
+    public void shiftCardsDown(int index, long listId) {
+        call("shiftCardsDown");
+        cards.stream()
+                .filter(c -> c.parentCardList.id == listId)
+                .filter(c -> c.index > index)
+                .forEach(c -> c.id++);
+    }
+
 }

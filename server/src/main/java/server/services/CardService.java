@@ -3,6 +3,7 @@ package server.services;
 import java.util.Optional;
 
 import commons.Card;
+import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,11 +65,8 @@ public class CardService implements StandardEntityService<Card, Long> {
             return HttpStatus.BAD_REQUEST;
         }
 
-        try {
-            card.getClass().getField(component).set(card, newValue);
-        } catch (Exception e) {
-            return HttpStatus.BAD_REQUEST;
-        }
+        HttpStatus res = updateSwitch(component, newValue, card);
+        if (res.equals(HttpStatus.BAD_REQUEST)) return res;
 
         cardRepo.saveAndFlush(card);
 
@@ -77,57 +75,47 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus updateIndex(long id, int newValue, boolean silent, String username, String password) {
-        if(cardRepo.findById(id).isEmpty())
-            return HttpStatus.NOT_FOUND;
+    private HttpStatus updateSwitch(String component, Object newValue, Card card) {
+        switch (component) {
+            case "title":
+                String newTitle = String.valueOf(newValue);
+                if(isNullOrEmpty(newTitle)) {
+                    return HttpStatus.BAD_REQUEST;
+                }
+                card.title = newTitle;
+                return HttpStatus.OK;
 
-        Card edit = cardRepo.findById(id).get();
+            case "parentCardList":
+                long parentCardListId = Long.parseLong(String.valueOf(newValue));
+                Optional<CardList> parentCardList = cardListRepo.findById(parentCardListId);
+                if (parentCardList.isEmpty()) {
+                    return HttpStatus.BAD_REQUEST;
+                }
+                card.parentCardList = parentCardList.get();
+                return HttpStatus.OK;
 
-        edit.index = newValue;
+            case "index":
+                int newIndex = Integer.parseInt(String.valueOf(newValue));
+                if (newIndex < 0) {
+                    return HttpStatus.BAD_REQUEST;
+                }
+                card.index = newIndex;
+                return HttpStatus.OK;
 
-        cardRepo.saveAndFlush(edit);
-
-        if(!silent)
-            forceRefresh(edit);
-
-        return HttpStatus.OK;
+            case "DD":
+                long targetId = Long.parseLong(String.valueOf(newValue));
+                Optional<Card> optionalTargetCard = cardRepo.findById(targetId);
+                if (optionalTargetCard.isEmpty()) {
+                    return HttpStatus.BAD_REQUEST;
+                }
+                Card targetCard = optionalTargetCard.get();
+                cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
+                cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
+                card.index = targetCard.index;
+                return HttpStatus.OK;
+        }
+        return HttpStatus.BAD_REQUEST;
     }
-
-    public HttpStatus updateParent(long id, long newParent, boolean silent, String username, String password){
-        if(cardListRepo.findById(newParent).isEmpty())
-            return HttpStatus.NOT_FOUND;
-        if(cardRepo.findById(id).isEmpty())
-            return HttpStatus.NOT_FOUND;
-
-        Card edit = cardRepo.findById(id).get();
-
-
-        var oldParent = edit.parentCardList.id;
-
-        var cEdit = cardListRepo.findById(oldParent).get();
-        cEdit.cards.remove(edit);
-
-        cardListRepo.saveAndFlush(cEdit);
-
-
-
-        edit.parentCardList = cardListRepo.findById(newParent).get();
-
-        cardRepo.saveAndFlush(edit);
-
-
-        cEdit = cardListRepo.findById(newParent).get();
-        cEdit.cards.add(edit);
-
-        cardListRepo.saveAndFlush(cEdit);
-
-        if(!silent)
-            forceRefresh(edit);
-
-        return HttpStatus.OK;
-    }
-
-    //TODO: Move DRAG AND DROP handlers to here
 
     private void forceRefresh(Card card) {
         boards.forceRefresh(card.parentCardList.parentBoard.key);

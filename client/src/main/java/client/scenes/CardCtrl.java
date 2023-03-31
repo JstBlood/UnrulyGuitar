@@ -10,6 +10,7 @@ import client.utils.UIUtils;
 import commons.Card;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
@@ -17,7 +18,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.input.KeyCode;
 
 public class CardCtrl implements Initializable {
     private final ServerUtils server;
@@ -131,14 +131,18 @@ public class CardCtrl implements Initializable {
         var mine = card.index;
         var myParent = card.parentCardList.id;
 
-        if(theirParent != myParent) {
-            server.updateCard(them, "parent/s", myParent);
-            server.updateCard(me, "parent/s", theirParent);
+        if(theirs != mine) {
+            Platform.runLater(() -> {
+                server.updateCard(them, "index", mine);
+                server.updateCard(me, "index", theirs);
+            });
         }
 
-        if(theirs != mine) {
-            server.updateCard(them, "index/s", mine);
-            server.updateCard(me, "index/s", theirs);
+        if(theirParent != myParent) {
+            Platform.runLater(() -> {
+                server.updateCard(them, "parentCardList", myParent);
+                server.updateCard(me, "parentCardList", theirParent);
+            });
         }
     }
 
