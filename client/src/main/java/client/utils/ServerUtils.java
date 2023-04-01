@@ -186,7 +186,8 @@ public class ServerUtils {
     }
 
     public void deleteCardList(long id) {
-        internalDeleteRequest("api/cardlists/" + id);
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/lists/" + id);
     }
 
     public CardList updateCardList(long id, String component, Object newValue) {

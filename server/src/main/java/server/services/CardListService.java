@@ -30,7 +30,7 @@ public class CardListService {
         cardListRepo.save(cardList);
         forceRefresh(cardList);
 
-        return HttpStatus.OK;
+        return HttpStatus.CREATED;
     }
 
     public HttpStatus delete(long id, String username, String password) {
