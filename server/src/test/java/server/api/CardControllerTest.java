@@ -109,13 +109,6 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotUpdateBadValue() {
-        repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "title", "", "", "");
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
     public void cannotUpdateBadComponent() {
         repo.save(SOME_CARD);
         var actual = sut.update(SOME_CARD.id, "margin", "12", "", "");
@@ -123,11 +116,110 @@ public class CardControllerTest {
     }
 
     @Test
-    public void databaseIsUsedUpdate() {
+    public void cannotUpdateBadTitle() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "title", "", "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateTitle() {
         repo.save(SOME_CARD);
         var actual = sut.update(SOME_CARD.id, "title", "newTitle", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadList() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "parentCardList", -1, "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateList() {
+        repo.save(SOME_CARD);
+        clRepo.save(SOME_CARDLIST);
+        var actual = sut.update(SOME_CARD.id, "parentCardList", SOME_CARDLIST.id, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadIndex() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "index", -1, "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateIndex() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "index", 0, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadDD() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "dragAndDrop", -1, "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+
+        actual = sut.update(SOME_CARD.id, "dragAndDrop", SOME_CARD.id, "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+
+    }
+
+    @Test
+    public void updateDD() {
+        var newList = new CardList("asda", SOME_BOARD);
+        var newCard = new Card("abc", "fasf", newList);
+        repo.save(SOME_CARD);
+        repo.save(newCard);
+        clRepo.save(SOME_CARDLIST);
+        clRepo.save(newList);
+
+        var actual = sut.update(SOME_CARD.id, "dragAndDrop", newCard.id, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsDown"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadLDD() {
+        repo.save(SOME_CARD);
+        var actual = sut.update(SOME_CARD.id, "listDragAndDrop", -1, "", "");
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateLDD() {
+        var newList = new CardList("asda", SOME_BOARD);
+
+        SOME_CARDLIST.cards.add(SOME_CARD);
+
+        clRepo.save(SOME_CARDLIST);
+        clRepo.save(newList);
+
+        repo.save(SOME_CARD);
+
+        var actual = sut.update(SOME_CARD.id, "listDragAndDrop", SOME_CARDLIST.id, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+
+        actual = sut.update(SOME_CARD.id, "listDragAndDrop", newList.id, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 

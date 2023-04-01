@@ -10,7 +10,6 @@ import client.utils.UIUtils;
 import commons.Card;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
@@ -46,16 +45,20 @@ public class CardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle rs) {
+        prepareTitle();
+
+        handleProgress();
+
+        prepareDragAndDrop();
+
+        this.description.setText(card.description);
+        this.description.setPrefRowCount((int) card.description.lines().count());
+    }
+
+    private void prepareTitle() {
         title.textProperty().addListener((o, oldV, newV) -> {
             if(!Objects.equals(card.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
-            }
-        });
-
-        this.cardBox.setUserData(card);
-        this.cardBox.setOnMouseClicked(e -> {
-            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
-                mainCtrl.showCardDetails(card);
             }
         });
         title.setOnKeyPressed(e -> {
@@ -68,12 +71,18 @@ public class CardCtrl implements Initializable {
                 updateTitle();
             }
         });
-
         title.setText(card.title);
+    }
 
-        handleProgress();
+    private void prepareDragAndDrop() {
+        this.cardBox.setUserData(card);
 
-        //DRAG AND DROP HANDLERS
+        this.cardBox.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+                mainCtrl.showCardDetails(card);
+            }
+        });
+
         this.cardBox.setOnDragDetected(e -> {
             this.cardBox.setStyle("-fx-opacity: 0.5");
 
@@ -85,15 +94,13 @@ public class CardCtrl implements Initializable {
         });
 
         this.cardBox.setOnDragDone(e -> {
+            this.cardBox.setStyle("-fx-opacity: 1");
             e.consume();
         });
 
         this.cardBox.setOnDragDropped(e -> {
             handleDrop(e);
         });
-        //END OF DRAG AND DROP HANDLER
-        this.description.setText(card.description);
-        this.description.setPrefRowCount((int) card.description.lines().count());
     }
 
     private void handleProgress() {
@@ -110,40 +117,17 @@ public class CardCtrl implements Initializable {
 
         if (db.hasString()) {
             var node = (VBox) e.getGestureSource();
+            var sourceID = ((Card) node.getUserData()).id;
 
-            performSwap(node);
-
-            server.forceRefresh(card.parentCardList.parentBoard.key);
+            if (sourceID != card.id) {
+                server.updateCard(sourceID, "dragAndDrop", card.id);
+                server.forceRefresh(card.parentCardList.parentBoard.key);
+            }
 
             success = true;
         }
-
         e.setDropCompleted(success);
         e.consume();
-    }
-
-    private void performSwap(VBox node) {
-        var theirs = ((Card) node.getUserData()).index;
-        var them = ((Card) node.getUserData()).id;
-        var theirParent = ((Card) node.getUserData()).parentCardList.id;
-
-        var me = card.id;
-        var mine = card.index;
-        var myParent = card.parentCardList.id;
-
-        if(theirs != mine) {
-            Platform.runLater(() -> {
-                server.updateCard(them, "index", mine);
-                server.updateCard(me, "index", theirs);
-            });
-        }
-
-        if(theirParent != myParent) {
-            Platform.runLater(() -> {
-                server.updateCard(them, "parentCardList", myParent);
-                server.updateCard(me, "parentCardList", theirParent);
-            });
-        }
     }
 
     public void updateTitle() {
