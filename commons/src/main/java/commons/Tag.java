@@ -1,13 +1,13 @@
 package commons;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
+import java.awt.*;
+import javax.persistence.*;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-import java.awt.*;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity(name = "Tag")
 @Table(name = "tag", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
@@ -17,10 +17,17 @@ public class Tag {
     public long id;
     @Column(nullable = false)
     public String name;
+
     public Color color;
 
     @ManyToOne
-    public Board board;
+    @JoinColumn(name = "board_id",
+            nullable = false)
+    public Board parentBoard;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id")
+    public Card parentCard;
 
     @SuppressWarnings("unused")
     protected Tag() {}

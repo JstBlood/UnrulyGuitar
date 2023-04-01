@@ -35,6 +35,9 @@ public class Card {
             cascade = CascadeType.ALL)
     public List<Task> tasks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "parentCard")
+    public List<Tag> tags = new ArrayList<>();
+
     /**
      * @param title The entry's text.
      * @param description The entry's description
