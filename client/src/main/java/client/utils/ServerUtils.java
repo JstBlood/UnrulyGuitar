@@ -152,30 +152,6 @@ public class ServerUtils {
 
     // END OF BOARD RELATED FUNCTIONS
 
-    // START OF TASK RELATED FUNCTIONS
-
-    public void addBoard(Task task) {
-        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/add",
-                Entity.entity(task, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
-    public void updateTask(long key, String component, Object newValue) {
-        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
-                Entity.entity(newValue, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
-    public void deleteTask(long id){
-        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/tasks/" + id);
-    }
-
-    // END OF TASK RELATED FUNCTIONS
-
-
     // CARD LIST RELATED METHODS
 
     public void addCardList(CardList cardList) {
@@ -230,7 +206,6 @@ public class ServerUtils {
 
     // END OF CARD LIST RELATED METHODS
 
-
     // CARD RELATED FUNCTIONS
 
     public Card addCard(Card card){
@@ -259,6 +234,29 @@ public class ServerUtils {
     }
 
     // END OF CARD RELATED FUNCTIONS
+
+    // START OF TASK RELATED FUNCTIONS
+
+    public void addBoard(Task task) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/add",
+                Entity.entity(task, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateTask(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteTask(long id){
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/tasks/" + id);
+    }
+
+    // END OF TASK RELATED FUNCTIONS
 
     public void forceRefresh(String key) {
         internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
@@ -302,9 +300,5 @@ public class ServerUtils {
     public <T> void deregister() {
         if(this.session != null)
             session.disconnect();
-    }
-
-    public void send(String dest, Object o) {
-        session.send(dest, o);
     }
 }

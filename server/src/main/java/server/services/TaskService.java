@@ -1,12 +1,12 @@
 package server.services;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.TaskRepository;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class TaskService implements StandardEntityService<Task, Long> {
@@ -68,13 +68,17 @@ public class TaskService implements StandardEntityService<Task, Long> {
         return res;
     }
 
-    private HttpStatus handleSwitch(String component, Object newValue, Task task) {
+    public HttpStatus handleSwitch(String component, Object newValue, Task task) {
 
         HttpStatus res = null;
 
         switch (component) {
             case "title":
                 res = updateTitle(newValue, task);
+                break;
+
+            case "index":
+                res = updateIndex(newValue, task);
                 break;
 
             case "isDone":
@@ -90,8 +94,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
         return res;
     }
 
-    private HttpStatus updateIsDone(Object newValue, Task task) {
-
+    public HttpStatus updateIsDone(Object newValue, Task task) {
         if(Objects.isNull(newValue)) {
             return HttpStatus.BAD_REQUEST;
         }
@@ -103,7 +106,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
         return HttpStatus.OK;
     }
 
-    private HttpStatus updateTitle(Object newValue, Task task) {
+    public HttpStatus updateTitle(Object newValue, Task task) {
 
         if(Objects.isNull(newValue)) {
             return HttpStatus.BAD_REQUEST;
@@ -116,6 +119,17 @@ public class TaskService implements StandardEntityService<Task, Long> {
         }
 
         task.title = newValueString;
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateIndex(Object newValue, Task task) {
+        int newIndex = Integer.parseInt(String.valueOf(newValue));
+        if (newIndex < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        task.index = newIndex;
 
         return HttpStatus.OK;
     }
