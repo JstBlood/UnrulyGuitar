@@ -56,55 +56,40 @@ public class CardListControllerTest {
 
     @Test
     public void cannotAddNullList() {
-        var actual = sut.add(null);
+        var actual = sut.add(null, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullParent() {
-        var actual = sut.add(new CardList("title", null));
+        var actual = sut.add(new CardList("title", null), "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotAddNullTitle() {
-        var actual = sut.add(new CardList(null, SOME_BOARD));
+        var actual = sut.add(new CardList(null, SOME_BOARD), "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedAdd() {
-        var actual = sut.add(SOME_CARDLIST);
+        var actual = sut.add(SOME_CARDLIST, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
     }
 
     @Test
-    public void cannotGetInexistentList() {
-        var actual = sut.get(-1);
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
-    public void databaseIsUsedGet() {
-        repo.save(SOME_CARDLIST);
-        var actual = sut.get(SOME_CARDLIST.id);
-
-        Assertions.assertTrue(repo.calledMethods.contains("findById"));
-        Assertions.assertEquals(OK, actual.getStatusCode());
-    }
-
-    @Test
     public void cannotDeleteInexistentList() {
-        var actual = sut.delete(-1);
+        var actual = sut.delete(-1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedDelete() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.delete(SOME_CARDLIST.id);
+        var actual = sut.delete(SOME_CARDLIST.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -112,28 +97,28 @@ public class CardListControllerTest {
 
     @Test
     public void cannotUpdateInexistentList() {
-        var actual = sut.update(-1, "title", "newTitle");
+        var actual = sut.update(-1, "title", "newTitle", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateBadValue() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARDLIST.id, "title", "");
+        var actual = sut.update(SOME_CARDLIST.id, "title", "", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateBadComponent() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARDLIST.id, "margin", "12");
+        var actual = sut.update(SOME_CARDLIST.id, "margin", "12", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void databaseIsUsedUpdate() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARDLIST.id, "title", "newTitle");
+        var actual = sut.update(SOME_CARDLIST.id, "title", "newTitle", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
