@@ -1,5 +1,6 @@
 package server.services;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import commons.Card;
@@ -61,12 +62,36 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Card card = optionalCard.get();
 
-        if(newValue == null || isNullOrEmpty(newValue.toString())) {
-            return HttpStatus.BAD_REQUEST;
+        String newValueString = String.valueOf(newValue);
+
+        HttpStatus res = null;
+
+        switch (component) {
+            case "title":
+                res = updateTitle(newValueString, card);
+                break;
+            case "parentCardList":
+                res = updateParentCardList(Long.parseLong(newValueString), card);
+                break;
+            case "index":
+                res = updateIndex(Integer.parseInt(newValueString), card);
+                break;
+
+            case "dragAndDrop":
+                res = dragAndDrop(Long.parseLong(newValueString), card);
+                break;
+
+            case "listDragAndDrop":
+                res = listDragAndDrop(Long.parseLong(newValueString), card);
+                break;
+            default:
+                res = HttpStatus.BAD_REQUEST;
+                break;
         }
 
-        HttpStatus res = updateSwitch(component, newValue, card);
-        if (res.equals(HttpStatus.BAD_REQUEST)) return res;
+        if(!res.equals(HttpStatus.OK)) {
+            return res;
+        }
 
         cardRepo.saveAndFlush(card);
 
@@ -75,46 +100,79 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    private HttpStatus updateSwitch(String component, Object newValue, Card card) {
-        switch (component) {
-            case "title":
-                String newTitle = String.valueOf(newValue);
-                if(isNullOrEmpty(newTitle)) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                card.title = newTitle;
-                return HttpStatus.OK;
-
-            case "parentCardList":
-                long parentCardListId = Long.parseLong(String.valueOf(newValue));
-                Optional<CardList> parentCardList = cardListRepo.findById(parentCardListId);
-                if (parentCardList.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                card.parentCardList = parentCardList.get();
-                return HttpStatus.OK;
-
-            case "index":
-                int newIndex = Integer.parseInt(String.valueOf(newValue));
-                if (newIndex < 0) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                card.index = newIndex;
-                return HttpStatus.OK;
-
-            case "DD":
-                long targetId = Long.parseLong(String.valueOf(newValue));
-                Optional<Card> optionalTargetCard = cardRepo.findById(targetId);
-                if (optionalTargetCard.isEmpty()) {
-                    return HttpStatus.BAD_REQUEST;
-                }
-                Card targetCard = optionalTargetCard.get();
-                cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
-                cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
-                card.index = targetCard.index;
-                return HttpStatus.OK;
+    public HttpStatus updateTitle(String newValue, Card card) {
+        if(isNullOrEmpty(newValue)) {
+            return HttpStatus.BAD_REQUEST;
         }
-        return HttpStatus.BAD_REQUEST;
+        card.title = newValue;
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateParentCardList(long newValue, Card card) {
+        Optional<CardList> parentCardList = cardListRepo.findById(newValue);
+        if (parentCardList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        card.parentCardList = parentCardList.get();
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateIndex(int newValue, Card card) {
+        if (newValue < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        card.index = newValue;
+        return HttpStatus.OK;
+    }
+
+    @Transactional
+    public HttpStatus dragAndDrop(long newValue, Card card) {
+        Optional<Card> optionalTargetCard = cardRepo.findById(newValue);
+
+        if (optionalTargetCard.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Card targetCard = optionalTargetCard.get();
+        long targetCardListId = targetCard.parentCardList.id;
+
+        Optional<CardList> optionalTargetCardList = cardListRepo.findById(targetCardListId);
+        if (optionalTargetCardList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        CardList targetCardList = optionalTargetCardList.get();
+
+        cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
+        cardRepo.shiftCardsDown(targetCard.index, targetCard.parentCardList.id);
+
+        card.parentCardList = targetCardList;
+        card.index = targetCard.index;
+
+        return HttpStatus.OK;
+    }
+
+    @Transactional
+    public HttpStatus listDragAndDrop(long newValue, Card card) {
+        Optional<CardList> optionalTargetList = cardListRepo.findById(newValue);
+
+        if (optionalTargetList.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        CardList targetList = optionalTargetList.get();
+
+        cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
+
+        if(Objects.equals(targetList, card.parentCardList)) {
+            card.index = targetList.cards.size() - 1;
+        }
+        else {
+            card.parentCardList = targetList;
+            card.index = targetList.cards.size();
+        }
+
+        return HttpStatus.OK;
     }
 
     private void forceRefresh(Card card) {
