@@ -28,7 +28,6 @@ public class CardListService {
         }
 
         cardListRepo.save(cardList);
-        forceRefresh(cardList);
 
         return HttpStatus.CREATED;
     }

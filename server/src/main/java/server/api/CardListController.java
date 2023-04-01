@@ -15,15 +15,22 @@
  */
 package server.api;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import commons.CardList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardListService;
 
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/lists", "/secure/{username}/lists"})
 public class CardListController {
     private final CardListService cardListService;
+    private Map<Object, Consumer<CardList>> listeners = new HashMap<>();
+
 
     public CardListController(CardListService service) {
         this.cardListService = service;
@@ -32,6 +39,9 @@ public class CardListController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList, @PathVariable String username,
                                  @PathVariable(required = false) String password) {
+        listeners.forEach((k, l) -> {
+            l.accept(cardList);
+        });
         return ResponseEntity.status(cardListService.add(cardList, username, password)).build();
     }
 
@@ -46,6 +56,22 @@ public class CardListController {
                                     @RequestBody Object newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardListService.update(id, component, newValue, username, password)).build();
+    }
+
+    @GetMapping("/updates")
+    public DeferredResult<ResponseEntity<CardList>> getUpdates() {
+        var noContent = ResponseEntity.noContent().build();
+        var res = new DeferredResult<ResponseEntity<CardList>>(2000L, noContent);
+
+        var key = new Object();
+        listeners.put(key, cardList -> {
+            res.setResult(ResponseEntity.ok(cardList));
+        });
+        res.onCompletion(() -> {
+            listeners.remove(key);
+        });
+
+        return res;
     }
 
 }
