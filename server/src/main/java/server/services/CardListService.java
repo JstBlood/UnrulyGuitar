@@ -77,6 +77,7 @@ public class CardListService {
         HttpStatus res = null;
 
         switch (component) {
+            //Only use of updateCardList
             case "title":
                 res = updateTitle(cardList, newValue);
                 break;
