@@ -16,13 +16,12 @@
 package server.api;
 
 import commons.CardList;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.CardListService;
 
 @RestController
-@RequestMapping("/api/cardlists")
+@RequestMapping(value = {"/secure/{username}/{password}/lists", "/secure/{username}/lists"})
 public class CardListController {
     private final CardListService cardListService;
 
@@ -31,45 +30,22 @@ public class CardListController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody CardList cardList) {
-        try {
-            cardListService.add(cardList);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable long id) {
-        try {
-            CardList cardList = cardListService.get(id);
-            return ResponseEntity.ok(cardList);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> add(@RequestBody CardList cardList, @PathVariable String username,
+                                 @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardListService.add(cardList, username, password)).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable long id) {
-        try {
-            cardListService.delete(id);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> delete(@PathVariable long id, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardListService.delete(id, username, password)).build();
     }
 
     @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable long id,
-                                           @PathVariable String component,
-                                           @RequestBody Object newValue) {
-        try {
-            CardList updatedCardList = cardListService.update(id, component, newValue);
-            return ResponseEntity.ok(updatedCardList);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
+                                    @RequestBody Object newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardListService.update(id, component, newValue, username, password)).build();
     }
 
 }
