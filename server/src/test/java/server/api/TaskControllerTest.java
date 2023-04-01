@@ -86,10 +86,10 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void canUpdateEmptyValue() {
+    public void cannotUpdateEmptyValue() {
         repo.save(SOME_TASK);
         var actual = sut.update(SOME_CARD.id, "title", "", "", "");
-        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

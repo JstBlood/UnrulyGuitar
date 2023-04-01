@@ -20,7 +20,7 @@ public class CardListService {
 
     public HttpStatus add(CardList cardList, String username, String password) {
         if (cardList == null || cardList.parentBoard == null) {
-            return HttpStatus.NOT_FOUND;
+            return HttpStatus.BAD_REQUEST;
         }
 
         if (isNullOrEmpty(cardList.title)) {
@@ -36,6 +36,10 @@ public class CardListService {
     public HttpStatus delete(long id, String username, String password) {
         Optional<CardList> optionalCardList = cardListRepo.findById(id);
 
+        if (id < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
         if (optionalCardList.isEmpty()) {
             return HttpStatus.NOT_FOUND;
         }
@@ -50,6 +54,10 @@ public class CardListService {
 
     public HttpStatus update(long id, String component, Object newValue, String username, String password) {
         Optional<CardList> optionalCardList = cardListRepo.findById(id);
+
+        if (id < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
 
         if (optionalCardList.isEmpty()) {
             return HttpStatus.NOT_FOUND;
