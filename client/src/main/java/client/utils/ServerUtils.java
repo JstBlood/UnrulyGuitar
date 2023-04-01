@@ -178,8 +178,9 @@ public class ServerUtils {
 
     // CARD LIST RELATED METHODS
 
-    public CardList addCardList(CardList cardList) {
-        return internalPostRequest("api/cardlists/add",
+    public void addCardList(CardList cardList) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/lists/add",
                 Entity.entity(cardList, APPLICATION_JSON),
                 new GenericType<>() {});
     }

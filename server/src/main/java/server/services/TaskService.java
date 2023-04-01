@@ -1,6 +1,5 @@
 package server.services;
 
-import commons.Card;
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

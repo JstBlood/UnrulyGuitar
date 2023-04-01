@@ -1,8 +1,10 @@
 package server.services;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import commons.CardList;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.CardListRepository;
 
@@ -16,61 +18,104 @@ public class CardListService {
         this.boards = boards;
     }
 
-    public void add(CardList cardList) throws RuntimeException{
+    public HttpStatus add(CardList cardList, String username, String password) {
         if (cardList == null || cardList.parentBoard == null) {
-            throw new RuntimeException("Invalid card list");
+            return HttpStatus.NOT_FOUND;
         }
+
         if (isNullOrEmpty(cardList.title)) {
-            throw new RuntimeException("Card list title cannot be empty");
+            return HttpStatus.BAD_REQUEST;
         }
 
         cardListRepo.save(cardList);
         forceRefresh(cardList);
+
+        return HttpStatus.OK;
     }
 
-    public CardList get(long id) throws RuntimeException{
+    public HttpStatus delete(long id, String username, String password) {
         Optional<CardList> optionalCardList = cardListRepo.findById(id);
 
         if (optionalCardList.isEmpty()) {
-            throw new RuntimeException("CardList not found");
-        }
-
-        return optionalCardList.get();
-    }
-
-    public void delete(long id) throws RuntimeException {
-        Optional<CardList> cardList = cardListRepo.findById(id);
-
-        if (cardList.isEmpty()) {
-            throw new RuntimeException("CardList not found with id: " + id);
-        }
-
-        cardListRepo.deleteById(id);
-        forceRefresh(cardList.get());
-    }
-
-    public CardList update(long id, String component, Object newValue) throws RuntimeException {
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
-
-        if (optionalCardList.isEmpty()) {
-            throw new RuntimeException("CardList not found");
+            return HttpStatus.NOT_FOUND;
         }
 
         CardList cardList = optionalCardList.get();
 
-        if (newValue == null || isNullOrEmpty(newValue.toString())) {
-            throw new RuntimeException("New value cannot be null or empty");
+        cardListRepo.deleteById(id);
+        forceRefresh(cardList);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus update(long id, String component, Object newValue, String username, String password) {
+        Optional<CardList> optionalCardList = cardListRepo.findById(id);
+
+        if (optionalCardList.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
         }
 
-        try {
-            cardList.getClass().getField(component).set(cardList, newValue);
-        } catch  (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Invalid field name: " + component);
+        CardList cardList = optionalCardList.get();
+
+        if (Objects.isNull(newValue)) {
+            return HttpStatus.BAD_REQUEST;
         }
+
+
+        HttpStatus res = handleSwitch(component, newValue, cardList);
+
+        if (res.equals(HttpStatus.BAD_REQUEST))
+            return res;
 
         cardListRepo.saveAndFlush(cardList);
         forceRefresh(cardList);
-        return cardList;
+
+        return res;
+    }
+
+    private HttpStatus handleSwitch(String component, Object newValue, CardList cardList) {
+        HttpStatus res = null;
+
+        switch (component) {
+            case "title":
+                res = updateTitle(cardList, newValue);
+                break;
+
+            //If we ever want to change List Indexes
+            case "index":
+                res = updateIndex(cardList, newValue);
+                break;
+
+            default:
+                res = HttpStatus.BAD_REQUEST;
+                break;
+        }
+
+        return res;
+    }
+
+    private HttpStatus updateTitle(CardList cardList, Object newValue) {
+        var newValueString = newValue.toString().trim();
+
+        if (isNullOrEmpty(newValueString)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        cardList.title = newValueString;
+
+        return HttpStatus.OK;
+    }
+
+    private HttpStatus updateIndex(CardList cardList, Object newValue) {
+        int newValueInt = Integer.parseInt(newValue.toString());
+
+        if (newValueInt < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        cardList.index = newValueInt;
+
+        return HttpStatus.OK;
     }
 
     //TODO: Move DRAG AND DROP handlers to here
