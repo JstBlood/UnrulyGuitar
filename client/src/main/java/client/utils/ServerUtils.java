@@ -203,10 +203,11 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    private ExecutorService exec;
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        EXEC.submit(() -> {
+        exec = Executors.newSingleThreadExecutor();
+        exec.submit(() -> {
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient(new ClientConfig())
                         .target(getServer()).path("secure/" + store.accessStore().getUsername() +
@@ -224,7 +225,7 @@ public class ServerUtils {
     }
 
     public void stop() {
-        EXEC.shutdownNow();
+        exec.shutdownNow();
     }
 
     // END OF CARD LIST RELATED METHODS
