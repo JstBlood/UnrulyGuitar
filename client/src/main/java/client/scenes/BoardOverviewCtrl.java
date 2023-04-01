@@ -101,6 +101,7 @@ public class BoardOverviewCtrl implements Initializable {
 
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
             Platform.runLater(() -> {
+                stop();
                 mainCtrl.showBoards();
             });
         });
@@ -117,6 +118,14 @@ public class BoardOverviewCtrl implements Initializable {
 
 
         server.forceRefresh(board.key);
+    }
+
+    public void prepareLongPolling() {
+        server.registerForUpdates(c -> {
+            Platform.runLater(() -> {
+                server.forceRefresh(board.key);
+            });
+        });
     }
 
     public void refresh(Board newState) throws IOException {
@@ -246,5 +255,9 @@ public class BoardOverviewCtrl implements Initializable {
     public void leaveBoard() {
         server.leaveBoard(board.key);
         mainCtrl.showBoards();
+    }
+
+    public void stop() {
+        server.stop();
     }
 }

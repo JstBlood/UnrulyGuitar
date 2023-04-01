@@ -203,6 +203,31 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+    private ExecutorService exec;
+
+    public void registerForUpdates(Consumer<CardList> consumer) {
+        exec = Executors.newSingleThreadExecutor();
+        exec.submit(() -> {
+            while(!Thread.interrupted()) {
+                var res = ClientBuilder.newClient(new ClientConfig())
+                        .target(getServer()).path("secure/" + store.accessStore().getUsername() +
+                                "/lists/updates")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+                if(res.getStatus() == 204) {
+                    continue;
+                }
+                var cl = res.readEntity(CardList.class);
+                consumer.accept(cl);
+            }
+        });
+    }
+
+    public void stop() {
+        exec.shutdownNow();
+    }
+
     // END OF CARD LIST RELATED METHODS
 
 
@@ -231,30 +256,6 @@ public class ServerUtils {
                         "/cards/" + id + "/" + component,
                 Entity.json(jsonValue),
                 new GenericType<>(){});
-    }
-
-    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
-
-    public void registerForUpdates(Consumer<Card> consumer) {
-        EXEC.submit(() -> {
-            while(!Thread.interrupted()) {
-                var res = ClientBuilder.newClient(new ClientConfig())
-                        .target(getServer()).path("secure/" + store.accessStore().getUsername() +
-                                "/cards/updates")
-                        .request(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
-                        .get(Response.class);
-                if(res.getStatus() == 204) {
-                    continue;
-                }
-                var c = res.readEntity(Card.class);
-                consumer.accept(c);
-            }
-        });
-    }
-
-    public void stop() {
-        EXEC.shutdownNow();
     }
 
     // END OF CARD RELATED FUNCTIONS

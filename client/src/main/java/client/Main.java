@@ -60,7 +60,7 @@ public class Main extends Application {
                 cStore);
 
         primaryStage.setOnCloseRequest(e -> {
-            cardList.getKey().stop();
+            boardOverview.getKey().stop();
         });
     }
 }

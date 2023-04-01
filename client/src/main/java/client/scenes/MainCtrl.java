@@ -118,6 +118,7 @@ public class MainCtrl {
     }
 
     public void showBoardOverview() {
+        boardOverviewCtrl.prepareLongPolling();
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
     }

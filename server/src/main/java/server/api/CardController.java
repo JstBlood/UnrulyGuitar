@@ -1,20 +1,14 @@
 package server.api;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import commons.Card;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardService;
 
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/cards", "/secure/{username}/cards"})
 public class CardController {
     private final CardService cardService;
-    private Map<Object, Consumer<Card>> listeners = new HashMap<>();
 
     public CardController(CardService cardService) {
         this.cardService = cardService;
@@ -23,9 +17,6 @@ public class CardController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Card card, @PathVariable String username,
                                       @PathVariable(required = false) String password) {
-        listeners.forEach((k, l) -> {
-            l.accept(card);
-        });
         return ResponseEntity.status(cardService.add(card, username, password)).build();
     }
 
@@ -40,21 +31,5 @@ public class CardController {
                                        @RequestBody Object newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.update(id, component, newValue, username, password)).build();
-    }
-
-    @GetMapping("/updates")
-    public DeferredResult<ResponseEntity<Card>> getUpdates() {
-        var noContent = ResponseEntity.noContent().build();
-        var res = new DeferredResult<ResponseEntity<Card>>(2000L, noContent);
-
-        var key = new Object();
-        listeners.put(key, card -> {
-            res.setResult(ResponseEntity.ok(card));
-        });
-        res.onCompletion(() -> {
-            listeners.remove(key);
-        });
-
-        return res;
     }
 }

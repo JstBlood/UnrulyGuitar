@@ -12,7 +12,6 @@ import com.google.inject.Inject;
 import commons.Card;
 import commons.CardList;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,20 +60,9 @@ public class CardListCtrl implements Initializable {
     @FXML
     @Override
     public void initialize(URL uri, ResourceBundle rs) {
-        //END OF DRAG AND DROP HANDLERS
-
-        prepare();
         prepareTitleField();
         prepareDragAndDrop();
         showCards();
-    }
-
-    public void prepare() {
-        server.registerForUpdates(c -> {
-            Platform.runLater(() -> {
-                server.forceRefresh(cardList.parentBoard.key);
-            });
-        });
     }
 
     private void prepareTitleField() {
@@ -210,9 +198,5 @@ public class CardListCtrl implements Initializable {
     @FXML
     public void deleteCardList() {
         server.deleteCardList(cardList.id);
-    }
-
-    public void stop() {
-        server.stop();
     }
 }
