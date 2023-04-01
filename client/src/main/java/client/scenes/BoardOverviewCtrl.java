@@ -156,7 +156,7 @@ public class BoardOverviewCtrl implements Initializable {
             }
         }
         for(Tag u : newState.tags) {
-            u.board = newState;
+            u.parentBoard = newState;
         }
     }
 

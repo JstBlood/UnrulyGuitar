@@ -25,9 +25,9 @@ public class TagTest {
     public void addBoard() {
         var t = new Tag("urgent", new Color(0, 0, 0));
         Board testBoard1 = new Board("board1", "myBoard");
-        t.board = testBoard1;
+        t.parentBoard = testBoard1;
 
-        assertEquals(testBoard1, t.board);
+        assertEquals(testBoard1, t.parentBoard);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class TagTest {
         var t = new Tag("urgent", new Color(0, 0, 0)).toString();
         assertTrue(t.contains(Tag.class.getSimpleName()));
         assertTrue(t.contains("\n"));
-        assertTrue(t.contains("board"));
+        assertTrue(t.contains("parentBoard"));
     }
 
 }
