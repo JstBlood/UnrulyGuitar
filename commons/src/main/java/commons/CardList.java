@@ -20,7 +20,6 @@ public class CardList {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
-    public int index;
 
     @Column(nullable = false)
     public String title;
@@ -46,7 +45,6 @@ public class CardList {
     public CardList(String title, Board parentBoard) {
         this.title = title;
         this.parentBoard = parentBoard;
-        if(parentBoard != null) index = parentBoard.cardLists.size();
     }
 
     public void addCard(Card newCard) {

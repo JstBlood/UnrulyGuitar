@@ -1,10 +1,7 @@
 package client.scenes;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
@@ -50,11 +47,14 @@ public class CardListCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     public CardList cardList;
 
+    private List<CardCtrl> children;
+
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, CardList cardList) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.cardList = cardList;
+        children = new ArrayList<>();
     }
 
 
@@ -139,17 +139,41 @@ public class CardListCtrl implements Initializable {
         var cardsOrdered = new ArrayList<>(cardList.cards);
         cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
 
-        for (Card c : cardsOrdered) {
-            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
+        while(children.size() != cardsOrdered.size()) {
+            if (children.size() < cardsOrdered.size()) {
+                Card c = cardList.cards.get(children.size());
 
-            try {
-                VBox cardNode = cardLoader.load();
-                cardsContainer.getChildren().add(cardNode);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+                cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
+
+                try {
+                    VBox cardNode = cardLoader.load();
+                    cardsContainer.getChildren().add(cardNode);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                children.add(cardLoader.getController());
+            } else if (children.size() > cardsOrdered.size()) {
+                cardsContainer.getChildren().remove(children.size() - 1);
+                children.remove(children.size() - 1);
             }
         }
+
+        for(int i = 0; i < children.size(); i++) {
+            children.get(i).propagate(cardsOrdered.get(i));
+        }
+    }
+
+    public void propagate(CardList newState) {
+        if(!newState.title.equals(title.getText())) {
+            title.setText(newState.title);
+            title.setStyle("-fx-text-fill: -fx-col-0;");
+        }
+
+        cardList = newState;
+
+        showCards();
     }
 
 

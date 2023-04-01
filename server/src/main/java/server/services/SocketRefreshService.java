@@ -1,6 +1,8 @@
 package server.services;
 
 import commons.Board;
+import commons.Card;
+import commons.CardList;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,14 @@ public class SocketRefreshService {
 
     public void broadcastRemoval(Board b) {
         messages.convertAndSend("/topic/board/" + b.key + "/deletion", b);
+    }
+
+    public void broadcastRemoval(Card c) {
+        messages.convertAndSend("/topic/card/" + c.id + "/deletion", c);
+    }
+
+    public void broadcastRemoval(CardList c) {
+        messages.convertAndSend("/topic/cardlist/" + c.id + "/deletion", c);
     }
 
 }

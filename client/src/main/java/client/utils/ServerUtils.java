@@ -190,16 +190,10 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/lists/" + id);
     }
 
-    public CardList updateCardList(long id, String component, Object newValue) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonValue = null;
-        try {
-            jsonValue = objectMapper.writeValueAsString(newValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return internalPutRequest("api/cardlists/" + id + "/" + component,
-                Entity.json(jsonValue),
+    public CardList updateCardList(long id, String component, String newValue) {
+        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/lists/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 

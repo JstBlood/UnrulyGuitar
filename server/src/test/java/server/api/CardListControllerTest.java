@@ -27,10 +27,8 @@ import org.junit.jupiter.api.Test;
 import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestUserRepository;
-import server.services.BoardsService;
-import server.services.CardListService;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
+import server.services.*;
+
 public class CardListControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
@@ -47,9 +45,9 @@ public class CardListControllerTest {
 
         TestBoardsRepository bRepo = new TestBoardsRepository();
         TestUserRepository uRepo = new TestUserRepository();
-        SocketRefreshService sockets = new SocketRefreshService(null);
+        SocketRefreshService sockets = new TestSocketRefresher();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd));
+        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), sockets);
 
         sut = new CardListController(service);
     }

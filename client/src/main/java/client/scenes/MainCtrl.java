@@ -30,7 +30,6 @@ public class MainCtrl {
 
     private Stage primaryStage;
 
-    private LogonCtrl logonCtrl;
     private Scene logon;
 
     private int silence = 0;
@@ -41,14 +40,11 @@ public class MainCtrl {
     private BoardOverviewCtrl boardOverviewCtrl;
     private Scene boardOverview;
 
-    private AddCardListCtrl addCardListCtrl;
     private Scene addCardList;
 
     private CardDetailsCtrl cardDetailsCtrl;
     private Scene cardDetails;
 
-    private CardListCtrl cardListCtrl;
-    private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
     private CredentialsStore cStore;
@@ -64,13 +60,11 @@ public class MainCtrl {
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<CardDetailsCtrl, Parent> addCard,
-                           Pair<CardListCtrl, Parent> cardList,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            CredentialsStore cStore) {
 
         this.primaryStage = primaryStage;
 
-        this.logonCtrl = logon.getKey();
         this.logon = new Scene(logon.getValue());
 
         this.boardsCtrl = boards.getKey();
@@ -79,14 +73,11 @@ public class MainCtrl {
         this.boardOverviewCtrl = boardOverview.getKey();
         this.boardOverview = new Scene(boardOverview.getValue());
 
-        this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
         this.cardDetailsCtrl = addCard.getKey();
         this.cardDetails = new Scene(addCard.getValue());
-        this.cardListCtrl = cardList.getKey();
 
-        this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
 
         this.cStore = cStore;
@@ -127,18 +118,9 @@ public class MainCtrl {
         primaryStage.setScene(addCardList);
     }
 
-    public void showBoard() {
-        primaryStage.setTitle("BOARD NAME");
-        primaryStage.setScene(boardOverview);
-    }
-
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
-    }
-
-    public void setCurrentBoard(Board board) {
-        boardOverviewCtrl.setBoard(board);
     }
 
     public Board getCurrentBoard() {

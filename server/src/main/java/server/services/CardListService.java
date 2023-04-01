@@ -12,10 +12,12 @@ import server.database.CardListRepository;
 public class CardListService {
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
+    private final SocketRefreshService sockets;
 
-    public CardListService(CardListRepository cardListRepo, BoardsService boards) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards, SocketRefreshService sockets) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
+        this.sockets = sockets;
     }
 
     public HttpStatus add(CardList cardList, String username, String password) {
@@ -46,7 +48,10 @@ public class CardListService {
 
         CardList cardList = optionalCardList.get();
 
+
         cardListRepo.deleteById(id);
+
+        sockets.broadcastRemoval(cardList);
         forceRefresh(cardList);
 
         return HttpStatus.OK;
@@ -90,11 +95,6 @@ public class CardListService {
                 res = updateTitle(cardList, newValue);
                 break;
 
-            //If we ever want to change List Indexes
-            case "index":
-                res = updateIndex(cardList, newValue);
-                break;
-
             default:
                 res = HttpStatus.BAD_REQUEST;
                 break;
@@ -111,18 +111,6 @@ public class CardListService {
         }
 
         cardList.title = newValueString;
-
-        return HttpStatus.OK;
-    }
-
-    private HttpStatus updateIndex(CardList cardList, Object newValue) {
-        int newValueInt = Integer.parseInt(newValue.toString());
-
-        if (newValueInt < 0) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        cardList.index = newValueInt;
 
         return HttpStatus.OK;
     }
