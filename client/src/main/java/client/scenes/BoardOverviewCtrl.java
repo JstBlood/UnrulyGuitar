@@ -94,6 +94,8 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
         });
+
+        server.forceRefresh(board.key);
     }
 
     public void prepareLongPolling() {
@@ -127,15 +129,6 @@ public class BoardOverviewCtrl implements Initializable {
     public void refresh(Board newState) throws IOException {
         performRelink(newState);
 
-        // If our data is already up-to-date
-        // we forgo this update
-
-        // Just as a side note: hashCode does not help with speed here
-        // since we already have to go through every field.
-        if(board.hashCode() == newState.hashCode()) {
-            return;
-        }
-
         updateBoard(newState);
 
         updateCardLists();
@@ -150,6 +143,9 @@ public class BoardOverviewCtrl implements Initializable {
 
                 for(Task t : c.tasks)
                     t.parentCard = c;
+
+                for(Tag u : c.tags)
+                    u.parentCard = c;
             }
         }
 
