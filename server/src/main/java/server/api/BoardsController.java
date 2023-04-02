@@ -27,15 +27,16 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/boards", "/secure/{username}/boards"})
 public class BoardsController {
-    private BoardsService service;
+    private final BoardsService service;
 
     public BoardsController(BoardsService service) {
         this.service = service;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Board> add(@RequestBody Board board, @PathVariable String username,
-                                      @PathVariable(required = false) String password) {
+    public ResponseEntity<Board> add(@RequestBody Board board,
+                                     @PathVariable String username,
+                                     @PathVariable(required = false) String password) {
         var status = service.add(board, username, password);
 
         if(status != HttpStatus.OK)
@@ -45,8 +46,9 @@ public class BoardsController {
     }
 
     @PostMapping("/join/{id}")
-    public ResponseEntity<Board> join(@PathVariable String username,
-                                      @PathVariable(required = false) String password, @PathVariable String id) {
+    public ResponseEntity<Board> join(@PathVariable String id,
+                                      @PathVariable String username,
+                                      @PathVariable(required = false) String password) {
         var status = service.join(id, username, password);
 
         if(status != HttpStatus.OK)
@@ -56,38 +58,49 @@ public class BoardsController {
     }
 
     @PostMapping("/leave/{id}")
-    public ResponseEntity<?> leave(@PathVariable String username,
-                                      @PathVariable(required = false) String password, @PathVariable String id) {
+    public ResponseEntity<?> leave(@PathVariable String id,
+                                   @PathVariable String username,
+                                   @PathVariable(required = false) String password) {
         return ResponseEntity.status(service.leave(id, username, password)).build();
     }
 
     @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable(required = false) String password, @PathVariable String username,
-                                       @PathVariable String id, @PathVariable String component,
-                                       @RequestBody String newValue) {
-        return ResponseEntity.status(service.update(id, component, newValue, username, password)).build();
+    public ResponseEntity<?> update(@PathVariable String key, @PathVariable String component,
+                                    @RequestBody String newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.update(key, component, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/title")
+    public ResponseEntity<?> updateTitle(@PathVariable String key,
+                                         @RequestBody String newValue,  @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateTitle(key, newValue, username, password)).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable(required = false) String password, @PathVariable String username,
-                                    @PathVariable String id) {
+    public ResponseEntity<?> delete(@PathVariable String id,
+                                    @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
         return ResponseEntity.status(service.delete(id, username, password)).build();
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Board>> all(@PathVariable String username, @PathVariable String password) {
+    public ResponseEntity<List<Board>> all(@PathVariable String username,
+                                           @PathVariable String password) {
         return service.getAll(username, password);
     }
 
     @GetMapping("/previous")
-    public ResponseEntity<Set<Board>> previous(@PathVariable String username, @PathVariable String password) {
+    public ResponseEntity<Set<Board>> previous(@PathVariable String username,
+                                               @PathVariable String password) {
         return service.getPrev(username, password);
     }
 
     @GetMapping("/force_refresh/{id}")
-    public ResponseEntity<?> previous(@PathVariable String username,
-                                           @PathVariable(required = false) String password,
-                                           @PathVariable String id) {
+    public ResponseEntity<?> previous(@PathVariable String id,
+                                      @PathVariable String username,
+                                      @PathVariable(required = false) String password) {
         return ResponseEntity.status(service.forceRefresh(id)).build();
     }
 }

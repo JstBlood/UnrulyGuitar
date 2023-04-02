@@ -137,11 +137,11 @@ public class ServerUtils {
 
     public void deleteBoard(String key) {
         internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/boards/" + key);
+                store.accessStore().getPassword() + "/boards/" + key);
     }
 
-    public Board updateBoard(String key, String component, Object newValue) {
-        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+    public void updateBoard(String key, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/" + key + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
@@ -153,7 +153,7 @@ public class ServerUtils {
 
     public void addCardList(CardList cardList) {
         internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/lists/add",
+                        store.accessStore().getPassword() + "/lists/add",
                 Entity.entity(cardList, APPLICATION_JSON),
                 new GenericType<>() {});
     }
@@ -163,11 +163,12 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/lists/" + id);
     }
 
-    public CardList updateCardList(long id, String component, String newValue) {
-        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/lists/" + id + "/" + component,
+    public void updateCardList(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/lists/" + id + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
-                new GenericType<>(){});
+                new GenericType<>() {
+                });
     }
 
     private ExecutorService exec;
@@ -196,7 +197,6 @@ public class ServerUtils {
     }
 
     // END OF CARD LIST RELATED METHODS
-
 
     // CARD RELATED FUNCTIONS
 
@@ -275,7 +275,7 @@ public class ServerUtils {
 
     public void forceRefresh(String key) {
         internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/boards/force_refresh/" + key,
+                        store.accessStore().getPassword() + "/boards/force_refresh/" + key,
                 new GenericType<>(){});
     }
 
@@ -315,9 +315,5 @@ public class ServerUtils {
     public <T> void deregister() {
         if(this.session != null)
             session.disconnect();
-    }
-
-    public void send(String dest, Object o) {
-        session.send(dest, o);
     }
 }

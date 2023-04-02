@@ -65,7 +65,6 @@ public class BoardSettingsCtrl implements Initializable {
     @FXML
     public void addTag() throws IOException {
         server.addTag(generateTag());
-        server.forceRefresh(mainCtrl.getCurrentBoard().key);
     }
 
     private Tag generateTag() {

@@ -31,11 +31,11 @@ public class Board {
     public List<CardList> cardLists = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards")
-    public List<User> users = new ArrayList<>();
+    public Set<User> users = ConcurrentHashMap.newKeySet();
 
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL)
-    public Set<Tag> tags = ConcurrentHashMap.newKeySet();
+    public List<Tag> tags = new ArrayList<>();
 
     @SuppressWarnings("unused")
     protected Board() {

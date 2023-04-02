@@ -1,8 +1,8 @@
 package client.scenes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import javax.inject.Inject;
 
 import client.utils.ServerUtils;
@@ -89,7 +89,7 @@ public class CardDetailsCtrl {
     }
 
     private void prepareTagsMenu() {
-        Set<Tag> remainingTags = mainCtrl.getCurrentBoard().tags;
+        List<Tag> remainingTags = mainCtrl.getCurrentBoard().tags;
         remainingTags.removeAll(card.tags);
 
         for(Tag t : remainingTags) {
