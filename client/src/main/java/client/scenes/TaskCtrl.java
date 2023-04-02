@@ -1,5 +1,12 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import commons.Task;
@@ -8,12 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.*;
-
-import javax.inject.Inject;
-import java.net.URL;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import javafx.scene.input.KeyCode;
 
 public class TaskCtrl implements Initializable {
     private final ServerUtils server;
@@ -35,6 +37,11 @@ public class TaskCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle rs) {
+        prepareTitle();
+        prepareIsDone();
+    }
+
+    private void prepareTitle() {
         title.textProperty().addListener((o, oldV, newV) -> {
             if(!Objects.equals(t.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
@@ -52,13 +59,14 @@ public class TaskCtrl implements Initializable {
                 updateTitle();
             }
         });
+        title.setText(t.title);
+    }
 
+    private void prepareIsDone() {
         isDone.selectedProperty().addListener((o, oldV, newV) -> {
             server.updateTask(t.id, "isDone", isDone.isSelected());
         });
-
-        this.title.setText(t.title);
-        this.isDone.setSelected(t.isDone);
+        isDone.setSelected(t.isDone);
     }
 
     public void updateTitle() {
@@ -77,6 +85,28 @@ public class TaskCtrl implements Initializable {
             server.updateTask(t.id, "title", title.getText());
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void shiftUp() {
+        if(t.index > 0) {
+            var tasksOrdered = new ArrayList<>(t.parentCard.tasks);
+            tasksOrdered.sort(Comparator.comparingInt(task -> task.index));
+            Task other = tasksOrdered.get(t.index - 1);
+            server.updateTask(t.id, "index", t.index - 1);
+            server.updateTask(other.id, "index", other.index + 1);
+        }
+    }
+
+    @FXML
+    private void shiftDown() {
+        if(t.index < t.parentCard.tasks.size() - 1) {
+            var tasksOrdered = new ArrayList<>(t.parentCard.tasks);
+            tasksOrdered.sort(Comparator.comparingInt(task -> task.index));
+            Task other = tasksOrdered.get(t.index + 1);
+            server.updateTask(t.id, "index", t.index + 1);
+            server.updateTask(other.id, "index", other.index - 1);
         }
     }
 

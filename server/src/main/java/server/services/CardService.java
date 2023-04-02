@@ -16,7 +16,6 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
-
     private final SocketRefreshService sockets;
 
 
@@ -34,6 +33,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.save(card);
+        sockets.broadcastRemoval(card);
         forceRefresh(card);
 
         return HttpStatus.CREATED;
@@ -41,19 +41,16 @@ public class CardService implements StandardEntityService<Card, Long> {
 
     @Transactional
     public HttpStatus delete(Long id, String username, String password) {
-        Optional<Card> optionalCard = cardRepo.findById(id);
+        HttpStatus res = prepare(id, username, password);
 
-        if(optionalCard.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
+        if (!res.equals(HttpStatus.OK))
+            return res;
 
-        Card card = optionalCard.get();
+        Card card = cardRepo.findById(id).get();
 
         cardRepo.deleteById(id);
 
         cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
-
-        sockets.broadcastRemoval(card);
 
         forceRefresh(card);
 
@@ -61,91 +58,105 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        Optional<Card> optionalCard = cardRepo.findById(id);
+//        if (!prepare(id, username, password).equals(HttpStatus.OK))
+//            return prepare(id, username, password);
+//
+//        Card card = cardRepo.findById(id).get();
+//        String newValueString = String.valueOf(newValue);
+//
+//        if(newValueString.isEmpty()) {
+//            return HttpStatus.BAD_REQUEST;
+//        }
+//
+//        return flush(card);
 
-        if(optionalCard.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Card card = optionalCard.get();
-
-        String newValueString = String.valueOf(newValue);
-
-        HttpStatus res = null;
-
-        switch (component) {
-            case "title":
-                res = updateTitle(newValueString, card);
-                break;
-            case "description":
-                res = updateDescription(newValueString, card);
-                break;
-            case "parentCardList":
-                res = updateParentCardList(Long.parseLong(newValueString), card);
-                break;
-            case "index":
-                res = updateIndex(Integer.parseInt(newValueString), card);
-                break;
-
-            case "dragAndDrop":
-                res = dragAndDrop(Long.parseLong(newValueString), card);
-                break;
-
-            case "listDragAndDrop":
-                res = listDragAndDrop(Long.parseLong(newValueString), card);
-                break;
-            default:
-                res = HttpStatus.BAD_REQUEST;
-                break;
-        }
-
-        if(!res.equals(HttpStatus.OK)) {
-            return res;
-        }
-
-        cardRepo.saveAndFlush(card);
-
-        forceRefresh(card);
-
-        return HttpStatus.OK;
+        //No use for this method, should I delete?
+        return HttpStatus.BAD_REQUEST;
     }
 
-    public HttpStatus updateTitle(String newValue, Card card) {
-        if(isNullOrEmpty(newValue)) {
+    public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(newValueString.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
-        card.title = newValue;
-        return HttpStatus.OK;
+
+        card.title = newValueString;
+
+        return flush(card);
     }
 
-    public HttpStatus updateDescription(String newValue, Card card) {
-        if(isNullOrEmpty(newValue)) {
+    public HttpStatus updateDescription(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(newValueString.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
-        card.description = newValue;
-        return HttpStatus.OK;
+
+        card.description = newValueString;
+
+        return flush(card);
     }
 
-    public HttpStatus updateParentCardList(long newValue, Card card) {
-        Optional<CardList> parentCardList = cardListRepo.findById(newValue);
+    public HttpStatus updateIndex(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        int newValueInt = Integer.parseInt(String.valueOf(newValue).trim());
+
+        if(newValueInt < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        card.index = newValueInt;
+
+        return flush(card);
+    }
+
+    public HttpStatus updateParent(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        long newValueLong = Long.parseLong(String.valueOf(newValue).trim());
+
+        if(newValueLong < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<CardList> parentCardList = cardListRepo.findById(newValueLong);
+
         if (parentCardList.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
-        card.parentCardList = parentCardList.get();
-        return HttpStatus.OK;
-    }
 
-    public HttpStatus updateIndex(int newValue, Card card) {
-        if (newValue < 0) {
-            return HttpStatus.BAD_REQUEST;
-        }
-        card.index = newValue;
-        return HttpStatus.OK;
+        card.parentCardList = parentCardList.get();
+
+        return flush(card);
     }
 
     @Transactional
-    public HttpStatus dragAndDrop(long newValue, Card card) {
-        Optional<Card> optionalTargetCard = cardRepo.findById(newValue);
+    public HttpStatus updateDragAndDrop(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        long newValueLong = Long.parseLong(String.valueOf(newValue).trim());
+
+        if(newValueLong < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<Card> optionalTargetCard = cardRepo.findById(newValueLong);
 
         if (optionalTargetCard.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
@@ -167,12 +178,22 @@ public class CardService implements StandardEntityService<Card, Long> {
         card.parentCardList = targetCardList;
         card.index = targetCard.index;
 
-        return HttpStatus.OK;
+        return flush(card);
     }
 
     @Transactional
-    public HttpStatus listDragAndDrop(long newValue, Card card) {
-        Optional<CardList> optionalTargetList = cardListRepo.findById(newValue);
+    public HttpStatus updateListDragAndDrop(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        long newValueLong = Long.parseLong(String.valueOf(newValue).trim());
+
+        if(newValueLong < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<CardList> optionalTargetList = cardListRepo.findById(newValueLong);
 
         if (optionalTargetList.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
@@ -189,6 +210,27 @@ public class CardService implements StandardEntityService<Card, Long> {
             card.parentCardList = targetList;
             card.index = targetList.cards.size();
         }
+
+        return flush(card);
+    }
+
+    public HttpStatus prepare(Long id, String username, String password) {
+        if (id < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<Card> optionalCard = cardRepo.findById(id);
+
+        if(optionalCard.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus flush(Card card) {
+        cardRepo.saveAndFlush(card);
+        forceRefresh(card);
 
         return HttpStatus.OK;
     }

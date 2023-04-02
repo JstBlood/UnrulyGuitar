@@ -19,7 +19,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
     private final RepositoryBasedAuthService pwd;
 
     public BoardsService(BoardRepository repo, UserRepository userRepo,
-                            SocketRefreshService messages, RepositoryBasedAuthService pwd) {
+                         SocketRefreshService messages, RepositoryBasedAuthService pwd) {
 
         this.repo = repo;
         this.sockets = messages;
@@ -77,22 +77,44 @@ public class BoardsService implements StandardEntityService<Board, String> {
     }
 
     public HttpStatus update(String id, String component, Object newValue, String username, String password) {
-        if(repo.findByKey(id) == null)
-            return HttpStatus.NOT_FOUND;
-        if(!pwd.hasEditAccess(password, id))
-            return HttpStatus.FORBIDDEN;
 
-        Board edit = repo.findByKey(id);
+        //Unused, delete?
+        return HttpStatus.BAD_REQUEST;
+    }
 
-        try {
-            edit.getClass().getField(component).set(edit, newValue);
-        } catch (Exception e) {
+    public HttpStatus updateTitle(String key, String newValue, String username, String password) {
+        if (!prepare(key, username, password).equals(HttpStatus.OK))
+            return prepare(key, username, password);
+
+        Board board = repo.findByKey(key);
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(newValueString.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        repo.save(edit);
+        board.title = newValueString;
 
-        forceRefresh(id);
+        return flush(board);
+    }
+
+    public HttpStatus prepare(String key, String username, String password) {
+        Board optionalBoard = repo.findByKey(key);
+
+        if(optionalBoard == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(password, key)) {
+            return HttpStatus.FORBIDDEN;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus flush(Board board) {
+        repo.save(board);
+        forceRefresh(board.key);
 
         return HttpStatus.OK;
     }
