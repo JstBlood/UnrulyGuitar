@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardSettingsCtrl">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardSettingsCtrl">
    <stylesheets>
       <URL value="@/client/css/mainStyle.css" />
       <URL value="@/client/css/BoardSettingsStyle.css" />
@@ -32,12 +25,14 @@
                <rowConstraints>
                   <RowConstraints minHeight="40.0" prefHeight="60.0" vgrow="SOMETIMES" />
                   <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="40.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="74.0" minHeight="0.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="146.0" minHeight="0.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="152.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="221.0" minHeight="0.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="159.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="159.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Label styleClass="text-2" text="Board Name" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
@@ -48,22 +43,67 @@
                         <String fx:value="input" />
                      </styleClass>
                   </TextField>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="subtitle" text="Customisation" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                  <Label styleClass="text-2" text="Colours" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-                  <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="subtitle" text="Customisation" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                  <Label prefWidth="81.0" styleClass="text-2" text="Background" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                     <buttons>
-                      <Button alignment="CENTER" mnemonicParsing="false" text="Red" />
-                        <Button alignment="CENTER" mnemonicParsing="false" text="Blue" />
-                        <Button alignment="CENTER" mnemonicParsing="false" text="Green" />
+                        <ColorPicker fx:id="backgroundColor" editable="true" onAction="#backgroundChange">
+                           <value>
+                              <Color red="0.41184818744659424" green="0.14290936291217804" blue="0.44736841320991516" />
+                           </value>
+                        </ColorPicker>
+                        <Button mnemonicParsing="false" onAction="#resetBoardBackground" text="Reset" />
                     </buttons>
                   </ButtonBar>
-                  <Label prefHeight="25.0" prefWidth="32.0" styleClass="text-2" text="Tags" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Label prefHeight="25.0" prefWidth="58.0" styleClass="text-2" text="Tags" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                   <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <content>
                         <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" spacing="10.0" />
                      </content>
                   </ScrollPane>
-                  <Button mnemonicParsing="false" onAction="#addTag" prefHeight="26.0" prefWidth="68.0" styleClass="button-0" text="Add tag" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" onAction="#addTag" prefHeight="36.0" prefWidth="95.0" styleClass="button-0" text="Add tag" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Label layoutX="100.0" layoutY="406.0" styleClass="text-2" text="Foreground" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                  <ButtonBar layoutX="196.0" layoutY="393.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="TOP">
+                     <buttons>
+                        <ColorPicker fx:id="foregroundColor" editable="true" onAction="#foregroundChange" />
+                        <Button mnemonicParsing="false" onAction="#resetBoardForeground" text="Reset" />
+                     </buttons>
+                  </ButtonBar>
+                  <Label layoutX="100.0" layoutY="263.0" styleClass="text-2" text="List Background" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                  <ButtonBar layoutX="196.0" layoutY="260.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                     <buttons>
+                        <ColorPicker fx:id="backgroundColorList" editable="true" onAction="#backgroundChangeList">
+                           <value>
+                              <Color red="0.41184818744659424" green="0.14290936291217804" blue="0.44736841320991516" />
+                           </value>
+                        </ColorPicker>
+                        <Button mnemonicParsing="false" onAction="#resetListBackground" text="Reset" />
+                     </buttons>
+                  </ButtonBar>
+                  <Label layoutX="85.0" layoutY="235.0" styleClass="text-2" text="List Foreground" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                  <ButtonBar layoutX="196.0" layoutY="199.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                     <buttons>
+                        <ColorPicker fx:id="foregroundColorList" editable="true" onAction="#foregroundChangeList">
+                           <value>
+                              <Color red="0.41184818744659424" green="0.14290936291217804" blue="0.44736841320991516" />
+                           </value>
+                        </ColorPicker>
+                        <Button mnemonicParsing="false" onAction="#resetListForeground" text="Reset" />
+                     </buttons>
+                  </ButtonBar>
+                  <Label layoutX="112.0" layoutY="129.0" prefHeight="25.0" prefWidth="58.0" styleClass="text-2" text="Presets" GridPane.columnIndex="1" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="196.0" layoutY="118.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                     <content>
+                        <HBox fx:id="presetList" prefHeight="100.0" prefWidth="200.0" spacing="10.0" />
+                     </content>
+                  </ScrollPane>
+                  <Button layoutX="576.0" layoutY="123.0" mnemonicParsing="false" onAction="#addPreset" prefHeight="36.0" prefWidth="123.0" styleClass="button-0" text="Add preset" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+                  <Label layoutX="100.0" layoutY="242.0" prefHeight="17.0" prefWidth="100.0" styleClass="text-2" text="Default preset" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                  <ButtonBar layoutX="196.0" layoutY="229.0" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <buttons>
+                        <ChoiceBox fx:id="defPreset" prefWidth="150.0" />
+                     </buttons>
+                  </ButtonBar>
                </children>
             </GridPane>
          </content>

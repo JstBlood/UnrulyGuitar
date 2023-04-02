@@ -16,6 +16,7 @@
 package server.api;
 
 import commons.Board;
+import commons.ColorPreset;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,13 @@ public class BoardsController {
         return ResponseEntity.ok(service.getBoard(board.key));
     }
 
+    @PostMapping("/{key}/addColorPreset")
+    public ResponseEntity<?> addPreset(@RequestBody ColorPreset preset,
+                                     @PathVariable String username, @PathVariable String key,
+                                     @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.addColorPreset(key, preset, username, password)).build();
+    }
+
     @PostMapping("/join/{id}")
     public ResponseEntity<Board> join(@PathVariable String id,
                                       @PathVariable String username,
@@ -64,18 +72,67 @@ public class BoardsController {
         return ResponseEntity.status(service.leave(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable String key, @PathVariable String component,
+    @PutMapping("/{key}/foreground")
+    public ResponseEntity<?> updateFore(@PathVariable String key,
                                     @RequestBody String newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.update(key, component, newValue, username, password)).build();
+        return ResponseEntity.status(service.updateForeground(key, newValue, username, password)).build();
     }
+
+    @PutMapping("/{key}/background")
+    public ResponseEntity<?> updateBack(@PathVariable String key,
+                                        @RequestBody String newValue, @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateBackground(key, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/list/foreground")
+    public ResponseEntity<?> updateForeList(@PathVariable String key,
+                                        @RequestBody String newValue, @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateForegroundList(key, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/list/background")
+    public ResponseEntity<?> updateBackList(@PathVariable String key,
+                                        @RequestBody String newValue, @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateBackgroundList(key, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/preset/{id}/foreground")
+    public ResponseEntity<?> updateForePreset(@PathVariable String key, @PathVariable Long id,
+                                            @RequestBody String newValue, @PathVariable String username,
+                                            @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateForegroundPreset(key, id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/preset/{id}/background")
+    public ResponseEntity<?> updateBackPreset(@PathVariable String key, @PathVariable Long id,
+                                              @RequestBody String newValue, @PathVariable String username,
+                                              @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateBackgroundPreset(key, id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{key}/defaultPreset")
+    public ResponseEntity<?> updateDefPreset(@RequestBody Long id, @PathVariable String key
+            , @PathVariable String username, @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.updateDefaultPreset(key, id, username, password)).build();
+    }
+
 
     @PutMapping("/{key}/title")
     public ResponseEntity<?> updateTitle(@PathVariable String key,
                                          @RequestBody String newValue,  @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(service.updateTitle(key, newValue, username, password)).build();
+    }
+
+    @DeleteMapping("/{key}/removeColorPreset/{id}")
+    public ResponseEntity<?> removePreset(@PathVariable Long id,
+                                       @PathVariable String username, @PathVariable String key,
+                                       @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.removeColorPreset(key, id, username, password)).build();
     }
 
     @DeleteMapping("/{id}")

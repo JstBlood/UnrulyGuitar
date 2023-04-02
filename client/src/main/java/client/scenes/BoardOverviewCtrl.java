@@ -51,6 +51,8 @@ public class BoardOverviewCtrl implements Initializable {
     private HBox section;
     @FXML
     private GridPane rightBar;
+    @FXML
+    private GridPane rooter;
 
     private List<CardListCtrl> children;
 
@@ -157,10 +159,13 @@ public class BoardOverviewCtrl implements Initializable {
 
         if(!newState.title.equals(title.getText())) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
         }
 
-        mainCtrl.updateBoardSettings();
+        title.setStyle("-fx-text-fill: " + newState.colors.foreground + ";");
+        rooter.setStyle("-fx-background-color: " + newState.colors.background + ";");
+
+
+        mainCtrl.updateBoardSettings(newState);
 
         //TODO: update tags
     }
@@ -206,7 +211,7 @@ public class BoardOverviewCtrl implements Initializable {
                     }),
                     new KeyFrame(Duration.seconds(2), event -> {
                         inviteKey.setText("Invite Key");
-                        inviteKey.setStyle("-fx-background-color: -fx-col-0");
+                        inviteKey.setStyle("-fx-background-color: " + board.colors.foreground + "");
                     })
             );
             timeline.play();
@@ -227,12 +232,12 @@ public class BoardOverviewCtrl implements Initializable {
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
+            title.setStyle("-fx-text-fill: " + board.colors.foreground + ";");
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: -fx-col-0;");
+        title.setStyle("-fx-text-fill: " + board.colors.foreground + ";");
 
         board.title = title.getText();
 

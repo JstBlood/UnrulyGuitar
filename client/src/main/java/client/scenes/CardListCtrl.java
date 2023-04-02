@@ -154,9 +154,10 @@ public class CardListCtrl implements Initializable {
     }
 
     public void propagate(CardList newState) {
+        title.setStyle("-fx-text-fill: " + newState.parentBoard.cardListColors.foreground + ";");
+        mainContainer.setStyle("-fx-background-color: " + newState.parentBoard.cardListColors.background + ";");
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
         }
 
         cardList = newState;
@@ -178,6 +179,8 @@ public class CardListCtrl implements Initializable {
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
         }
+
+        cardName.setText("");
     }
 
     private void handleDragEvent(DragEvent e) {
@@ -200,13 +203,13 @@ public class CardListCtrl implements Initializable {
     public void updateTitle() {
         if (title.getText().isEmpty()) {
             title.setText(cardList.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
+            title.setStyle("-fx-text-fill: " + cardList.parentBoard.cardListColors.foreground + ";");
             UIUtils.showError("Title should not be empty!");
             return;
         }
-        cardList.title = title.getText();
 
-        title.setStyle("-fx-text-fill: -fx-col-0;");
+        cardList.title = title.getText();
+        title.setStyle("-fx-text-fill: " + cardList.parentBoard.cardListColors.foreground + ";");
 
         try {
             server.updateCardList(cardList.id, "title", title.getText());

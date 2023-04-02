@@ -44,6 +44,8 @@ public class CardDetailsCtrl {
     private TextField subtaskTitle;
     @FXML
     private TextArea subtaskDescription;
+    @FXML
+    private ChoiceBox<String> presetChoice;
     private List<Task> subtasks;
 
     @Inject
@@ -116,6 +118,7 @@ public class CardDetailsCtrl {
 
             tagsBar.getButtons().add(tagButton);
         };
+
         return addTagEvent;
     }
 
@@ -166,6 +169,15 @@ public class CardDetailsCtrl {
             return;
         }
 
+        presetChoice.getItems().clear();
+        for(ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
+            presetChoice.getItems().add("No #" + c.id);
+
+            if(newState.colors != null && c.id == newState.colors.id) {
+                presetChoice.getSelectionModel().select(presetChoice.getItems().size()-1);
+            }
+        }
+
         card = newState;
 
         title.setStyle("-fx-text-fill: white;");
@@ -191,8 +203,15 @@ public class CardDetailsCtrl {
 
     public void submitCard(){
         // go back to the overview
+        updatePreset();
+        updatePreset();
         clearFields();
         mainCtrl.showBoardOverview();
+    }
+
+    private void updatePreset() {
+        server.updateCardPreset(card.id, Long.parseLong(presetChoice.getSelectionModel().
+                getSelectedItem().substring(4)));
     }
 
     private Task generateTask() {

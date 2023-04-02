@@ -111,7 +111,9 @@ public class MainCtrl {
     }
 
     public void showBoardOverview() {
-        boardOverviewCtrl.prepareLongPolling();
+        // TODO: FIX ME
+        //boardOverviewCtrl.prepareLongPolling();
+
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
     }
@@ -126,8 +128,8 @@ public class MainCtrl {
         primaryStage.setScene(boardSettings);
     }
 
-    public void updateBoardSettings() {
-        boardSettingsCtrl.update();
+    public void updateBoardSettings(Board newState) {
+        boardSettingsCtrl.update(newState);
     }
 
     public Board getCurrentBoard() {

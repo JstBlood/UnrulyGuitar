@@ -133,27 +133,41 @@ public class CardCtrl implements Initializable {
     public void propagate(Card newState) {
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
-            title.setStyle("-fx-text-fill: white;");
         }
+
+        setTitleColors();
 
         if(!newState.description.equals(description.getText())) {
             description.setText(newState.description);
         }
+
+        if(card.colors == null)
+            cardBox.setStyle("-fx-background-color: " + card.parentCardList.parentBoard
+                    .defaultPreset.background + " ");
+        else
+            cardBox.setStyle("-fx-background-color: " + card.colors.background + " ");
 
         card = newState;
 
         handleProgress();
     }
 
+    private void setTitleColors() {
+        if(card.colors == null)
+            title.setStyle("-fx-text-fill: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
+        else
+            title.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
+    }
+
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(card.title);
-            title.setStyle("-fx-text-fill: white;");
+            setTitleColors();
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: white;");
+        setTitleColors();
 
         card.title = title.getText();
 

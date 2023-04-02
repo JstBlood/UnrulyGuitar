@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.database.TestBoardsRepository;
+import server.database.TestColorPresetRepository;
 import server.database.TestTaskRepository;
 import server.database.TestUserRepository;
 import server.services.BoardsService;
@@ -38,8 +39,9 @@ public class TaskControllerTest {
         TestUserRepository uRepo = new TestUserRepository();
         TestBoardsRepository bRepo = new TestBoardsRepository();
         SocketRefreshService sockets = new SocketRefreshService(null);
+        var colorRepo = new TestColorPresetRepository();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        TaskService service = new TaskService(repo, new BoardsService(bRepo, uRepo, sockets, pwd));
+        TaskService service = new TaskService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo));
 
         sut = new TaskController(service);
     }
@@ -88,14 +90,7 @@ public class TaskControllerTest {
     @Test
     public void cannotUpdateEmptyValue() {
         repo.save(SOME_TASK);
-        var actual = sut.update(SOME_CARD.id, "title", "", "", "");
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
-    public void cannotUpdateBadComponent() {
-        repo.save(SOME_TASK);
-        var actual = sut.update(SOME_CARD.id, "margin", "12", "", "");
+        var actual = sut.updateTitle(SOME_CARD.id,  "", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 

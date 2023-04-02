@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
+import server.database.ColorPresetRepository;
 
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
@@ -17,14 +18,16 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
     private final SocketRefreshService sockets;
+    private final ColorPresetRepository colorRepo;
 
 
     public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
-                       SocketRefreshService sockets) {
+                       SocketRefreshService sockets, ColorPresetRepository colorRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
         this.sockets = sockets;
+        this.colorRepo = colorRepo;
     }
 
     public HttpStatus add(Card card, String username, String password) {
@@ -57,21 +60,22 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-//        if (!prepare(id, username, password).equals(HttpStatus.OK))
-//            return prepare(id, username, password);
-//
-//        Card card = cardRepo.findById(id).get();
-//        String newValueString = String.valueOf(newValue);
-//
-//        if(newValueString.isEmpty()) {
-//            return HttpStatus.BAD_REQUEST;
-//        }
-//
-//        return flush(card);
+    public HttpStatus updatePreset(Long id, Long newId, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
 
-        //No use for this method, should I delete?
-        return HttpStatus.BAD_REQUEST;
+        if(colorRepo.findById(newId).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
+        Card card = cardRepo.findById(id).get();
+
+        card.colors = colorRepo.findById(newId).get();
+
+        // This is needed here for the simple reason
+        // that one save does not suffice in this case
+        cardRepo.saveAndFlush(card);
+
+        return flush(card);
     }
 
     public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {

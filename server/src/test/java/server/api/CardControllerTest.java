@@ -26,10 +26,7 @@ import commons.CardList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.TestBoardsRepository;
-import server.database.TestCardListRepository;
-import server.database.TestCardRepository;
-import server.database.TestUserRepository;
+import server.database.*;
 import server.services.*;
 
 public class CardControllerTest {
@@ -52,12 +49,14 @@ public class CardControllerTest {
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
         SocketRefreshService sockets = new TestSocketRefresher();
+        var colorRepo = new TestColorPresetRepository();
         clRepo = new TestCardListRepository();
 
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
+        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo),
+                clRepo, sockets, colorRepo);
 
 
         sut = new CardController(service);
@@ -104,13 +103,6 @@ public class CardControllerTest {
     public void cannotUpdateInexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
-    public void cannotUpdateBadComponent() {
-        repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "margin", "12", "", "");
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
