@@ -1,12 +1,10 @@
 package server.services;
 
-import commons.Card;
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.TaskRepository;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

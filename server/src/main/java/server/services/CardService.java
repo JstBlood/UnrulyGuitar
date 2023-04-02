@@ -16,11 +16,15 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
+    private final SocketRefreshService sockets;
 
-    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo) {
+
+    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
+                       SocketRefreshService sockets) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
+        this.sockets = sockets;
     }
 
     public HttpStatus add(Card card, String username, String password) {
@@ -29,6 +33,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         cardRepo.save(card);
+        sockets.broadcastRemoval(card);
         forceRefresh(card);
 
         return HttpStatus.CREATED;
@@ -38,7 +43,7 @@ public class CardService implements StandardEntityService<Card, Long> {
     public HttpStatus delete(Long id, String username, String password) {
         HttpStatus res = prepare(id, username, password);
 
-        if (res.equals(HttpStatus.NOT_FOUND))
+        if (!res.equals(HttpStatus.OK))
             return res;
 
         Card card = cardRepo.findById(id).get();
@@ -158,7 +163,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         Card targetCard = optionalTargetCard.get();
-        Long targetCardListId = targetCard.parentCardList.id;
+        long targetCardListId = targetCard.parentCardList.id;
 
         Optional<CardList> optionalTargetCardList = cardListRepo.findById(targetCardListId);
         if (optionalTargetCardList.isEmpty()) {

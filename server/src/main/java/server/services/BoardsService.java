@@ -1,7 +1,6 @@
 package server.services;
 
 import commons.Board;
-import commons.Card;
 import commons.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

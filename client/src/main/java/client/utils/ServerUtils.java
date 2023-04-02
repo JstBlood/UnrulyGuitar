@@ -190,18 +190,12 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/lists/" + id);
     }
 
-    public CardList updateCardList(long id, String component, Object newValue) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonValue = null;
-        try {
-            jsonValue = objectMapper.writeValueAsString(newValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+    public void updateCardList(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/lists/" + id + "/" + component,
-                Entity.json(jsonValue),
-                new GenericType<>(){});
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>() {
+                });
     }
 
     private ExecutorService exec;

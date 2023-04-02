@@ -11,10 +11,12 @@ import server.database.CardListRepository;
 public class CardListService {
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
+    private final SocketRefreshService sockets;
 
-    public CardListService(CardListRepository cardListRepo, BoardsService boards) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards, SocketRefreshService sockets) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
+        this.sockets = sockets;
     }
 
     public HttpStatus add(CardList cardList, String username, String password) {
@@ -45,6 +47,7 @@ public class CardListService {
         CardList cardList = optionalCardList.get();
 
         cardListRepo.deleteById(id);
+        sockets.broadcastRemoval(cardList);
         forceRefresh(cardList);
 
         return HttpStatus.OK;

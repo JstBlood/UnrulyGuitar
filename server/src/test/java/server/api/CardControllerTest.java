@@ -57,7 +57,7 @@ public class CardControllerTest {
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo);
+        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
 
 
         sut = new CardController(service);
@@ -84,6 +84,12 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotDeleteInexistentCard() {
+        var actual = sut.delete(-1, "", "");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
     public void databaseIsUsedDelete() {
         repo.save(SOME_CARD);
         repo.shiftCardsUp(SOME_CARD.index, SOME_CARD.parentCardList.id);
@@ -92,6 +98,12 @@ public class CardControllerTest {
         Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
         Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateInexistentCard() {
+        var actual = sut.updateTitle(-1, "", "", "");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

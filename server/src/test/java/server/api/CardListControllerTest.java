@@ -47,7 +47,7 @@ public class CardListControllerTest {
         TestUserRepository uRepo = new TestUserRepository();
         SocketRefreshService sockets = new TestSocketRefresher();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd));
+        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), sockets);
 
         sut = new CardListController(service);
     }
