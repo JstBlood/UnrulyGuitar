@@ -171,10 +171,9 @@ public class ServerUtils {
                 });
     }
 
-    private ExecutorService exec;
+    private static final ExecutorService exec = Executors.newSingleThreadExecutor();
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        exec = Executors.newSingleThreadExecutor();
         exec.submit(() -> {
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient(new ClientConfig())
