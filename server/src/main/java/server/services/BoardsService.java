@@ -1,6 +1,7 @@
 package server.services;
 
 import commons.Board;
+import commons.Card;
 import commons.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import server.database.BoardRepository;
 import server.database.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -19,7 +21,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
     private final RepositoryBasedAuthService pwd;
 
     public BoardsService(BoardRepository repo, UserRepository userRepo,
-                            SocketRefreshService messages, RepositoryBasedAuthService pwd) {
+                         SocketRefreshService messages, RepositoryBasedAuthService pwd) {
 
         this.repo = repo;
         this.sockets = messages;
@@ -77,22 +79,61 @@ public class BoardsService implements StandardEntityService<Board, String> {
     }
 
     public HttpStatus update(String id, String component, Object newValue, String username, String password) {
-        if(repo.findByKey(id) == null)
-            return HttpStatus.NOT_FOUND;
-        if(!pwd.hasEditAccess(password, id))
-            return HttpStatus.FORBIDDEN;
+//        if(repo.findByKey(id) == null)
+//            return HttpStatus.NOT_FOUND;
+//        if(!pwd.hasEditAccess(password, id))
+//            return HttpStatus.FORBIDDEN;
+//
+//        Board board = repo.findByKey(id);
+//        String newValueString = String.valueOf(newValue).trim();
+//
+//        if(newValueString.isEmpty()) {
+//            return HttpStatus.BAD_REQUEST;
+//        }
+//
+//        repo.save(edit);
+//
+//        forceRefresh(id);
+//
+//        return HttpStatus.OK;
 
-        Board edit = repo.findByKey(id);
+        //Unused, delete?
+        return HttpStatus.NO_CONTENT;
+    }
 
-        try {
-            edit.getClass().getField(component).set(edit, newValue);
-        } catch (Exception e) {
+    public HttpStatus updateTitle(long id, String newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Board board = repo.findById(id).get();
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(newValueString.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        repo.save(edit);
+        board.title = newValueString;
 
-        forceRefresh(id);
+        return flush(board);
+    }
+
+    public HttpStatus prepare(long id, String username, String password) {
+        Optional<Board> optionalBoard = repo.findById(id);
+
+        if(optionalBoard.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(password, String.valueOf(id))) {
+            return HttpStatus.FORBIDDEN;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus flush(Board board) {
+        repo.save(board);
+        forceRefresh(board.key);
 
         return HttpStatus.OK;
     }

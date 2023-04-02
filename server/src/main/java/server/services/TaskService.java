@@ -1,5 +1,6 @@
 package server.services;
 
+import commons.Card;
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,68 +48,22 @@ public class TaskService implements StandardEntityService<Task, Long> {
 
     @Override
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
+//        if (!prepare(id, username, password).equals(HttpStatus.OK))
+//            return prepare(id, username, password);
+//
+//        Task task = taskRepo.findById(id).get();
+//
+//        return flush(task);
 
-        Optional<Task> optionalTask = taskRepo.findById(id);
-
-        if(optionalTask.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Task task = optionalTask.get();
-
-        HttpStatus res = handleSwitch(component, newValue, task);
-
-        if (res.equals(HttpStatus.BAD_REQUEST))
-            return res;
-
-        taskRepo.saveAndFlush(task);
-
-        forceRefresh(task);
-
-        return res;
+        //Not needed, delete?
+        return HttpStatus.NO_CONTENT;
     }
 
-    private HttpStatus handleSwitch(String component, Object newValue, Task task) {
+    public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
 
-        HttpStatus res = null;
-
-        switch (component) {
-            case "title":
-                res = updateTitle(newValue, task);
-                break;
-
-            case "isDone":
-                res = updateIsDone(newValue, task);
-                break;
-
-            default:
-                res = HttpStatus.BAD_REQUEST;
-                break;
-
-        }
-
-        return res;
-    }
-
-    private HttpStatus updateIsDone(Object newValue, Task task) {
-
-        if(Objects.isNull(newValue)) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        var newValueBool = Boolean.parseBoolean(newValue.toString());
-
-        task.isDone = newValueBool;
-
-        return HttpStatus.OK;
-    }
-
-    private HttpStatus updateTitle(Object newValue, Task task) {
-
-        if(Objects.isNull(newValue)) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
+        Task task = taskRepo.findById(id).get();
         String newValueString = String.valueOf(newValue).trim();
 
         if(isNullOrEmpty(newValueString)) {
@@ -116,6 +71,39 @@ public class TaskService implements StandardEntityService<Task, Long> {
         }
 
         task.title = newValueString;
+
+        return flush(task);
+    }
+
+    public HttpStatus updateIsDone(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Task task = taskRepo.findById(id).get();
+        boolean newValueBool = Boolean.parseBoolean(newValue.toString());
+
+        task.isDone = newValueBool;
+
+        return flush(task);
+    }
+
+    public HttpStatus prepare(Long id, String username, String password) {
+        if (id < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<Task> optionalTask = taskRepo.findById(id);
+
+        if(optionalTask.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus flush(Task task) {
+        taskRepo.saveAndFlush(task);
+        forceRefresh(task);
 
         return HttpStatus.OK;
     }

@@ -33,4 +33,17 @@ public class TaskController {
         return ResponseEntity.status(taskService.update(id, component, newValue, username, password)).build();
     }
 
+    @PutMapping("/{id}/title")
+    public ResponseEntity<?> updateTitle(@PathVariable long id,
+                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.updateTitle(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/isDone")
+    public ResponseEntity<?> updateIsDone(@PathVariable long id,
+                                          @RequestBody Object newValue, @PathVariable String username,
+                                          @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.updateIsDone(id, newValue, username, password)).build();
+    }
 }

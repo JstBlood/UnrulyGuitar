@@ -51,19 +51,18 @@ public class CardListController {
         return ResponseEntity.status(cardListService.delete(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/title")
-    public ResponseEntity<?> update(@PathVariable long id,
-                                    @RequestBody String newValue, @PathVariable String username,
-                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(cardListService.update(id, "title", newValue, username,
-                password)).build();
-    }
-
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
                                     @RequestBody Object newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardListService.update(id, component, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/title")
+    public ResponseEntity<?> updateTitle(@PathVariable long id,
+                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardListService.updateTitle(id, newValue, username, password)).build();
     }
 
     @GetMapping("/updates")
