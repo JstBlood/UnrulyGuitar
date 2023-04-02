@@ -2,6 +2,8 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -39,7 +41,6 @@ public class BoardOverviewCtrl implements Initializable {
     private final Clipboard clipboard;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
-    private CardDetailsCtrl cardDetailsCtrl;
 
     @FXML
     private TextField title;
@@ -52,6 +53,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private GridPane rightBar;
 
+    private List<CardListCtrl> children;
+
     public void setBoard(Board board) {
         this.board = board;
         inviteKey.getItems().get(0).setText(board.key);
@@ -61,8 +64,8 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.cardDetailsCtrl = new CardDetailsCtrl(server, mainCtrl);
 
+        children = new ArrayList<>();
         clipboard = Clipboard.getSystemClipboard();
     }
 
@@ -86,6 +89,7 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
 
+        listsGrid.setAlignment(Pos.TOP_CENTER);
     }
 
     public void prepare(Board board) {
@@ -141,6 +145,7 @@ public class BoardOverviewCtrl implements Initializable {
         }
 
         updateBoard(newState);
+
         updateCardLists();
     }
 
@@ -155,6 +160,7 @@ public class BoardOverviewCtrl implements Initializable {
                     t.parentCard = c;
             }
         }
+
         for(Tag u : newState.tags) {
             u.parentBoard = newState;
         }
@@ -163,27 +169,37 @@ public class BoardOverviewCtrl implements Initializable {
     private void updateBoard(Board newState) {
         setBoard(newState);
 
-        title.setText(board.title);
-        title.setStyle("-fx-text-fill: -fx-col-0;");
+        if(!newState.title.equals(title.getText())) {
+            title.setText(board.title);
+            title.setStyle("-fx-text-fill: -fx-col-0;");
+        }
     }
 
     private void updateCardLists() throws IOException {
-        listsGrid.getChildren().clear();
-        listsGrid.getColumnConstraints().clear();
-        listsGrid.setAlignment(Pos.TOP_CENTER);
+        while(children.size() != board.cardLists.size()) {
+            if (children.size() < board.cardLists.size()) {
+                CardList cl = board.cardLists.get(children.size());
 
-        for (int i = 0; i < board.cardLists.size(); i++) {
-            CardList cl = board.cardLists.get(i);
-            FXMLLoader cardListLoader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
+                FXMLLoader cardListLoader = new FXMLLoader(getClass().getResource("/client/scenes/CardList.fxml"));
 
-            cardListLoader.setControllerFactory(c ->
-                    new CardListCtrl(this.server, this.mainCtrl, cl)
-            );
+                cardListLoader.setControllerFactory(c ->
+                        new CardListCtrl(this.server, this.mainCtrl, cl)
+                );
 
-            VBox cardListNode = cardListLoader.load();
+                VBox cardListNode = cardListLoader.load();
 
-            listsGrid.add(cardListNode, i, 0);
-            listsGrid.getColumnConstraints().add(new ColumnConstraints());
+                listsGrid.add(cardListNode, children.size(), 0);
+                listsGrid.getColumnConstraints().add(new ColumnConstraints());
+                children.add(cardListLoader.getController());
+            } else if (children.size() > board.cardLists.size()) {
+                listsGrid.getChildren().remove(children.size() - 1);
+                listsGrid.getColumnConstraints().remove(children.size() - 1);
+                children.remove(children.size() - 1);
+            }
+        }
+
+        for(int i = 0; i < children.size(); i++) {
+            children.get(i).propagate(board.cardLists.get(i));
         }
     }
     @FXML

@@ -19,7 +19,6 @@ import client.scenes.*;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
-import commons.Tag;
 
 public class MyModule implements Module {
 
@@ -28,8 +27,9 @@ public class MyModule implements Module {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
         binder.bind(LogonCtrl.class).in(Scopes.SINGLETON);
         binder.bind(BoardsCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(CardListCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CardListCtrl.class).in(Scopes.NO_SCOPE);
         binder.bind(BoardOverviewCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(CardDetailsCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CardDetailsCtrl.class).in(Scopes.NO_SCOPE);
+
     }
 }

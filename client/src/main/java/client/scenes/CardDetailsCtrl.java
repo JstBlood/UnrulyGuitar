@@ -68,6 +68,34 @@ public class CardDetailsCtrl {
             });
         });
 
+        server.registerForMessages("/topic/card/" + c.id + "/deletion", Card.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoardOverview();
+            });
+        });
+
+        server.registerForMessages("/topic/cardlist/" + c.parentCardList.id + "/deletion", CardList.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoardOverview();
+            });
+        });
+
+        server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key + "/deletion", Board.class,
+                q -> { Platform.runLater(() -> { mainCtrl.showBoards(); }); });
+
+        EventHandler<ActionEvent> addTagEvent = registerTagEvents();
+
+        addUpdateHandler(title, () -> updateTitle(), "title", true);
+        addUpdateHandler(description, () -> updateDescription(), "description", false);
+
+        for(Tag tag : mainCtrl.getCurrentBoard().tags){
+            MenuItem mi = new MenuItem(tag.name);
+            mi.setOnAction(addTagEvent);
+            this.addTag.getItems().add(mi);
+        }
+    }
+
+    private EventHandler<ActionEvent> registerTagEvents() {
         EventHandler<ActionEvent> removeTagEvent = e -> {
             this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
         };
@@ -88,15 +116,7 @@ public class CardDetailsCtrl {
 
             tagsBar.getButtons().add(tagButton);
         };
-
-        addUpdateHandler(title, () -> updateTitle(), "title", true);
-        addUpdateHandler(description, () -> updateDescription(), "description", false);
-
-        for(Tag tag : mainCtrl.getCurrentBoard().tags){
-            MenuItem mi = new MenuItem(tag.name);
-            mi.setOnAction(addTagEvent);
-            this.addTag.getItems().add(mi);
-        }
+        return addTagEvent;
     }
 
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {

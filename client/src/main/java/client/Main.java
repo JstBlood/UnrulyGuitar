@@ -40,7 +40,6 @@ public class Main extends Application {
         var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
         var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
-        var cardList = FXML.load(CardListCtrl.class, "client", "scenes", "CardList.fxml");
         var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes", "AddCardList.fxml");
         var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes", "CardDetails.fxml");
         var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
@@ -55,7 +54,6 @@ public class Main extends Application {
                 boardOverview,
                 addCardList,
                 cardDetails,
-                cardList,
                 boardSettings,
                 cStore);
 
