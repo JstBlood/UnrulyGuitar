@@ -1,5 +1,10 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
@@ -13,11 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
@@ -68,6 +68,34 @@ public class CardDetailsCtrl {
             });
         });
 
+        server.registerForMessages("/topic/card/" + c.id + "/deletion", Card.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoardOverview();
+            });
+        });
+
+        server.registerForMessages("/topic/cardlist/" + c.parentCardList.id + "/deletion", CardList.class, q -> {
+            Platform.runLater(() -> {
+                mainCtrl.showBoardOverview();
+            });
+        });
+
+        server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key + "/deletion", Board.class,
+                q -> { Platform.runLater(() -> { mainCtrl.showBoards(); }); });
+
+        EventHandler<ActionEvent> addTagEvent = registerTagEvents();
+
+        addUpdateHandler(title, () -> updateTitle(), "title", true);
+        addUpdateHandler(description, () -> updateDescription(), "description", false);
+
+        for(Tag tag : mainCtrl.getCurrentBoard().tags){
+            MenuItem mi = new MenuItem(tag.name);
+            mi.setOnAction(addTagEvent);
+            this.addTag.getItems().add(mi);
+        }
+    }
+
+    private EventHandler<ActionEvent> registerTagEvents() {
         EventHandler<ActionEvent> removeTagEvent = e -> {
             this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
         };
@@ -88,15 +116,7 @@ public class CardDetailsCtrl {
 
             tagsBar.getButtons().add(tagButton);
         };
-
-        addUpdateHandler(title, () -> updateTitle(), "title", true);
-        addUpdateHandler(description, () -> updateDescription(), "description", false);
-
-        for(Tag tag : mainCtrl.getCurrentBoard().tags){
-            MenuItem mi = new MenuItem(tag.name);
-            mi.setOnAction(addTagEvent);
-            this.addTag.getItems().add(mi);
-        }
+        return addTagEvent;
     }
 
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
@@ -180,7 +200,7 @@ public class CardDetailsCtrl {
     }
 
     public void addSubtask(){
-        server.addBoard(generateTask());
+        server.addTask(generateTask());
     }
 
     public void clearFields(){

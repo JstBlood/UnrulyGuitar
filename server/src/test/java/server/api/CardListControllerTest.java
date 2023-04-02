@@ -27,10 +27,8 @@ import org.junit.jupiter.api.Test;
 import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestUserRepository;
-import server.services.BoardsService;
-import server.services.CardListService;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
+import server.services.*;
+
 public class CardListControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
@@ -47,9 +45,9 @@ public class CardListControllerTest {
 
         TestBoardsRepository bRepo = new TestBoardsRepository();
         TestUserRepository uRepo = new TestUserRepository();
-        SocketRefreshService sockets = new SocketRefreshService(null);
+        SocketRefreshService sockets = new TestSocketRefresher();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd));
+        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), sockets);
 
         sut = new CardListController(service);
     }
@@ -97,14 +95,14 @@ public class CardListControllerTest {
 
     @Test
     public void cannotUpdateInexistentList() {
-        var actual = sut.update(-1, "title", "newTitle", "", "");
+        var actual = sut.updateTitle(-1, "newTitle", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void cannotUpdateBadValue() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARDLIST.id, "title", "", "", "");
+        var actual = sut.updateTitle(SOME_CARDLIST.id, "", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -118,7 +116,7 @@ public class CardListControllerTest {
     @Test
     public void databaseIsUsedUpdate() {
         repo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARDLIST.id, "title", "newTitle", "", "");
+        var actual = sut.updateTitle(SOME_CARDLIST.id, "newTitle", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
