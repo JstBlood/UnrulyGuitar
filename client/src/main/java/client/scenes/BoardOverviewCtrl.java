@@ -18,7 +18,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
@@ -71,35 +70,11 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        title.textProperty().addListener((o, oldV, newV) -> {
-            if(!Objects.equals(board.title, newV)) {
-                title.setStyle("-fx-text-fill: red;");
-            }
-        });
-
-        title.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        } );
-
-        title.focusedProperty().addListener((o, oldV, newV) -> {
-            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        });
-
-        listsGrid.setAlignment(Pos.TOP_CENTER);
+        prepareTitleField();
     }
 
     public void prepare(Board board) {
         setBoard(board);
-        this.board.id = -1;
-        try {
-            refresh(board);
-        } catch (Exception e) {
-
-        }
 
         server.connect();
 
@@ -120,7 +95,6 @@ public class BoardOverviewCtrl implements Initializable {
             });
         });
 
-
         server.forceRefresh(board.key);
     }
 
@@ -132,17 +106,28 @@ public class BoardOverviewCtrl implements Initializable {
         });
     }
 
+    public void prepareTitleField() {
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(board.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+    }
+
     public void refresh(Board newState) throws IOException {
         performRelink(newState);
-
-        // If our data is already up-to-date
-        // we forgo this update
-
-        // Just as a side note: hashCode does not help with speed here
-        // since we already have to go through every field.
-        if(board.hashCode() == newState.hashCode()) {
-            return;
-        }
 
         updateBoard(newState);
 
@@ -158,11 +143,12 @@ public class BoardOverviewCtrl implements Initializable {
 
                 for(Task t : c.tasks)
                     t.parentCard = c;
+
             }
         }
 
         for(Tag u : newState.tags) {
-            u.board = newState;
+            u.parentBoard = newState;
         }
     }
 
@@ -173,6 +159,10 @@ public class BoardOverviewCtrl implements Initializable {
             title.setText(board.title);
             title.setStyle("-fx-text-fill: -fx-col-0;");
         }
+
+        mainCtrl.updateBoardSettings();
+
+        //TODO: update tags
     }
 
     private void updateCardLists() throws IOException {

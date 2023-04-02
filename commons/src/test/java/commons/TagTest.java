@@ -7,10 +7,11 @@ import java.awt.*;
 import org.junit.jupiter.api.Test;
 
 public class TagTest {
+    private final Board SOME_BOARD = new Board("board", "myBoard");
 
     @Test
     public void checkConstructor() {
-        var t = new Tag("urgent", new Color(0, 0, 0));
+        var t = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD);
         assertEquals("urgent", t.name);
         assertEquals(new Color(0, 0, 0), t.color);
     }
@@ -23,35 +24,35 @@ public class TagTest {
 
     @Test
     public void addBoard() {
-        var t = new Tag("urgent", new Color(0, 0, 0));
+        var t = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD);
         Board testBoard1 = new Board("board1", "myBoard");
-        t.board = testBoard1;
+        t.parentBoard = testBoard1;
 
-        assertEquals(testBoard1, t.board);
+        assertEquals(testBoard1, t.parentBoard);
     }
 
     @Test
     public void EqualsHashCode() {
-        var a = new Tag("urgent", new Color(0, 0, 0));
-        var b = new Tag("urgent", new Color(0, 0, 0));
+        var a = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD);
+        var b = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD);
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void notEqualsHashCode() {
-        var a = new Tag("urgent", new Color(0, 0, 0));
-        var b = new Tag("mandatory", Color.BLUE);
+        var a = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD);
+        var b = new Tag("mandatory", Color.BLUE, SOME_BOARD);
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void hasToString() {
-        var t = new Tag("urgent", new Color(0, 0, 0)).toString();
+        var t = new Tag("urgent", new Color(0, 0, 0), SOME_BOARD).toString();
         assertTrue(t.contains(Tag.class.getSimpleName()));
         assertTrue(t.contains("\n"));
-        assertTrue(t.contains("board"));
+        assertTrue(t.contains("parentBoard"));
     }
 
 }
