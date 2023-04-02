@@ -161,9 +161,9 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
-    public void updateTask(long key, String component, Object newValue) {
+    public void updateTask(long id, String component, Object newValue) {
         internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
+                        store.accessStore().getPassword() + "/tasks/" + id + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }
