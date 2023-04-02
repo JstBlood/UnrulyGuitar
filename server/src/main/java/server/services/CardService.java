@@ -17,10 +17,15 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
 
-    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo) {
+    private final SocketRefreshService sockets;
+
+
+    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
+                       SocketRefreshService sockets) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
+        this.sockets = sockets;
     }
 
     public HttpStatus add(Card card, String username, String password) {
@@ -48,6 +53,8 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
 
+        sockets.broadcastRemoval(card);
+
         forceRefresh(card);
 
         return HttpStatus.OK;
@@ -69,6 +76,9 @@ public class CardService implements StandardEntityService<Card, Long> {
         switch (component) {
             case "title":
                 res = updateTitle(newValueString, card);
+                break;
+            case "description":
+                res = updateDescription(newValueString, card);
                 break;
             case "parentCardList":
                 res = updateParentCardList(Long.parseLong(newValueString), card);
@@ -105,6 +115,14 @@ public class CardService implements StandardEntityService<Card, Long> {
             return HttpStatus.BAD_REQUEST;
         }
         card.title = newValue;
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateDescription(String newValue, Card card) {
+        if(isNullOrEmpty(newValue)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        card.description = newValue;
         return HttpStatus.OK;
     }
 

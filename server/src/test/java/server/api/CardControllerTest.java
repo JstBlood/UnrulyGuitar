@@ -30,10 +30,7 @@ import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestCardRepository;
 import server.database.TestUserRepository;
-import server.services.BoardsService;
-import server.services.CardService;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
+import server.services.*;
 
 public class CardControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
@@ -52,15 +49,16 @@ public class CardControllerTest {
     public void setup() {
         random = new MyRandom();
         repo = new TestCardRepository();
-         uRepo = new TestUserRepository();
-         bRepo = new TestBoardsRepository();
-        SocketRefreshService sockets = new SocketRefreshService(null);
-         clRepo = new TestCardListRepository();
+        uRepo = new TestUserRepository();
+        bRepo = new TestBoardsRepository();
+        SocketRefreshService sockets = new TestSocketRefresher();
+        clRepo = new TestCardListRepository();
 
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo);
+        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
+
 
         sut = new CardController(service);
     }

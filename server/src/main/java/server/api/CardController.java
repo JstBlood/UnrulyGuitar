@@ -26,6 +26,22 @@ public class CardController {
         return ResponseEntity.status(cardService.delete(id, username, password)).build();
     }
 
+    @PutMapping("/{id}/description")
+    public ResponseEntity<?> updateDescription(@PathVariable long id,
+                                    @RequestBody String newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.update(id, "description", newValue,
+                username, password)).build();
+    }
+
+    @PutMapping("/{id}/title")
+    public ResponseEntity<?> updateTitle(@PathVariable long id,
+                                    @RequestBody String newValue, @PathVariable String username,
+                                    @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.update(id, "title", newValue,
+                username, password)).build();
+    }
+
     @PutMapping("/{id}/{component}")
     public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
                                        @RequestBody Object newValue, @PathVariable String username,

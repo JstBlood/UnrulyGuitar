@@ -130,6 +130,21 @@ public class CardCtrl implements Initializable {
         e.consume();
     }
 
+    public void propagate(Card newState) {
+        if(!newState.title.equals(title.getText())) {
+            title.setText(newState.title);
+            title.setStyle("-fx-text-fill: white;");
+        }
+
+        if(!newState.description.equals(description.getText())) {
+            description.setText(newState.description);
+        }
+
+        card = newState;
+
+        handleProgress();
+    }
+
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(card.title);
