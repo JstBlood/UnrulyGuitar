@@ -1,11 +1,11 @@
 package server.services;
 
+import java.util.Optional;
+
 import commons.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.TaskRepository;
-
-import java.util.Optional;
 
 @Service
 public class TaskService implements StandardEntityService<Task, Long> {
@@ -46,14 +46,6 @@ public class TaskService implements StandardEntityService<Task, Long> {
 
     @Override
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-//        if (!prepare(id, username, password).equals(HttpStatus.OK))
-//            return prepare(id, username, password);
-//
-//        Task task = taskRepo.findById(id).get();
-//
-//        return flush(task);
-
-        //Not needed, delete?
         return HttpStatus.BAD_REQUEST;
     }
 
@@ -81,6 +73,23 @@ public class TaskService implements StandardEntityService<Task, Long> {
         boolean newValueBool = Boolean.parseBoolean(newValue.toString());
 
         task.isDone = newValueBool;
+
+        return flush(task);
+    }
+
+    public HttpStatus updateIndex(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Task task = taskRepo.findById(id).get();
+
+        int newIndex = Integer.parseInt(String.valueOf(newValue));
+
+        if (newIndex < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        task.index = newIndex;
 
         return flush(task);
     }

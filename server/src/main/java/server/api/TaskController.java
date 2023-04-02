@@ -35,7 +35,7 @@ public class TaskController {
 
     @PutMapping("/{id}/title")
     public ResponseEntity<?> updateTitle(@PathVariable long id,
-                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @RequestBody String newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(taskService.updateTitle(id, newValue, username, password)).build();
     }
@@ -45,5 +45,12 @@ public class TaskController {
                                           @RequestBody Object newValue, @PathVariable String username,
                                           @PathVariable(required = false) String password) {
         return ResponseEntity.status(taskService.updateIsDone(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/index")
+    public ResponseEntity<?> updateIndex(@PathVariable long id,
+                                          @RequestBody Object newValue, @PathVariable String username,
+                                          @PathVariable(required = false) String password) {
+        return ResponseEntity.status(taskService.updateIndex(id, newValue, username, password)).build();
     }
 }
