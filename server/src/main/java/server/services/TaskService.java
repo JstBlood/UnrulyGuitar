@@ -56,7 +56,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
 //        return flush(task);
 
         //Not needed, delete?
-        return HttpStatus.NO_CONTENT;
+        return HttpStatus.BAD_REQUEST;
     }
 
     public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {

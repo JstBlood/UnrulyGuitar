@@ -66,7 +66,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 //        return flush(card);
 
         //No use for this method, should I delete?
-        return HttpStatus.NO_CONTENT;
+        return HttpStatus.BAD_REQUEST;
     }
 
     public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {
@@ -85,7 +85,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         return flush(card);
     }
 
-    public HttpStatus updateDescription(long id, Object newValue, String username, String password) {
+    public HttpStatus updateDescription(Long id, Object newValue, String username, String password) {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);
 
@@ -108,7 +108,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         Card card = cardRepo.findById(id).get();
         int newValueInt = Integer.parseInt(String.valueOf(newValue).trim());
 
-        if(newValueInt < -1) {
+        if(newValueInt < 0) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -158,7 +158,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         Card targetCard = optionalTargetCard.get();
-        long targetCardListId = targetCard.parentCardList.id;
+        Long targetCardListId = targetCard.parentCardList.id;
 
         Optional<CardList> optionalTargetCardList = cardListRepo.findById(targetCardListId);
         if (optionalTargetCardList.isEmpty()) {

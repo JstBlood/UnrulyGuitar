@@ -57,7 +57,7 @@ public class CardControllerTest {
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
+        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo);
 
 
         sut = new CardController(service);
@@ -84,12 +84,6 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotDeleteInexistentList() {
-        var actual = sut.delete(-1, "", "");
-        assertEquals(NOT_FOUND, actual.getStatusCode());
-    }
-
-    @Test
     public void databaseIsUsedDelete() {
         repo.save(SOME_CARD);
         repo.shiftCardsUp(SOME_CARD.index, SOME_CARD.parentCardList.id);
@@ -98,12 +92,6 @@ public class CardControllerTest {
         Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
         Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
-    }
-
-    @Test
-    public void cannotUpdateInexistentList() {
-        var actual = sut.update(-1, "title", "", "", "");
-        assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -116,14 +104,14 @@ public class CardControllerTest {
     @Test
     public void cannotUpdateBadTitle() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "title", "", "", "");
+        var actual = sut.updateTitle(SOME_CARD.id, "", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void updateTitle() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "title", "newTitle", "", "");
+        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -132,7 +120,7 @@ public class CardControllerTest {
     @Test
     public void cannotUpdateBadList() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "parentCardList", -1, "", "");
+        var actual = sut.updateParent(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -140,7 +128,7 @@ public class CardControllerTest {
     public void updateList() {
         repo.save(SOME_CARD);
         clRepo.save(SOME_CARDLIST);
-        var actual = sut.update(SOME_CARD.id, "parentCardList", SOME_CARDLIST.id, "", "");
+        var actual = sut.updateParent(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -149,14 +137,14 @@ public class CardControllerTest {
     @Test
     public void cannotUpdateBadIndex() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "index", -1, "", "");
+        var actual = sut.updateIndex(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
     public void updateIndex() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "index", 0, "", "");
+        var actual = sut.updateIndex(SOME_CARD.id, 0, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -165,10 +153,10 @@ public class CardControllerTest {
     @Test
     public void cannotUpdateBadDD() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "dragAndDrop", -1, "", "");
+        var actual = sut.updateDragAndDrop(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
 
-        actual = sut.update(SOME_CARD.id, "dragAndDrop", SOME_CARD.id, "", "");
+        actual = sut.updateDragAndDrop(SOME_CARD.id, SOME_CARD.id, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
 
     }
@@ -182,7 +170,7 @@ public class CardControllerTest {
         clRepo.save(SOME_CARDLIST);
         clRepo.save(newList);
 
-        var actual = sut.update(SOME_CARD.id, "dragAndDrop", newCard.id, "", "");
+        var actual = sut.updateDragAndDrop(SOME_CARD.id, newCard.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
@@ -193,7 +181,7 @@ public class CardControllerTest {
     @Test
     public void cannotUpdateBadLDD() {
         repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "listDragAndDrop", -1, "", "");
+        var actual = sut.updateListDragAndDrop(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -208,13 +196,13 @@ public class CardControllerTest {
 
         repo.save(SOME_CARD);
 
-        var actual = sut.update(SOME_CARD.id, "listDragAndDrop", SOME_CARDLIST.id, "", "");
+        var actual = sut.updateListDragAndDrop(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
 
-        actual = sut.update(SOME_CARD.id, "listDragAndDrop", newList.id, "", "");
+        actual = sut.updateListDragAndDrop(SOME_CARD.id, newList.id, "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));

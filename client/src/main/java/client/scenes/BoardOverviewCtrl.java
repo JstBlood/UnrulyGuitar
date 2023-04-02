@@ -247,7 +247,7 @@ public class BoardOverviewCtrl implements Initializable {
         board.title = title.getText();
 
         try {
-            server.updateBoard(board.key, "title", title.getText());
+            server.updateBoard(board.id, "title", title.getText());
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
         }

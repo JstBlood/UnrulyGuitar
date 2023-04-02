@@ -2,7 +2,6 @@ package server.services;
 
 import java.util.Optional;
 
-import commons.Card;
 import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class CardListService {
 //        return flush(cardList)
 
         //Unused, delete?
-        return HttpStatus.NO_CONTENT;
+        return HttpStatus.BAD_REQUEST;
     }
 
     public HttpStatus updateTitle(long id, Object newValue, String username, String password) {

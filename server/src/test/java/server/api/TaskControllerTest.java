@@ -81,8 +81,8 @@ public class TaskControllerTest {
 
     @Test
     public void cannotUpdateInexistentTask() {
-        var actual = sut.update(-1, "title", "newTitle", "", "");
-        assertEquals(NOT_FOUND, actual.getStatusCode());
+        var actual = sut.updateTitle(-1, "newTitle", "", "");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TaskControllerTest {
     @Test
     public void databaseIsUsedUpdate() {
         repo.save(SOME_TASK);
-        var actual = sut.update(SOME_CARD.id, "title", "newTitle", "", "");
+        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
