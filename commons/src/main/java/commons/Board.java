@@ -31,7 +31,7 @@ public class Board {
     public List<CardList> cardLists = new ArrayList<>();
 
     @ManyToMany(mappedBy = "boards")
-    public Set<User> users = ConcurrentHashMap.newKeySet();
+    public List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL)
