@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity(name = "Tag")
-@Table(name = "tag", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Table(name = "tag")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,9 +32,10 @@ public class Tag {
     @SuppressWarnings("unused")
     protected Tag() {}
 
-    public Tag(String name, Color color) {
+    public Tag(String name, Color color, Board parentBoard) {
         this.color = color;
         this.name = name;
+        this.parentBoard = parentBoard;
     }
 
     @Override

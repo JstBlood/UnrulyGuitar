@@ -60,7 +60,11 @@ public class Main extends Application {
                 cStore);
 
         primaryStage.setOnCloseRequest(e -> {
-            boardOverview.getKey().stop();
+            try {
+                boardOverview.getKey().stop();
+            } catch (RuntimeException ignored) {
+
+            }
         });
     }
 }

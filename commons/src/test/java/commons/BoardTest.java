@@ -49,8 +49,8 @@ public class BoardTest {
     @Test
     public void addTag() {
         var b = new Board("myBoard", "work");
-        Tag testTag1 = new Tag("urgent", Color.BLACK);
-        Tag testTag2 = new Tag("mandatory", Color.BLACK);
+        Tag testTag1 = new Tag("urgent", Color.BLACK, SOME_BOARD);
+        Tag testTag2 = new Tag("mandatory", Color.BLACK, SOME_BOARD);
         Set<Tag> SOME_TAGS = new HashSet<>(Arrays.asList(testTag1, testTag2));
         b.addTag(testTag1);
         b.addTag(testTag2);

@@ -10,9 +10,11 @@ import server.database.TagRepository;
 @Service
 public class TagService implements StandardEntityService<Tag, Long> {
     private final TagRepository tagRepo;
+    private final BoardsService boardsService;
 
-    public TagService(TagRepository tagRepo) {
+    public TagService(TagRepository tagRepo, BoardsService boardsService) {
         this.tagRepo = tagRepo;
+        this.boardsService = boardsService;
     }
 
     public HttpStatus add(Tag tag, String username, String password) {
@@ -20,9 +22,11 @@ public class TagService implements StandardEntityService<Tag, Long> {
             return HttpStatus.BAD_REQUEST;
         }
 
+        System.out.println(tag.id);
+
         tagRepo.save(tag);
 
-        //TODO: send a message
+        //forceRefresh(tag);
 
         return HttpStatus.CREATED;
     }
@@ -42,9 +46,13 @@ public class TagService implements StandardEntityService<Tag, Long> {
 
         tagRepo.deleteById(id);
 
-        //TODO: send a message
+        forceRefresh(tag);
 
         return HttpStatus.OK;
+    }
+
+    private void forceRefresh(Tag tag) {
+        boardsService.forceRefresh(tag.parentBoard.key);
     }
 
     private boolean isNullOrEmpty(String s) {

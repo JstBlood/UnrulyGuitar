@@ -31,10 +31,7 @@ import javax.websocket.WebSocketContainer;
 import client.scenes.MainCtrl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import commons.Board;
-import commons.Card;
-import commons.CardList;
-import commons.Task;
+import commons.*;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -152,30 +149,6 @@ public class ServerUtils {
 
     // END OF BOARD RELATED FUNCTIONS
 
-    // START OF TASK RELATED FUNCTIONS
-
-    public void addBoard(Task task) {
-        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/add",
-                Entity.entity(task, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
-    public void updateTask(long key, String component, Object newValue) {
-        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
-                Entity.entity(newValue, APPLICATION_JSON),
-                new GenericType<>(){});
-    }
-
-    public void deleteTask(long id){
-        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
-                store.accessStore().getPassword() + "/tasks/" + id);
-    }
-
-    // END OF TASK RELATED FUNCTIONS
-
-
     // CARD LIST RELATED METHODS
 
     public void addCardList(CardList cardList) {
@@ -259,6 +232,52 @@ public class ServerUtils {
     }
 
     // END OF CARD RELATED FUNCTIONS
+
+    // START OF TASK RELATED FUNCTIONS
+
+    public void addBoard(Task task) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/add",
+                Entity.entity(task, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateTask(long key, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteTask(long id){
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/tasks/" + id);
+    }
+
+    // END OF TASK RELATED FUNCTIONS
+
+    // START OF TAG RELATED FUNCTIONS
+
+    public void addTag(Tag tag) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tags/add",
+                Entity.entity(tag, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateTag(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/tags/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteTag(long id){
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/tags/" + id);
+    }
+
+    // END OF TAG RELATED FUNCTIONS
 
     public void forceRefresh(String key) {
         internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
