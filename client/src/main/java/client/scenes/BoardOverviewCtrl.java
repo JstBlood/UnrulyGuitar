@@ -144,8 +144,6 @@ public class BoardOverviewCtrl implements Initializable {
                 for(Task t : c.tasks)
                     t.parentCard = c;
 
-                for(Tag u : c.tags)
-                    u.parentCard = c;
             }
         }
 

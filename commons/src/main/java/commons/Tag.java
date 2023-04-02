@@ -3,6 +3,8 @@ package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import java.awt.*;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -29,9 +31,8 @@ public class Tag {
             nullable = false)
     public Board parentBoard;
 
-    @ManyToOne
-    @JoinColumn(name = "card_id")
-    public Card parentCard;
+    @ManyToMany(mappedBy = "tags")
+    public Set<Card> cards = ConcurrentHashMap.newKeySet();
 
     @SuppressWarnings("unused")
     protected Tag() {}

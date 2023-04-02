@@ -229,16 +229,16 @@ public class ServerUtils {
 
     // START OF TASK RELATED FUNCTIONS
 
-    public void addBoard(Task task) {
+    public void addTask(Task task) {
         internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/tasks/add",
                 Entity.entity(task, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 
-    public void updateTask(long key, String component, Object newValue) {
+    public void updateTask(long id, String component, Object newValue) {
         internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/tasks/" + key + "/" + component,
+                        store.accessStore().getPassword() + "/tasks/" + id + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }

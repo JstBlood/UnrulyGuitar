@@ -61,7 +61,7 @@ public class Main extends Application {
             try {
                 boardOverview.getKey().stop();
             } catch (RuntimeException ignored) {
-
+                System.out.println("closed");
             }
         });
     }

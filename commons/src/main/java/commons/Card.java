@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -35,8 +37,11 @@ public class Card {
             cascade = CascadeType.ALL)
     public List<Task> tasks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parentCard")
-    public List<Tag> tags = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "card_tag",
+            joinColumns = @JoinColumn(name = "card_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    public Set<Tag> tags = ConcurrentHashMap.newKeySet();
 
     /**
      * @param title The entry's text.

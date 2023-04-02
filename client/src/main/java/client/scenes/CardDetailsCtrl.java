@@ -1,5 +1,10 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
@@ -13,11 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
@@ -200,7 +200,7 @@ public class CardDetailsCtrl {
     }
 
     public void addSubtask(){
-        server.addBoard(generateTask());
+        server.addTask(generateTask());
     }
 
     public void clearFields(){

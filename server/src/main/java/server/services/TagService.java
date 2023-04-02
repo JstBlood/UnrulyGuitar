@@ -1,5 +1,6 @@
 package server.services;
 
+import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,59 +31,6 @@ public class TagService implements StandardEntityService<Tag, Long> {
         return HttpStatus.CREATED;
     }
 
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        Optional<Tag> optionalTag = tagRepo.findById(id);
-
-        if(optionalTag.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Tag tag = optionalTag.get();
-
-        HttpStatus res = handleSwitch(component, newValue, tag);
-
-        if (res.equals(HttpStatus.BAD_REQUEST))
-            return res;
-
-        tagRepo.saveAndFlush(tag);
-
-        forceRefresh(tag);
-
-        return res;
-    }
-
-    private HttpStatus handleSwitch(String component, Object newValue, Tag tag) {
-        HttpStatus res = null;
-
-        switch (component) {
-            case "name":
-                res = updateName(newValue, tag);
-                break;
-
-            default:
-                res = HttpStatus.BAD_REQUEST;
-                break;
-
-        }
-        return res;
-    }
-
-    private HttpStatus updateName(Object newValue, Tag tag) {
-        if(Objects.isNull(newValue)) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        String newValueString = String.valueOf(newValue).trim();
-
-        if(isNullOrEmpty(newValueString)) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        tag.name = newValueString;
-
-        return HttpStatus.OK;
-    }
-
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
@@ -93,6 +41,54 @@ public class TagService implements StandardEntityService<Tag, Long> {
         Tag tag = optionalTag.get();
 
         tagRepo.deleteById(id);
+
+        forceRefresh(tag);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
+        return null;
+    }
+
+    public HttpStatus updateName(Long id, String newValue, String username, String password) {
+        Optional<Tag> optionalTag = tagRepo.findById(id);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Tag tag = optionalTag.get();
+
+        if(isNullOrEmpty(newValue)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        tag.name = newValue;
+
+        tagRepo.saveAndFlush(tag);
+
+        forceRefresh(tag);
+
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus updateColor(Long id, Color newValue, String username, String password) {
+        Optional<Tag> optionalTag = tagRepo.findById(id);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Tag tag = optionalTag.get();
+
+        if(Objects.isNull(newValue)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        tag.color = newValue;
+
+        tagRepo.saveAndFlush(tag);
 
         forceRefresh(tag);
 
