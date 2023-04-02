@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
+
 <ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
    <content>
       <AnchorPane fx:id="root" prefHeight="380.0" prefWidth="603.0" styleClass="anchor-plane">
@@ -48,11 +60,6 @@
                   </TextField>
                </center>
             </BorderPane>
-            <ScrollPane layoutX="98.0" layoutY="71.0" prefHeight="44.0" prefWidth="495.0" AnchorPane.leftAnchor="98.0" AnchorPane.rightAnchor="17.0">
-               <content>
-                  <HBox fx:id="tagsBar" prefHeight="42.0" prefWidth="510.0" spacing="10.0" />
-               </content>
-            </ScrollPane>
             <TextArea fx:id="description" layoutX="7.0" layoutY="121.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
                <styleClass>
                   <String fx:value="plane-0" />
@@ -82,6 +89,11 @@
                </image>
             </ImageView>
             <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="71.0" mnemonicParsing="false" text="Add tag" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="36.0" prefWidth="479.0">
+               <content>
+                  <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" />
+               </content>
+            </ScrollPane>
          </children>
       </AnchorPane>
    </content>

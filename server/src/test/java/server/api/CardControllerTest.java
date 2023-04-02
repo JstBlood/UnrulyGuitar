@@ -26,10 +26,7 @@ import commons.CardList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.TestBoardsRepository;
-import server.database.TestCardListRepository;
-import server.database.TestCardRepository;
-import server.database.TestUserRepository;
+import server.database.*;
 import server.services.*;
 
 public class CardControllerTest {
@@ -43,6 +40,7 @@ public class CardControllerTest {
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
     private TestCardListRepository clRepo;
+    private TestTagRepository tagRepo;
     private CardController sut;
 
     @BeforeEach
@@ -57,8 +55,9 @@ public class CardControllerTest {
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
-
+        CardService service = new CardService(repo,
+                new BoardsService(bRepo, uRepo, sockets, pwd),
+                clRepo, tagRepo, sockets);
 
         sut = new CardController(service);
     }

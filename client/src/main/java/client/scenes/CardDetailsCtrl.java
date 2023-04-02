@@ -1,6 +1,7 @@
 package client.scenes;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import javax.inject.Inject;
@@ -75,60 +76,67 @@ public class CardDetailsCtrl {
                     });
                 });
 
-
         addUpdateHandler(title, () -> updateTitle(), "title", true);
         addUpdateHandler(description, () -> updateDescription(), "description", false);
-
-        prepareTags();
     }
 
     private void prepareTags() {
 
-
-
+        prepareTagsMenu();
+        prepareTagsBar();
     }
 
     private void prepareTagsMenu() {
         List<Tag> remainingTags = mainCtrl.getCurrentBoard().tags;
-        remainingTags.removeAll(card.tags);
+
+        for(Tag t : card.tags) {
+            Iterator<Tag> it = remainingTags.iterator();
+            while(it.hasNext()) {
+                Tag curr = it.next();
+                if(curr.id == t.id) {
+                    it.remove();
+                    break;
+                }
+            }
+        }
+
+        tagsMenu.getItems().clear();
 
         for(Tag t : remainingTags) {
             MenuItem newItem = new MenuItem(t.name);
-            newItem.setUserData(t);
 
-            prepareMenuItem(newItem);
+            newItem.setOnAction(event -> {
+                server.updateCard(card.id, "addTag", t.id);
+            });
 
             tagsMenu.getItems().add(newItem);
         }
     }
 
-    private void prepareMenuItem(MenuItem newItem) {
-        newItem.setOnAction(event -> {
-            Tag newTag = (Tag) newItem.getUserData();
+    private void prepareTagsBar() {
+        tagsBar.getChildren().clear();
+
+        for(Tag t : card.tags) {
             FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
             tagLoader.setControllerFactory(c ->
-                    new TagCtrl(this.server, this.mainCtrl, newTag)
+                    new TagCtrl(this.server, this.mainCtrl, t)
             );
             Node newTagNode = null;
             try {
                 newTagNode = tagLoader.load();
-                //TODO: replace with server call
-                //server.updateCard(card.id, "addTag", newTag.id);
-                tagsBar.getChildren().add(newTagNode);
-                tagsMenu.getItems().remove(newItem);
-
-                TagCtrl tagCtrl = tagLoader.getController();
-                Node finalNewTagNode = newTagNode;
-
-                tagCtrl.delete.setOnAction(e -> {
-                    //TODO: replace with server call
-                    tagsBar.getChildren().remove(finalNewTagNode);
-                    tagsMenu.getItems().add(newItem);
-                });
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
+
+            TagCtrl tagCtrl = tagLoader.getController();
+
+            tagCtrl.delete.setOnAction(e -> {
+                server.updateCard(card.id, "removeTag", t.id);
+                server.forceRefresh(mainCtrl.getCurrentBoard().key);
+            });
+
+            tagsBar.getChildren().add(newTagNode);
+        }
     }
 
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
@@ -199,6 +207,8 @@ public class CardDetailsCtrl {
                 throw new RuntimeException(e);
             }
         }
+
+        prepareTags();
     }
 
     public void submitCard(){
