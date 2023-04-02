@@ -63,7 +63,7 @@ public class MainCtrl {
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<AddCardListCtrl, Parent> addCardList,
-                           Pair<CardDetailsCtrl, Parent> addCard,
+                           Pair<CardDetailsCtrl, Parent> cardDetails,
                            Pair<CardListCtrl, Parent> cardList,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            CredentialsStore cStore) {
@@ -82,8 +82,8 @@ public class MainCtrl {
         this.addCardListCtrl = addCardList.getKey();
         this.addCardList = new Scene(addCardList.getValue());
 
-        this.cardDetailsCtrl = addCard.getKey();
-        this.cardDetails = new Scene(addCard.getValue());
+        this.cardDetailsCtrl = cardDetails.getKey();
+        this.cardDetails = new Scene(cardDetails.getValue());
         this.cardListCtrl = cardList.getKey();
 
         this.boardSettingsCtrl = boardSettings.getKey();
