@@ -65,17 +65,17 @@ public class BoardsController {
     }
 
     @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable String id, @PathVariable String component,
+    public ResponseEntity<?> update(@PathVariable String key, @PathVariable String component,
                                     @RequestBody String newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.update(id, component, newValue, username, password)).build();
+        return ResponseEntity.status(service.update(key, component, newValue, username, password)).build();
     }
 
     @PutMapping("/{id}/title")
-    public ResponseEntity<?> updateTitle(@PathVariable long id,
+    public ResponseEntity<?> updateTitle(@PathVariable String key,
                                          @RequestBody String newValue,  @PathVariable String username,
                                          @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.updateTitle(id, newValue, username, password)).build();
+        return ResponseEntity.status(service.updateTitle(key, newValue, username, password)).build();
     }
 
     @DeleteMapping("/{id}")

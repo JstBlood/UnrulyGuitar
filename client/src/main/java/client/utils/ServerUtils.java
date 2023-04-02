@@ -143,9 +143,9 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/boards/" + key);
     }
 
-    public void updateBoard(long id, String component, Object newValue) {
+    public void updateBoard(String key, String component, Object newValue) {
         internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
-                        store.accessStore().getPassword() + "/boards/" + id + "/" + component,
+                        store.accessStore().getPassword() + "/boards/" + key + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }

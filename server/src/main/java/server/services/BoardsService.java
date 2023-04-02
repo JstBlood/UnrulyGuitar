@@ -78,33 +78,16 @@ public class BoardsService implements StandardEntityService<Board, String> {
     }
 
     public HttpStatus update(String id, String component, Object newValue, String username, String password) {
-//        if(repo.findByKey(id) == null)
-//            return HttpStatus.NOT_FOUND;
-//        if(!pwd.hasEditAccess(password, id))
-//            return HttpStatus.FORBIDDEN;
-//
-//        Board board = repo.findByKey(id);
-//        String newValueString = String.valueOf(newValue).trim();
-//
-//        if(newValueString.isEmpty()) {
-//            return HttpStatus.BAD_REQUEST;
-//        }
-//
-//        repo.save(edit);
-//
-//        forceRefresh(id);
-//
-//        return HttpStatus.OK;
 
         //Unused, delete?
-        return HttpStatus.NO_CONTENT;
+        return HttpStatus.BAD_REQUEST;
     }
 
-    public HttpStatus updateTitle(long id, String newValue, String username, String password) {
-        if (!prepare(id, username, password).equals(HttpStatus.OK))
-            return prepare(id, username, password);
+    public HttpStatus updateTitle(String key, String newValue, String username, String password) {
+        if (!prepare(key, username, password).equals(HttpStatus.OK))
+            return prepare(key, username, password);
 
-        Board board = repo.findById(id).get();
+        Board board = repo.findByKey(key);
         String newValueString = String.valueOf(newValue).trim();
 
         if(newValueString.isEmpty()) {
@@ -116,14 +99,14 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return flush(board);
     }
 
-    public HttpStatus prepare(long id, String username, String password) {
-        Optional<Board> optionalBoard = repo.findById(id);
+    public HttpStatus prepare(String key, String username, String password) {
+        Board optionalBoard = repo.findByKey(key);
 
-        if(optionalBoard.isEmpty()) {
+        if(optionalBoard == null) {
             return HttpStatus.NOT_FOUND;
         }
 
-        if(!pwd.hasEditAccess(password, String.valueOf(id))) {
+        if(!pwd.hasEditAccess(password, key)) {
             return HttpStatus.FORBIDDEN;
         }
 
