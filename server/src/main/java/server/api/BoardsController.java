@@ -71,7 +71,7 @@ public class BoardsController {
         return ResponseEntity.status(service.update(key, component, newValue, username, password)).build();
     }
 
-    @PutMapping("/{id}/title")
+    @PutMapping("/{key}/title")
     public ResponseEntity<?> updateTitle(@PathVariable String key,
                                          @RequestBody String newValue,  @PathVariable String username,
                                          @PathVariable(required = false) String password) {
