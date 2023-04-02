@@ -49,6 +49,11 @@ public class BoardSettingsCtrl implements Initializable {
             Node newTagNode = null;
             try {
                 newTagNode = tagLoader.load();
+                TagCtrl tagCtrl = tagLoader.getController();
+                tagCtrl.delete.setOnAction(event -> {
+                    server.deleteTag(tag.id);
+                    server.forceRefresh(mainCtrl.getCurrentBoard().key);
+                });
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -60,6 +65,7 @@ public class BoardSettingsCtrl implements Initializable {
     @FXML
     public void addTag() throws IOException {
         server.addTag(generateTag());
+        server.forceRefresh(mainCtrl.getCurrentBoard().key);
     }
 
     private Tag generateTag() {
