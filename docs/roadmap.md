@@ -103,7 +103,8 @@ HUE:
 
 > Date | 2023-03-27 .. 2023-04-02
 > |-|-|
-> 
+> Mandatory meeting agenda | [Agenda](/docs/agendas/meeting_6.md)
+> Mandatory meeting minute taker notes | [Notes](/docs/minute_taker_notes/meeting_6_notes.md)
 
 Update the list of user stories and tasks, closing them if they have been completed. Create new tasks based on the Heuristic Usability Evaluation that was done last week. Split up user stories into tasks, and assign them.
 
@@ -117,6 +118,42 @@ User stories:
 -  #45: "As a user I want to see task progress in overview."
 -  #46: "As a user I want to close the details and return to the overview."
 -  #47: "As a user I want to delete the task."
+
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** | 
+Deleting and leaving boards | 4h
+Open a detailed card view upon double click | 1h30m
+Refreshing system improvement | 4h
+Filming part of the product pitch | 1h
+Editing the product pitch | 1h
+**Matiss** | 
+Redoing the GUI for addList | 3h
+Finished drag and drop with Vlad | 4h
+Finished the TaskService, including tests | 3h
+Polishing some controllers | 30m
+Filming part of the product pitch | 1h
+**Vlad**
+Moving logic from the task controller to a service | 30m
+Finished drag and drop with Matiss | 4h
+"Invite key" button | 30m
+Test for the commons Classes | 3h
+Ordering bugfix | 30m
+Implementing long polling | 2h
+Drag and drop on the server | 30m
+Editable list titles | 2h
+Moving long polling around and fixing it | 30m
+Filming part of the product pitch | 1h
+**Bogdan**
+FXML improvements for CardList | 2h
+Filming part of the product pitch | 1h
+**Madeline**
+Wrote tests for all the client-side Classes | 10h
+Drew improved mocks for the HUE | 2h
+Filming part of the product pitch | 1h
+**Michael**
+Filming part of the product pitch | 1h
 
 ### Week 8
 
