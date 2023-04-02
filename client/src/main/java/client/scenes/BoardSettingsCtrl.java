@@ -2,12 +2,11 @@ package client.scenes;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import commons.Board;
 import commons.Tag;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +19,8 @@ public class BoardSettingsCtrl implements Initializable {
     private final ServerUtils server;
     @FXML
     private HBox tagsBar;
-    public List<Tag> tags = new ArrayList<>();
+
+    public Board board;
 
     @Inject
     public BoardSettingsCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -30,16 +30,16 @@ public class BoardSettingsCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        prepareTags();
     }
 
-    public void refreshTags(List<Tag> updatedTags) {
-        tags = updatedTags;
+    public void update() {
+        board = mainCtrl.getCurrentBoard();
         prepareTags();
     }
 
     private void prepareTags() {
-        for(Tag tag : tags) {
+        tagsBar.getChildren().clear();
+        for(Tag tag : board.tags) {
             FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
 
             tagLoader.setControllerFactory(c ->

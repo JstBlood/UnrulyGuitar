@@ -22,11 +22,9 @@ public class TagService implements StandardEntityService<Tag, Long> {
             return HttpStatus.BAD_REQUEST;
         }
 
-        System.out.println(tag.id);
-
         tagRepo.save(tag);
 
-        //forceRefresh(tag);
+        forceRefresh(tag);
 
         return HttpStatus.CREATED;
     }

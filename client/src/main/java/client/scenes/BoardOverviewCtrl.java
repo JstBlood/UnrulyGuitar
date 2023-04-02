@@ -173,6 +173,10 @@ public class BoardOverviewCtrl implements Initializable {
             title.setText(board.title);
             title.setStyle("-fx-text-fill: -fx-col-0;");
         }
+
+        mainCtrl.updateBoardSettings();
+
+        //TODO: update tags
     }
 
     private void updateCardLists() throws IOException {

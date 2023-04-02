@@ -18,7 +18,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label alignment="CENTER" prefHeight="34.0" prefWidth="108.0" text="New tag" GridPane.halignment="CENTER" />
+            <Label fx:id="label" alignment="CENTER" prefHeight="34.0" prefWidth="108.0" text="New tag" GridPane.halignment="CENTER" />
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="28.0" text="❌" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
          </children>
       </GridPane>

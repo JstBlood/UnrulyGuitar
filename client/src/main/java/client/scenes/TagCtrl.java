@@ -14,7 +14,7 @@ public class TagCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
-    private Label tagLabel;
+    private Label label;
     public Tag tag;
 
     @Inject
@@ -30,7 +30,7 @@ public class TagCtrl implements Initializable {
     }
 
     private void prepareLabel() {
-        tagLabel.setText(tag.name);
+        label.setText(tag.name);
         //TODO: add handlers
     }
 
