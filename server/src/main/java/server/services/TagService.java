@@ -1,5 +1,6 @@
 package server.services;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import commons.Tag;
@@ -30,7 +31,56 @@ public class TagService implements StandardEntityService<Tag, Long> {
     }
 
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        return null;
+        Optional<Tag> optionalTag = tagRepo.findById(id);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        Tag tag = optionalTag.get();
+
+        HttpStatus res = handleSwitch(component, newValue, tag);
+
+        if (res.equals(HttpStatus.BAD_REQUEST))
+            return res;
+
+        tagRepo.saveAndFlush(tag);
+
+        forceRefresh(tag);
+
+        return res;
+    }
+
+    private HttpStatus handleSwitch(String component, Object newValue, Tag tag) {
+        HttpStatus res = null;
+
+        switch (component) {
+            case "name":
+                res = updateName(newValue, tag);
+                break;
+
+            default:
+                res = HttpStatus.BAD_REQUEST;
+                break;
+
+        }
+        return res;
+    }
+
+    private HttpStatus updateName(Object newValue, Tag tag) {
+        if(Objects.isNull(newValue)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(isNullOrEmpty(newValueString)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        tag.name = newValueString;
+
+        return HttpStatus.OK;
     }
 
     public HttpStatus delete(Long id, String username, String password) {

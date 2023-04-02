@@ -18,7 +18,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
@@ -71,35 +70,11 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        title.textProperty().addListener((o, oldV, newV) -> {
-            if(!Objects.equals(board.title, newV)) {
-                title.setStyle("-fx-text-fill: red;");
-            }
-        });
-
-        title.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        } );
-
-        title.focusedProperty().addListener((o, oldV, newV) -> {
-            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        });
-
-        listsGrid.setAlignment(Pos.TOP_CENTER);
+        prepareTitleField();
     }
 
     public void prepare(Board board) {
         setBoard(board);
-        this.board.id = -1;
-        try {
-            refresh(board);
-        } catch (Exception e) {
-
-        }
 
         server.connect();
 
@@ -119,9 +94,6 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
         });
-
-
-        server.forceRefresh(board.key);
     }
 
     public void prepareLongPolling() {
@@ -129,6 +101,26 @@ public class BoardOverviewCtrl implements Initializable {
             Platform.runLater(() -> {
                 server.forceRefresh(board.key);
             });
+        });
+    }
+
+    public void prepareTitleField() {
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(board.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
         });
     }
 
