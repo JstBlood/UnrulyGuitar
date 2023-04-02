@@ -4,10 +4,12 @@ import commons.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.services.TagService;
+
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/tags", "/secure/{username}/tags"})
 public class TagController {
     private final TagService tagService;
+
     public TagController(TagService tagService) {
         this.tagService = tagService;
     }

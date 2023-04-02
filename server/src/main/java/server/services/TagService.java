@@ -4,8 +4,10 @@ import java.util.Optional;
 
 import commons.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import server.database.TagRepository;
 
+@Service
 public class TagService implements StandardEntityService<Tag, Long> {
     private final TagRepository tagRepo;
 
