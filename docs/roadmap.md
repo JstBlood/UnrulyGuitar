@@ -30,6 +30,29 @@ This roadmap is an outline for the overall distribution and planning of the user
 > Mandatory meeting minute taker notes | 
 
 This week, the main objective is to create a backlog and finalise the Code of Conduct. No coding yet. Dicuss the mocks and who will create them.
+
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** |
+Helping people with setting up Git + GitLab | 2h
+Planning the database schema with Vlad | 1h
+**Matiss** |
+Setting up communication with WhatsApp and Discord | 2h
+Discussing the Code of Conduct | 1h
+Drafting the Code of Conduct | 1h
+**Vlad** | 
+Planning the database schema with Mikolaj | 1h
+Reviewing Code of Conduct draft | 30m
+**Bogdan** |
+Researching the backlog | 2h
+**Madeline** |
+Drawing the mocks | 3h
+Researching the backlog | 2h
+**Michael** |
+Researching the backlog | 2h
+Reviewing Code of Conduct draft | 30m
+
 ### Week 3
 
 > Date | 2023-02-27 .. 2023-03-05
@@ -42,6 +65,38 @@ Create user stories. Review the mocks.
 Discuss user stories:
 - #21: "As a user I want to join an existing board."
 - #16: "As a user I want to create a new board."
+
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** |
+Finalising the backlog with Madeline | 2h
+Making the Lucidcharts Database Schema with the team | 2h
+Intialising repositories in the Java database | 1h
+Creating commons Classes | 30m
+**Matiss** |
+Gradle changes to fit the Mattermost updates | 4h
+Setting up the Lucidcharts Database Schema | 1h
+Making the Lucidcharts Database Schema with the team | 2h
+Learning LaTeX with Madeline | 1h
+Getting comfortable with using Git and GitLab | 1h
+**Vlad** | 
+Finalising and discussing the Code of Conduct with Michael | 2h
+Making the Lucidcharts Database Schema with the team | 2h
+Tweaking the commons classes Mikolaj made | 2h
+**Bogdan** |
+Making the Lucidcharts Database Schema with the team | 2h
+Learning LaTeX with Madeline | 1h
+Helping people get comfortable with using Git and GitLab | 4h
+**Madeline** |
+Contacting other teams and the head TA to talk about the backlog | 4h
+Editing the Code of Conduct with Michael using newfound intel on other teams | 1h
+Making the Lucidcharts Database Schema with the team | 2h
+Teaching Matiss and Bogdan LaTeX | 1h
+**Michael** |
+Editing and finalising the Code of Conduct | 2h
+Making the Lucidcharts Database Schema with the team | 2h
+Getting comfortable with using Git and GitLab | 1h
 
 ### Week 4
 
@@ -63,12 +118,66 @@ Discuss user stories:
 - #12: "As a user I want to remove tasks."
 - #13: "As a user I want to see any update of others directly reflected in the overview"
 
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** |
+Finishing the DB schema with Matiss | 2h
+Creating backend + frontend for the Logon Scene | 3h
+Helping Bogdan fix a bug he was stuck on | 1h
+**Matiss** |
+Finishing the DB schema with Mikolaj | 2h
+**Vlad** | 
+Translating the DB schema into Java with Madeline | 3h
+Tweaking the database to fit the backlog | 2h
+Tweaking the checkstyle | 2h
+Adding websockets | 30m
+**Bogdan** |
+Client-side implementation of Lists | 3h
+Discussing how the server and client side connect regarding Lists with Michael | 1h
+**Madeline** |
+Refactoring back-end resources with Vlad | 2h
+Helping Vlad figure out database annotations in Java | 2h
+Drawing a wireframe | 1h
+Drawing, sketching, and settling on a design style with Michael | 3h
+**Michael** |
+Helping Madeline with the overall design | 3h
+Creating the server-side for lists | 3h
+Discussing how the server and client side connect regarding Lists with Bogdan | 1h
+
 ### Week 5 (midterms)
 
 > Date | 2023-03-13 .. 2023-03-19
 > |-|-|
 
 No meeting this week, because of the midterms.
+
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** |
+Multi-board features | 6h
+**Matiss** |
+Helping Mikolaj with the prototype of multi-board | 4h
+**Vlad** | 
+Back-end rework of the lists using JSON | 3h
+Fixing FXML Loader issue with the lists | 2h
+Remodeling the BoardOverview Scene | 30m
+Resolving merge conflicts with Madeline | 1h
+**Bogdan** |
+Helping Michael with the server-side Tasks | 3h
+**Madeline** |
+Polishing the backend of adding cards | 2h
+Polishing the AddCard FXML | 2h
+Drawing custom GUI elements | 3h
+Incorporating custom GUI elements with Vlad | 2h
+Fixing layout and resizing issues | 4h
+**Michael** |
+Implementing methods for the CardController | 2h
+Adding tests to the CardController | 1h
+Adding TaskRepository to the server | 30m
+Adding TaskController to the server with Bogdan | 2h
+Making tests for TaskController with Bogdan | 1h
 
 ### Week 6
 
