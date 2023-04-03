@@ -34,17 +34,11 @@ public class CardListService {
     }
 
     public HttpStatus delete(long id, String username, String password) {
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
-
-        if (id < 0) {
-            return HttpStatus.BAD_REQUEST;
+        if (!prepare(id, username, password).equals(HttpStatus.OK)) {
+            return prepare(id, username, password);
         }
 
-        if (optionalCardList.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        CardList cardList = optionalCardList.get();
+        CardList cardList = cardListRepo.findById(id).get();
 
         cardListRepo.deleteById(id);
         sockets.broadcastRemoval(cardList);
@@ -84,12 +78,6 @@ public class CardListService {
     public HttpStatus prepare(long id, String username, String password) {
         if (id < 0) {
             return HttpStatus.BAD_REQUEST;
-        }
-
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
-
-        if(optionalCardList.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
         }
 
         return HttpStatus.OK;
