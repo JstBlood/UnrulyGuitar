@@ -7,11 +7,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class TestTagRepository implements TagRepository {
+
+    public final List<Tag> tagList = new ArrayList<>();
+    public final List<String> calledMethods = new ArrayList<>();
+
+    private void call(String name) {
+        calledMethods.add(name);
+    }
+
+    public Optional<Tag> find(long id) {
+
+        return tagList.stream().filter(q -> q.id == id).findFirst();
+    }
 
     @Override
     public List<Tag> findAll() {
@@ -65,7 +78,10 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public <S extends Tag> S save(S entity) {
-        return null;
+        call("save");
+        entity.id = (long) tagList.size();
+        tagList.add(entity);
+        return entity;
     }
 
     @Override
@@ -74,8 +90,13 @@ public class TestTagRepository implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> findById(Long aLong) {
-        return Optional.empty();
+    public Optional<Tag> findById(Long id) {
+        call("findById");
+        Optional<Tag> tag = tagList.stream().filter(q -> q.id == id).findFirst();
+
+        if (tag.isEmpty())
+            return null;
+        return tag;
     }
 
     @Override
@@ -90,7 +111,8 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public <S extends Tag> S saveAndFlush(S entity) {
-        return null;
+        call("saveAndFlush");
+        return entity;
     }
 
     @Override

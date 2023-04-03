@@ -71,6 +71,13 @@ public class CardListControllerTest {
     }
 
     @Test
+    public void cannotDeleteNonexistentCardList() {
+        var actual = sut.delete(1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
     public void databaseIsUsedAdd() {
         var actual = sut.add(SOME_CARDLIST, "", "");
 

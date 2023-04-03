@@ -52,12 +52,90 @@ public class TagControllerTest {
     }
 
     @Test
-    public void test() {
+    public void cannotAddNullTag() {
+        var actual = sut.add(null, "", "");
 
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
-    @SuppressWarnings("serial")
-    public class MyRandom extends Random {
+    @Test
+    public void addTag() {
+        var actual = sut.add(SOME_TAG, "", "");
+
+        Assertions.assertEquals(CREATED, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotDeleteNonexistentTag() {
+        var actual = sut.delete(1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void deleteTag() {
+        repo.save(SOME_TAG);
+        var actual = sut.delete(SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateTask() {
+        var actual = sut.update(SOME_TAG.id, "", "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNameNonexistentTask() {
+        var actual = sut.updateName(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNameToNull() {
+        repo.save(SOME_TAG);
+        var actual = sut.updateName(SOME_TAG.id, null, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateName() {
+        repo.save(SOME_TAG);
+        var actual = sut.updateName(SOME_TAG.id, "some name", "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+    }
+
+    @Test
+    public void cannotUpdateColorNonexistentTask() {
+        var actual = sut.updateColor(1234567890, Color.RED, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateToNullColor() {
+        repo.save(SOME_TAG);
+        var actual = sut.updateColor(SOME_TAG.id, null, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateColor() {
+        repo.save(SOME_TAG);
+        var actual = sut.updateColor(SOME_TAG.id, Color.RED, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+    }
+
+    @SuppressWarnings("serial")   public class MyRandom extends Random {
 
         public boolean wasCalled = false;
 

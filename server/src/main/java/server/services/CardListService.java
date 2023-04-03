@@ -80,6 +80,12 @@ public class CardListService {
             return HttpStatus.BAD_REQUEST;
         }
 
+        var optionalCardList = cardListRepo.findById(id);
+
+        if(optionalCardList.isEmpty()) {
+            return HttpStatus.NOT_FOUND;
+        }
+
         return HttpStatus.OK;
     }
 
