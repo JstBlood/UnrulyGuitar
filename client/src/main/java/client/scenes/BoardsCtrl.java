@@ -81,7 +81,6 @@ public class BoardsCtrl {
         Board receivedBoard = null;
         try {
             receivedBoard = server.joinBoard(key.getText());
-            System.out.println("[DEBUG] Received board: " + receivedBoard);
         } catch (NotFoundException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {

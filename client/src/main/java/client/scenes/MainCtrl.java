@@ -96,6 +96,8 @@ public class MainCtrl {
                 .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
         prepareHelp();
+        prepareBoardOverview();
+        prepareCardDetails();
 
         showLogon();
         primaryStage.show();
@@ -120,7 +122,6 @@ public class MainCtrl {
     }
 
     public void showBoardOverview() {
-        boardOverviewCtrl.prepareLongPolling();
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
     }
@@ -160,6 +161,18 @@ public class MainCtrl {
         boardSettings.setOnKeyPressed(e -> {
             if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
                 showHelpScreen("boardSettings");
+            }
+        });
+    }
+
+    public void prepareBoardOverview() {
+        //TODO : set traversal engine
+    }
+
+    public void prepareCardDetails() {
+        cardDetails.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ESCAPE)) {
+                showBoardOverview();
             }
         });
     }

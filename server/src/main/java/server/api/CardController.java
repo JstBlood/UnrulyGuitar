@@ -74,4 +74,12 @@ public class CardController {
                                                    @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateListDragAndDrop(id, newValue, username, password)).build();
     }
+
+    @PutMapping("/{id}/swap")
+    public ResponseEntity<?> updateSwap(@PathVariable long id,
+                                                   @RequestBody Object newValue, @PathVariable String username,
+                                                   @PathVariable(required = false) String password) {
+        System.out.println("called");
+        return ResponseEntity.status(cardService.updateSwap(id, newValue, username, password)).build();
+    }
 }

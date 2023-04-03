@@ -40,7 +40,7 @@
                   <Font size="14.0" />
                </font>
             </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="● Move the task highlight with arrow keys (Up/Down/Left/Right), so you can select other tasks." GridPane.rowIndex="1">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="● Move the task highlight with arrow keys (Up/Down), so you can select other tasks." GridPane.rowIndex="1">
                <font>
                   <Font size="14.0" />
                </font>

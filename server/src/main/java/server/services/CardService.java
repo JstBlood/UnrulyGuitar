@@ -214,6 +214,35 @@ public class CardService implements StandardEntityService<Card, Long> {
         return flush(card);
     }
 
+    @Transactional
+    public HttpStatus updateSwap(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        long newValueLong = Long.parseLong(String.valueOf(newValue).trim());
+
+        if(newValueLong < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Optional<Card> optionalTargetCard = cardRepo.findById(newValueLong);
+
+        if (optionalTargetCard.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Card targetCard = optionalTargetCard.get();
+
+        int aux = card.index;
+        card.index = targetCard.index;
+        targetCard.index = aux;
+
+        cardRepo.saveAndFlush(targetCard);
+
+        return flush(card);
+    }
+
     public HttpStatus prepare(Long id, String username, String password) {
         if (id < 0) {
             return HttpStatus.BAD_REQUEST;
