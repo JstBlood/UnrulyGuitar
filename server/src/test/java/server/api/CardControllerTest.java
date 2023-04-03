@@ -40,6 +40,7 @@ public class CardControllerTest {
     private TestUserRepository uRepo;
     private TestBoardsRepository bRepo;
     private TestCardListRepository clRepo;
+    private TestTagRepository tagRepo;
     private CardController sut;
 
     @BeforeEach
@@ -56,7 +57,7 @@ public class CardControllerTest {
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
         CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo),
-                clRepo, sockets, colorRepo);
+                clRepo, sockets, colorRepo, tagRepo);
 
 
         sut = new CardController(service);

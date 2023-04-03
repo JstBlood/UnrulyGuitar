@@ -11,6 +11,7 @@ import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
@@ -19,6 +20,8 @@ public class TagCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     @FXML
     private TextField name;
+    @FXML
+    public Button delete;
     public Tag tag;
 
     @Inject
@@ -71,10 +74,5 @@ public class TagCtrl implements Initializable {
         } catch (WebApplicationException e) {
             UIUtils.showError(e.getMessage());
         }
-    }
-
-    @FXML
-    public void delete() {
-        server.deleteTag(tag.id);
     }
 }

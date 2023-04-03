@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -35,14 +34,7 @@
                   <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="117.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label styleClass="text-2" text="Board Name" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                   <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="subtitle" text="General" GridPane.columnIndex="1" GridPane.columnSpan="2" />
-                  <TextField GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <styleClass>
-                        <String fx:value="text-1" />
-                        <String fx:value="input" />
-                     </styleClass>
-                  </TextField>
                   <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="subtitle" text="Customisation" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
                   <Label prefWidth="81.0" styleClass="text-2" text="Background" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
                   <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
@@ -56,7 +48,7 @@
                     </buttons>
                   </ButtonBar>
                   <Label prefHeight="25.0" prefWidth="58.0" styleClass="text-2" text="Tags" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <content>
                         <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" spacing="10.0" />
                      </content>

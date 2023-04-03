@@ -5,27 +5,31 @@ import java.util.Optional;
 
 import commons.Card;
 import commons.CardList;
+import commons.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
 import server.database.ColorPresetRepository;
+import server.database.TagRepository;
 
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
     private final CardListRepository cardListRepo;
+    private final TagRepository tagRepo;
     private final BoardsService boards;
     private final SocketRefreshService sockets;
     private final ColorPresetRepository colorRepo;
 
 
     public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
-                       SocketRefreshService sockets, ColorPresetRepository colorRepo) {
+                       SocketRefreshService sockets, ColorPresetRepository colorRepo, TagRepository tagRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
+        this.tagRepo = tagRepo;
         this.sockets = sockets;
         this.colorRepo = colorRepo;
     }
@@ -64,14 +68,14 @@ public class CardService implements StandardEntityService<Card, Long> {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);
 
-        if(colorRepo.findById(newId).isEmpty())
-            return HttpStatus.NOT_FOUND;
-
         Card card = cardRepo.findById(id).get();
 
         if(newId == -1) {
             card.colors = null;
         } else {
+            if(colorRepo.findById(newId).isEmpty())
+                return HttpStatus.NOT_FOUND;
+
             card.colors = colorRepo.findById(newId).get();
         }
 
@@ -218,6 +222,48 @@ public class CardService implements StandardEntityService<Card, Long> {
             card.parentCardList = targetList;
             card.index = targetList.cards.size();
         }
+
+        return flush(card);
+    }
+
+    public HttpStatus updateAddTag(long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Long tagId = Long.valueOf(String.valueOf(newValue));
+
+        Optional<Tag> optionalTag = tagRepo.findById(tagId);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Tag tag = optionalTag.get();
+
+        card.tags.add(tag);
+
+        return flush(card);
+    }
+
+    public HttpStatus updateRemoveTag(long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Long tagId = Long.valueOf(String.valueOf(newValue));
+
+        Optional<Tag> optionalTag = tagRepo.findById(tagId);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Tag tag = optionalTag.get();
+
+        card.removeTag(tag);
 
         return flush(card);
     }

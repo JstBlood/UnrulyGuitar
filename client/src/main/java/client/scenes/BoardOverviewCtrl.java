@@ -84,6 +84,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        prepareLongPolling();
         prepareTitleField();
     }
 
@@ -98,7 +99,6 @@ public class BoardOverviewCtrl implements Initializable {
 
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
             Platform.runLater(() -> {
-                stop();
                 mainCtrl.showBoards();
             });
         });

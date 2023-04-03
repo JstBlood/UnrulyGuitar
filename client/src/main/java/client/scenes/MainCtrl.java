@@ -118,9 +118,6 @@ public class MainCtrl {
     }
 
     public void showBoardOverview() {
-        // TODO: FIX ME
-        //boardOverviewCtrl.prepareLongPolling();
-
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
     }

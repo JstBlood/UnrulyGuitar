@@ -16,7 +16,7 @@
             <URL value="@/client/css/AddCardStyle.css" />
          </stylesheets>
          <children>
-            <BorderPane focusTraversable="true" prefHeight="61.0" prefWidth="609.0">
+            <BorderPane focusTraversable="true" prefHeight="57.0" prefWidth="610.0">
                <left>
                   <ImageView fitHeight="50.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
@@ -38,7 +38,7 @@
                   </ImageView>
                </right>
                <center>
-                  <TextField fx:id="title" alignment="CENTER" prefHeight="61.0" prefWidth="600.0" promptText="Add Card Title" BorderPane.alignment="CENTER">
+                  <TextField fx:id="title" alignment="CENTER" prefHeight="46.0" prefWidth="454.0" promptText="Add Card Title" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="24.0" />
                      </font>
@@ -49,24 +49,7 @@
                   </TextField>
                </center>
             </BorderPane>
-            <ButtonBar fx:id="tagsBar" layoutX="3.0" layoutY="61.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="604.0">
-              <buttons>
-                  <MenuButton fx:id="addTag" alignment="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white;" text="Add Tag">
-                     <styleClass>
-                        <String fx:value="tag" />
-                        <String fx:value="text-1" />
-                     </styleClass>
-                  </MenuButton>
-              </buttons>
-               <styleClass>
-                  <String fx:value="plane-0" />
-                  <String fx:value="tags" />
-               </styleClass>
-               <padding>
-                  <Insets left="20.0" right="20.0" />
-               </padding>
-            </ButtonBar>
-            <TextArea fx:id="description" layoutY="142.0" prefHeight="100.0" prefWidth="609.0" promptText="Add a description">
+            <TextArea fx:id="description" layoutX="11.0" layoutY="116.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
                <styleClass>
                   <String fx:value="plane-0" />
                   <String fx:value="text-1" />
@@ -88,14 +71,20 @@
               </rowConstraints>
             </GridPane>
             <Button fx:id="submit" layoutX="533.0" layoutY="343.0" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
-            <Label layoutX="87.0" layoutY="247.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
-            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="56.0" layoutY="246.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
+            <Label layoutX="52.0" layoutY="266.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
+            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="27.0" layoutY="263.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/client/images/plus_icon.png" />
                </image>
             </ImageView>
-            <Label layoutX="61.0" layoutY="112.0" text="Color Preset:" textFill="WHITE" />
-            <ChoiceBox fx:id="presetChoice" layoutX="155.0" layoutY="108.0" prefWidth="150.0" />
+            <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
+            <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
+            <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="71.0" mnemonicParsing="false" text="Add tag" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="36.0" prefWidth="479.0">
+               <content>
+                  <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" />
+               </content>
+            </ScrollPane>
          </children>
       </AnchorPane>
    </content>

@@ -74,4 +74,20 @@ public class CardController {
                                                    @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateListDragAndDrop(id, newValue, username, password)).build();
     }
+
+    @PutMapping("/{id}/addTag")
+    public ResponseEntity<?> updateAddTag(@PathVariable long id,
+                                                   @RequestBody Object newValue,
+                                                   @PathVariable String username,
+                                                   @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateAddTag(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/removeTag")
+    public ResponseEntity<?> updateRemoveTag(@PathVariable long id,
+                                          @RequestBody Object newValue,
+                                          @PathVariable String username,
+                                          @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateRemoveTag(id, newValue, username, password)).build();
+    }
 }

@@ -1,6 +1,7 @@
 package client.scenes;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import javax.inject.Inject;
@@ -8,15 +9,14 @@ import javax.inject.Inject;
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 
 public class CardDetailsCtrl {
@@ -27,26 +27,15 @@ public class CardDetailsCtrl {
     @FXML
     private TextField title;
     @FXML
-    private ButtonBar tagsBar;
+    private MenuButton tagsMenu;
     @FXML
-    private MenuButton addTag;
+    private HBox tagsBar;
     @FXML
     private TextArea description;
     @FXML
-    private Button submit;
-    @FXML
-    private ImageView addSubtask;
-    @FXML
-    private Label addSubtaskLabel;
-    @FXML
     private GridPane subtaskPane;
     @FXML
-    private TextField subtaskTitle;
-    @FXML
-    private TextArea subtaskDescription;
-    @FXML
     private ChoiceBox<String> presetChoice;
-    private List<Task> subtasks;
 
     /**
      * This controller shows the details of a card.
@@ -92,43 +81,73 @@ public class CardDetailsCtrl {
         });
 
         server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key + "/deletion", Board.class,
-                q -> { Platform.runLater(() -> { mainCtrl.showBoards(); }); });
-
-        EventHandler<ActionEvent> addTagEvent = registerTagEvents();
+                q -> {
+                    Platform.runLater(() -> {
+                        mainCtrl.showBoards();
+                    });
+                });
 
         addUpdateHandler(title, () -> updateTitle(), "title", true);
         addUpdateHandler(description, () -> updateDescription(), "description", false);
+    }
 
-        for(Tag tag : mainCtrl.getCurrentBoard().tags){
-            MenuItem mi = new MenuItem(tag.name);
-            mi.setOnAction(addTagEvent);
-            this.addTag.getItems().add(mi);
+    private void prepareTags() {
+
+        prepareTagsMenu();
+        prepareTagsBar();
+    }
+
+    private void prepareTagsMenu() {
+        List<Tag> remainingTags = mainCtrl.getCurrentBoard().tags;
+
+        for(Tag t : card.tags) {
+            Iterator<Tag> it = remainingTags.iterator();
+            while(it.hasNext()) {
+                Tag curr = it.next();
+                if(curr.id == t.id) {
+                    it.remove();
+                    break;
+                }
+            }
+        }
+
+        tagsMenu.getItems().clear();
+
+        for(Tag t : remainingTags) {
+            MenuItem newItem = new MenuItem(t.name);
+
+            newItem.setOnAction(event -> {
+                server.updateCard(card.id, "addTag", t.id);
+            });
+
+            tagsMenu.getItems().add(newItem);
         }
     }
 
-    private EventHandler<ActionEvent> registerTagEvents() {
-        EventHandler<ActionEvent> removeTagEvent = e -> {
-            this.tagsBar.getButtons().remove((ToggleButton) e.getSource());
-        };
-        EventHandler<ActionEvent> addTagEvent = e -> {
-            String tagName = ((MenuItem) e.getSource()).getText();
-            if (this.tagsBar.getButtons().stream().anyMatch(
-                    b -> (b instanceof ToggleButton) && ((ToggleButton) b).getText().equals(tagName)))
-                return;
+    private void prepareTagsBar() {
+        tagsBar.getChildren().clear();
 
-            Tag tag = mainCtrl.getCurrentBoard().tags.stream().filter(t ->
-                    t.name.equals(tagName)).findFirst().orElse(null);
-            ToggleButton tagButton = new ToggleButton(tagName);
-            tagButton.setStyle(String.format("-fx-background-color: rgb(%d, %d, %d);",
-                    tag.color.getRed(), tag.color.getGreen(), tag.color.getBlue()));
-            tagButton.getStyleClass().add("tag");
+        for(Tag t : card.tags) {
+            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
+            tagLoader.setControllerFactory(c ->
+                    new TagCtrl(this.server, this.mainCtrl, t)
+            );
+            Node newTagNode = null;
+            try {
+                newTagNode = tagLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-            tagButton.setOnAction(removeTagEvent);
+            TagCtrl tagCtrl = tagLoader.getController();
 
-            tagsBar.getButtons().add(tagButton);
-        };
+            tagCtrl.delete.setOnAction(e -> {
+                server.updateCard(card.id, "removeTag", t.id);
+                server.forceRefresh(mainCtrl.getCurrentBoard().key);
+            });
 
-        return addTagEvent;
+            tagsBar.getChildren().add(newTagNode);
+        }
     }
 
     /**
@@ -231,6 +250,8 @@ public class CardDetailsCtrl {
                 throw new RuntimeException(e);
             }
         }
+
+        prepareTags();
     }
 
     /**
@@ -250,7 +271,7 @@ public class CardDetailsCtrl {
     private void updatePreset() {
         if(presetChoice.getSelectionModel().getSelectedItem().equals("[Default]")) {
             server.updateCardPreset(card.id, -1L);
-
+            return;
         }
 
         server.updateCardPreset(card.id, Long.parseLong(presetChoice.getSelectionModel().
@@ -273,7 +294,7 @@ public class CardDetailsCtrl {
     }
 
     /**
-     * Clear all of the fields. (used for changing between cards)
+     * Clear all the fields. (used for changing between cards)
      */
     public void clearFields(){
         this.title.clear();

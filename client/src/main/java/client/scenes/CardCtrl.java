@@ -8,10 +8,12 @@ import javax.inject.Inject;
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import commons.Card;
+import commons.Tag;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -21,17 +23,16 @@ import javafx.scene.layout.VBox;
 public class CardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
     private Card card;
 
     @FXML
     private TextField title;
     @FXML
     private TextArea description;
-
     @FXML
     private VBox cardBox;
-
+    @FXML
+    private VBox tagContainer;
     @FXML
     private ProgressBar prog;
 
@@ -53,7 +54,8 @@ public class CardCtrl implements Initializable {
 
         this.description.setText(card.description);
         this.description.setPrefRowCount((int) card.description.lines().count());
-        mainCtrl.accessUsedPresets().add(card.colors.id);
+        if(card.colors != null)
+            mainCtrl.accessUsedPresets().add(card.colors.id);
     }
 
     private void prepareTitle() {
@@ -135,7 +137,9 @@ public class CardCtrl implements Initializable {
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
         }
-        mainCtrl.accessUsedPresets().add(newState.colors.id);
+
+        if(newState.colors != null)
+            mainCtrl.accessUsedPresets().add(newState.colors.id);
 
         setTitleColors();
 
@@ -152,6 +156,16 @@ public class CardCtrl implements Initializable {
         card = newState;
 
         handleProgress();
+        showTags();
+    }
+
+    public void showTags() {
+        tagContainer.getChildren().clear();
+
+        for(Tag t : card.tags) {
+            Label newTagNode = new Label(t.name);
+            tagContainer.getChildren().add(newTagNode);
+        }
     }
 
     private void setTitleColors() {
@@ -184,8 +198,5 @@ public class CardCtrl implements Initializable {
     public void delete() {
         server.deleteCard(this.card.id);
     }
-
-
-
 
 }

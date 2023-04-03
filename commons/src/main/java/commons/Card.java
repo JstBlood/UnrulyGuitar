@@ -3,6 +3,7 @@ package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,12 +65,24 @@ public class Card {
     public void addTask(Task newTask) {
         tasks.add(newTask);
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void removeTag(Tag tag) {
+        Iterator<Tag> it = tags.iterator();
+        while(it.hasNext()) {
+            Tag curr = it.next();
+            if(curr.id == tag.id) {
+                it.remove();
+                break;
+            }
+        }
     }
 
     @Override

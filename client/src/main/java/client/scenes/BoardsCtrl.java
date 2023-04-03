@@ -1,5 +1,8 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.util.Random;
+
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
@@ -11,9 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
-import java.util.Random;
 
 /**
  * This class is the controller of the Boards scene,
@@ -81,7 +81,6 @@ public class BoardsCtrl {
         Board receivedBoard = null;
         try {
             receivedBoard = server.joinBoard(key.getText());
-            System.out.println("[DEBUG] Received board: " + receivedBoard);
         } catch (NotFoundException e) {
             UIUtils.showError("This board has not been found");
         } catch (Exception e) {

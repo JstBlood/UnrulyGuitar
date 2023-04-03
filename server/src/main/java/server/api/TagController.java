@@ -33,7 +33,6 @@ public class TagController {
                                         @RequestBody String newValue,
                                         @PathVariable String username,
                                         @PathVariable(required = false) String password) {
-        System.out.println("called");
         return ResponseEntity.status(tagService.updateName(id, newValue, username, password)).build();
     }
 
