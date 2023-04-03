@@ -33,10 +33,8 @@ public class Board {
     @ManyToMany(mappedBy = "boards")
     public Set<User> users = ConcurrentHashMap.newKeySet();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "board_tag",
-            joinColumns = @JoinColumn(name = "board_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @OneToMany(mappedBy = "parentBoard",
+            cascade = CascadeType.ALL)
     public Set<Tag> tags = ConcurrentHashMap.newKeySet();
 
     @SuppressWarnings("unused")

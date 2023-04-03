@@ -39,14 +39,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
-        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes",
-                "BoardOverview.fxml");
-        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes",
-                "AddCardList.fxml");
-        var addCard = FXML.load(CardDetailsCtrl.class, "client", "scenes",
-                "AddCard.fxml");
-        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes",
-                "BoardSettings.fxml");
+        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes", "AddCardList.fxml");
+        var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes", "CardDetails.fxml");
+        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
@@ -57,13 +53,16 @@ public class Main extends Application {
                 boards,
                 boardOverview,
                 addCardList,
-                addCard,
+                cardDetails,
                 boardSettings,
                 cStore);
 
-        var cardList = FXML.load(CardListCtrl.class, "client", "scenes", "CardList.fxml");
         primaryStage.setOnCloseRequest(e -> {
-            boardOverview.getKey().stop();
+            try {
+                boardOverview.getKey().stop();
+            } catch (RuntimeException ignored) {
+                System.out.println("closed");
+            }
         });
     }
 }

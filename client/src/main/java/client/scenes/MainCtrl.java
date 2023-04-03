@@ -45,6 +45,7 @@ public class MainCtrl {
     private CardDetailsCtrl cardDetailsCtrl;
     private Scene cardDetails;
 
+    private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
     private CredentialsStore cStore;
@@ -78,6 +79,7 @@ public class MainCtrl {
         this.cardDetailsCtrl = addCard.getKey();
         this.cardDetails = new Scene(addCard.getValue());
 
+        this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
 
         this.cStore = cStore;
@@ -122,6 +124,10 @@ public class MainCtrl {
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
+    }
+
+    public void updateBoardSettings() {
+        boardSettingsCtrl.update();
     }
 
     public Board getCurrentBoard() {
