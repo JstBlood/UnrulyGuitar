@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import server.database.BoardRepository;
 import server.database.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BoardsService implements StandardEntityService<Board, String> {
