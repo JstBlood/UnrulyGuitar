@@ -46,14 +46,6 @@ public class CardListService {
     }
 
     public HttpStatus update(long id, String component, Object newValue, String username, String password) {
-//        if (!prepare(id, username, password).equals(HttpStatus.OK))
-//            return prepare(id, username, password);
-//
-//        CardList cardList = cardListRepo.findById(id).get();
-//
-//        return flush(cardList)
-
-        //Unused, delete?
         return HttpStatus.BAD_REQUEST;
     }
 

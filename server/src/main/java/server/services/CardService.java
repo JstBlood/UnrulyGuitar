@@ -5,25 +5,29 @@ import java.util.Optional;
 
 import commons.Card;
 import commons.CardList;
+import commons.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
+import server.database.TagRepository;
 
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
     private final CardRepository cardRepo;
     private final CardListRepository cardListRepo;
+    private final TagRepository tagRepo;
     private final BoardsService boards;
     private final SocketRefreshService sockets;
 
 
     public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
-                       SocketRefreshService sockets) {
+                       TagRepository tagRepo, SocketRefreshService sockets) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
+        this.tagRepo = tagRepo;
         this.sockets = sockets;
     }
 
@@ -58,19 +62,6 @@ public class CardService implements StandardEntityService<Card, Long> {
     }
 
     public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-//        if (!prepare(id, username, password).equals(HttpStatus.OK))
-//            return prepare(id, username, password);
-//
-//        Card card = cardRepo.findById(id).get();
-//        String newValueString = String.valueOf(newValue);
-//
-//        if(newValueString.isEmpty()) {
-//            return HttpStatus.BAD_REQUEST;
-//        }
-//
-//        return flush(card);
-
-        //No use for this method, should I delete?
         return HttpStatus.BAD_REQUEST;
     }
 
@@ -214,6 +205,48 @@ public class CardService implements StandardEntityService<Card, Long> {
         return flush(card);
     }
 
+    public HttpStatus updateAddTag(long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Long tagId = Long.valueOf(String.valueOf(newValue));
+
+        Optional<Tag> optionalTag = tagRepo.findById(tagId);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Tag tag = optionalTag.get();
+
+        card.tags.add(tag);
+
+        return flush(card);
+    }
+
+    public HttpStatus updateRemoveTag(long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Long tagId = Long.valueOf(String.valueOf(newValue));
+
+        Optional<Tag> optionalTag = tagRepo.findById(tagId);
+
+        if(optionalTag.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        Tag tag = optionalTag.get();
+
+        card.removeTag(tag);
+
+        return flush(card);
+    }
+
     public HttpStatus prepare(Long id, String username, String password) {
         if (id < 0) {
             return HttpStatus.BAD_REQUEST;
@@ -242,4 +275,6 @@ public class CardService implements StandardEntityService<Card, Long> {
     private boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
     }
+
+
 }
