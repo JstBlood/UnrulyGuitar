@@ -236,4 +236,9 @@ public class BoardSettingsCtrl implements Initializable {
         server.updateBoardDefaultPreset(board.key, Long.parseLong(defPreset.getSelectionModel().getSelectedItem()
                 .substring(4)));
     }
+
+    @FXML
+    public void showHelp() {
+        mainCtrl.showHelpScreen("logon");
+    }
 }

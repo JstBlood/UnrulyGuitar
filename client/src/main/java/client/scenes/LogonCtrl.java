@@ -130,4 +130,8 @@ public class LogonCtrl {
 
     }
 
+    @FXML
+    public void showHelp() {
+        mainCtrl.showHelpScreen("logon");
+    }
 }
