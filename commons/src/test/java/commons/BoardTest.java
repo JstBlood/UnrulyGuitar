@@ -51,7 +51,7 @@ public class BoardTest {
         var b = new Board("myBoard", "work");
         Tag testTag1 = new Tag("urgent", Color.BLACK, SOME_BOARD);
         Tag testTag2 = new Tag("mandatory", Color.BLACK, SOME_BOARD);
-        Set<Tag> SOME_TAGS = new HashSet<>(Arrays.asList(testTag1, testTag2));
+        List<Tag> SOME_TAGS = new ArrayList<>(Arrays.asList(testTag1, testTag2));
         b.addTag(testTag1);
         b.addTag(testTag2);
         assertEquals(SOME_TAGS, b.tags);

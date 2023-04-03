@@ -32,7 +32,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Task> optionalTask = taskRepo.findById(id);
 
-        if(optionalTask.isEmpty()) {
+        if(optionalTask == null) {
             return HttpStatus.NOT_FOUND;
         }
 
@@ -101,7 +101,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
 
         Optional<Task> optionalTask = taskRepo.findById(id);
 
-        if(optionalTask.isEmpty()) {
+        if(optionalTask == null) {
             return HttpStatus.NOT_FOUND;
         }
 

@@ -45,26 +45,26 @@ public class BoardsController {
         return ResponseEntity.ok(service.getBoard(board.key));
     }
 
-    @PostMapping("/join/{id}")
-    public ResponseEntity<Board> join(@PathVariable String id,
+    @PostMapping("/join/{key}")
+    public ResponseEntity<Board> join(@PathVariable String key,
                                       @PathVariable String username,
                                       @PathVariable(required = false) String password) {
-        var status = service.join(id, username, password);
+        var status = service.join(key, username, password);
 
         if(status != HttpStatus.OK)
             return ResponseEntity.status(status).build();
 
-        return ResponseEntity.ok(service.getBoard(id));
+        return ResponseEntity.ok(service.getBoard(key));
     }
 
-    @PostMapping("/leave/{id}")
-    public ResponseEntity<?> leave(@PathVariable String id,
+    @PostMapping("/leave/{key}")
+    public ResponseEntity<?> leave(@PathVariable String key,
                                    @PathVariable String username,
                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.leave(id, username, password)).build();
+        return ResponseEntity.status(service.leave(key, username, password)).build();
     }
 
-    @PutMapping("/{id}/{component}")
+    @PutMapping("/{key}/{component}")
     public ResponseEntity<?> update(@PathVariable String key, @PathVariable String component,
                                     @RequestBody String newValue, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
@@ -78,11 +78,11 @@ public class BoardsController {
         return ResponseEntity.status(service.updateTitle(key, newValue, username, password)).build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id,
+    @DeleteMapping("/{key}")
+    public ResponseEntity<?> delete(@PathVariable String key,
                                     @PathVariable String username,
                                     @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.delete(id, username, password)).build();
+        return ResponseEntity.status(service.delete(key, username, password)).build();
     }
 
     @GetMapping("/list")
@@ -97,10 +97,10 @@ public class BoardsController {
         return service.getPrev(username, password);
     }
 
-    @GetMapping("/force_refresh/{id}")
-    public ResponseEntity<?> previous(@PathVariable String id,
+    @GetMapping("/force_refresh/{key}")
+    public ResponseEntity<?> previous(@PathVariable String key,
                                       @PathVariable String username,
                                       @PathVariable(required = false) String password) {
-        return ResponseEntity.status(service.forceRefresh(id)).build();
+        return ResponseEntity.status(service.forceRefresh(key)).build();
     }
 }

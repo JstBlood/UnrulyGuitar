@@ -179,23 +179,34 @@ public class CardListCtrl implements Initializable {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
                 Card card = (Card) cardNode.getUserData();
-                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP)) {
-                    if (card.index > 0) {
-                        Card prev = cardList.cards.get(card.index - 1);
-                        server.updateCard(card.id, "swap", prev.id);
+                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP) && card.index > 0) {
+                    Card prev = cardList.cards.get(card.index - 1);
+                    server.updateCard(card.id, "swap", prev.id);
+                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN) &&
+                        card.index < cardList.cards.size() - 1) {
+                    Card next = cardList.cards.get(card.index + 1);
+                    server.updateCard(card.id, "swap", next.id);
+                } else {
+                    switch(e.getCode()) {
+                        case E:
+                            //TODO : edit title
+                            break;
+                        case BACK_SPACE:
+                            server.deleteCard(card.id);
+                            break;
+                        case DELETE:
+                            server.deleteCard(card.id);
+                            break;
+                        case ENTER:
+                            mainCtrl.showCardDetails(card);
+                            break;
+                        case T:
+                            //TODO: create popup for adding tags
+                            break;
+                        case C:
+                            //TODO: create popup for color selection
+                            break;
                     }
-                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN)){
-                    if (card.index < cardList.cards.size() - 1) {
-                        Card next = cardList.cards.get(card.index + 1);
-                        server.updateCard(card.id, "swap", next.id);
-                    }
-                } else if(e.getCode().equals(KeyCode.E)) {
-                    //TODO : edit title
-
-                } else if (e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
-                    server.deleteCard(card.id);
-                } else if(e.getCode().equals(KeyCode.ENTER)) {
-                    mainCtrl.showCardDetails(card);
                 }
             }
         });
@@ -203,6 +214,7 @@ public class CardListCtrl implements Initializable {
 
     public void prepareCardTitle(Node cardNode) {
         Card card = (Card) cardNode.getUserData();
+        //TODO: make title editable
     }
 
     public void propagate(CardList newState) {

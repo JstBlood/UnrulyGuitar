@@ -171,10 +171,10 @@ public class ServerUtils {
                 });
     }
 
-    private final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    private final ExecutorService exec = Executors.newSingleThreadExecutor();
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        EXEC.submit(() -> {
+        exec.submit(() -> {
             while(!Thread.interrupted()) {
                 try {
                     var res = ClientBuilder.newClient(new ClientConfig())
@@ -196,7 +196,7 @@ public class ServerUtils {
     }
 
     public void stop() {
-        EXEC.shutdownNow();
+        exec.shutdownNow();
     }
 
     // END OF CARD LIST RELATED METHODS

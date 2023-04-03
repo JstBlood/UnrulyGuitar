@@ -31,10 +31,15 @@ public class TagService implements StandardEntityService<Tag, Long> {
         return HttpStatus.CREATED;
     }
 
+    @Override
+    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
+        return HttpStatus.BAD_REQUEST;
+    }
+
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag.isEmpty()) {
+        if(optionalTag == null) {
             return HttpStatus.NOT_FOUND;
         }
 
@@ -47,14 +52,10 @@ public class TagService implements StandardEntityService<Tag, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        return null;
-    }
-
     public HttpStatus updateName(Long id, String newValue, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag.isEmpty()) {
+        if(optionalTag == null) {
             return HttpStatus.NOT_FOUND;
         }
 
@@ -76,7 +77,7 @@ public class TagService implements StandardEntityService<Tag, Long> {
     public HttpStatus updateColor(Long id, Color newValue, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag.isEmpty()) {
+        if(optionalTag == null) {
             return HttpStatus.NOT_FOUND;
         }
 

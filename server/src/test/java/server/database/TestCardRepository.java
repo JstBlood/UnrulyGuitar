@@ -23,6 +23,9 @@ public class TestCardRepository implements CardRepository {
     }
 
     private Optional<Card> find(Long id) {
+        boolean temp = cards.stream().filter(q -> q.id == id).findFirst().isPresent();
+        if (!temp)
+            return null;
         return cards.stream().filter(q -> q.id == id).findFirst();
     }
 

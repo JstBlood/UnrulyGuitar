@@ -35,7 +35,7 @@ public class Board {
 
     @OneToMany(mappedBy = "parentBoard",
             cascade = CascadeType.ALL)
-    public Set<Tag> tags = ConcurrentHashMap.newKeySet();
+    public List<Tag> tags = new ArrayList<>();
 
     @SuppressWarnings("unused")
     protected Board() {
