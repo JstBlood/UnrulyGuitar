@@ -171,23 +171,26 @@ public class ServerUtils {
                 });
     }
 
-    private ExecutorService exec;
+    private final ExecutorService exec = Executors.newSingleThreadExecutor();
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        exec = Executors.newSingleThreadExecutor();
         exec.submit(() -> {
             while(!Thread.interrupted()) {
-                var res = ClientBuilder.newClient(new ClientConfig())
-                        .target(getServer()).path("secure/" + store.accessStore().getUsername() +
-                                "/lists/updates")
-                        .request(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
-                        .get(Response.class);
-                if(res.getStatus() == 204) {
-                    continue;
+                try {
+                    var res = ClientBuilder.newClient(new ClientConfig())
+                            .target(getServer()).path("secure/" + store.accessStore().getUsername() +
+                                    "/lists/updates")
+                            .request(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+                            .get(Response.class);
+                    if (res.getStatus() == 204) {
+                        continue;
+                    }
+                    var cl = res.readEntity(CardList.class);
+                    consumer.accept(cl);
+                } catch (Exception ignored) {
+
                 }
-                var cl = res.readEntity(CardList.class);
-                consumer.accept(cl);
             }
         });
     }
