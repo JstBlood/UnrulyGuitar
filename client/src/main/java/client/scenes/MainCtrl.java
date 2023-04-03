@@ -23,6 +23,7 @@ import commons.Card;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -48,6 +49,9 @@ public class MainCtrl {
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
+    private HelpScreenCtrl helpScreenCtrl;
+    private Scene helpScreen;
+
     private CredentialsStore cStore;
 
     public CredentialsStore accessStore() {
@@ -60,8 +64,9 @@ public class MainCtrl {
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<AddCardListCtrl, Parent> addCardList,
-                           Pair<CardDetailsCtrl, Parent> addCard,
+                           Pair<CardDetailsCtrl, Parent> cardDetails,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
+                           Pair<HelpScreenCtrl, Parent> helpScreen,
                            CredentialsStore cStore) {
 
         this.primaryStage = primaryStage;
@@ -76,20 +81,24 @@ public class MainCtrl {
 
         this.addCardList = new Scene(addCardList.getValue());
 
-        this.cardDetailsCtrl = addCard.getKey();
-        this.cardDetails = new Scene(addCard.getValue());
+        this.cardDetailsCtrl = cardDetails.getKey();
+        this.cardDetails = new Scene(cardDetails.getValue());
 
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
+
+        this.helpScreenCtrl = helpScreen.getKey();
+        this.helpScreen = new Scene(helpScreen.getValue());
 
         this.cStore = cStore;
 
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
                 .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
+        prepareHelp();
+
         showLogon();
         primaryStage.show();
-
     }
 
     public void showLogon() {
@@ -124,6 +133,35 @@ public class MainCtrl {
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
+    }
+
+    public void showHelpScreen(String prevScene) {
+        helpScreenCtrl.setPrevScene(prevScene);
+        primaryStage.setTitle("Help");
+        primaryStage.setScene(helpScreen);
+    }
+
+    public void prepareHelp() {
+        logon.setOnKeyPressed(e -> {
+            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
+                showHelpScreen("logon");
+            }
+        });
+        boards.setOnKeyPressed(e -> {
+            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
+                showHelpScreen("boards");
+            }
+        });
+        boardOverview.setOnKeyPressed(e -> {
+            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
+                showHelpScreen("boardOverview");
+            }
+        });
+        boardSettings.setOnKeyPressed(e -> {
+            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
+                showHelpScreen("boardSettings");
+            }
+        });
     }
 
     public void updateBoardSettings() {
