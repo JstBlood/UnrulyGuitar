@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import commons.Board;
 import commons.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 public class TestUserRepository implements UserRepository {
 
+    public final List<Board> joinedBoards = new ArrayList<>();
     public final List<User> cardLists = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
@@ -107,6 +109,11 @@ public class TestUserRepository implements UserRepository {
     public User getById(Long id) {
         call("getById");
         return find(id).get();
+    }
+
+    public List<Board> getJoinedBoards() {
+        call("getJoinedBoards");
+        return joinedBoards;
     }
 
     private Optional<User> find(Long id) {

@@ -30,17 +30,21 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 public class TestBoardsRepository implements BoardRepository {
 
-    public final List<Board> cardLists = new ArrayList<>();
+    public final List<Board> boardList = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
     }
 
+    public Optional<Board> find(long id) {
+        return boardList.stream().filter(q -> q.id == id).findFirst();
+    }
+
     @Override
     public List<Board> findAll() {
-        calledMethods.add("findAll");
-        return cardLists;
+        call("findAll");
+        return boardList;
     }
 
     @Override
@@ -69,8 +73,8 @@ public class TestBoardsRepository implements BoardRepository {
 
     @Override
     public <S extends Board> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
-        return null;
+        call("saveAndFlush");
+        return entity;
     }
 
     @Override
@@ -109,10 +113,6 @@ public class TestBoardsRepository implements BoardRepository {
         return find(id).get();
     }
 
-    private Optional<Board> find(Long id) {
-        return cardLists.stream().filter(q -> q.id == id).findFirst();
-    }
-
     @Override
     public <S extends Board> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
@@ -134,8 +134,8 @@ public class TestBoardsRepository implements BoardRepository {
     @Override
     public <S extends Board> S save(S entity) {
         call("save");
-        entity.id = (long) cardLists.size();
-        cardLists.add(entity);
+        entity.id = (long) boardList.size();
+        boardList.add(entity);
         return entity;
     }
 
@@ -153,7 +153,7 @@ public class TestBoardsRepository implements BoardRepository {
 
     @Override
     public long count() {
-        return cardLists.size();
+        return boardList.size();
     }
 
     @Override
@@ -164,8 +164,8 @@ public class TestBoardsRepository implements BoardRepository {
 
     @Override
     public void delete(Board entity) {
-        // TODO Auto-generated method stub
-
+        call("delete");
+        boardList.remove(entity);
     }
 
     @Override
@@ -217,7 +217,9 @@ public class TestBoardsRepository implements BoardRepository {
     }
 
     @Override
-    public Board findByKey(String username) {
-        return null;
+    public Board findByKey(String key) {
+        call("findByKey");
+        Optional<Board> board = boardList.stream().filter(q -> q.key.toString().equals(key.toString())).findFirst();
+        return board.orElse(null);
     }
 }

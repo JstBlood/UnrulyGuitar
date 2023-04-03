@@ -1,7 +1,5 @@
 package server.services;
 
-import java.util.Optional;
-
 import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,17 +32,11 @@ public class CardListService {
     }
 
     public HttpStatus delete(long id, String username, String password) {
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
-
-        if (id < 0) {
-            return HttpStatus.BAD_REQUEST;
+        if (!prepare(id, username, password).equals(HttpStatus.OK)) {
+            return prepare(id, username, password);
         }
 
-        if (optionalCardList.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        CardList cardList = optionalCardList.get();
+        CardList cardList = cardListRepo.findById(id).get();
 
         cardListRepo.deleteById(id);
         sockets.broadcastRemoval(cardList);
@@ -78,7 +70,7 @@ public class CardListService {
             return HttpStatus.BAD_REQUEST;
         }
 
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
+        var optionalCardList = cardListRepo.findById(id);
 
         if(optionalCardList.isEmpty()) {
             return HttpStatus.NOT_FOUND;
