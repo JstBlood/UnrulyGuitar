@@ -333,7 +333,7 @@ public class BoardOverviewCtrl implements Initializable {
      */
     @FXML
     public void showHelp() {
-        mainCtrl.showHelpScreen("logon");
+        mainCtrl.showHelpScreen("boardOverview");
     }
 
     public void stop() {
