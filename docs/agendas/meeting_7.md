@@ -21,17 +21,17 @@ Check if everything that is needed to talk about is mentioned in the agenda, if 
 
 *14:20 - 14:30*
 
+---
 
 Hear what the TA has to say about our application before moving on.
----
 
 ## Product pitch Feedback (+ HUE Questions)
 
 *14:30 - 15:35*
 
+---
 
 Hear what the TA thinks of our product pitch.
----
 
 ## Question round for coworkers and for the TA + Closing
 
