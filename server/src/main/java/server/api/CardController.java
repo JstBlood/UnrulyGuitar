@@ -77,17 +77,25 @@ public class CardController {
 
     @PutMapping("/{id}/addTag")
     public ResponseEntity<?> updateAddTag(@PathVariable long id,
-                                                   @RequestBody Object newValue,
-                                                   @PathVariable String username,
-                                                   @PathVariable(required = false) String password) {
+                                          @RequestBody Object newValue,
+                                          @PathVariable String username,
+                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateAddTag(id, newValue, username, password)).build();
     }
 
     @PutMapping("/{id}/removeTag")
     public ResponseEntity<?> updateRemoveTag(@PathVariable long id,
-                                          @RequestBody Object newValue,
-                                          @PathVariable String username,
-                                          @PathVariable(required = false) String password) {
+                                             @RequestBody Object newValue,
+                                             @PathVariable String username,
+                                             @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateRemoveTag(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/swap")
+    public ResponseEntity<?> updateSwap(@PathVariable long id,
+                                                   @RequestBody Object newValue, @PathVariable String username,
+                                                   @PathVariable(required = false) String password) {
+        System.out.println("called");
+        return ResponseEntity.status(cardService.updateSwap(id, newValue, username, password)).build();
     }
 }

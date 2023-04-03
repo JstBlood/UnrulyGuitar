@@ -12,6 +12,7 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.DragEvent;
@@ -46,7 +47,6 @@ public class CardListCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     public CardList cardList;
-
     private List<CardCtrl> children;
 
     @Inject
@@ -125,43 +125,84 @@ public class CardListCtrl implements Initializable {
     }
 
     public void showCards() {
-        var cardsOrdered = new ArrayList<>(cardList.cards);
-        cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
+        cardList.cards.sort(Comparator.comparingInt(card -> card.index));
 
-        while(children.size() != cardsOrdered.size()) {
-            if (children.size() < cardsOrdered.size()) {
-                Card c = cardList.cards.get(children.size());
+        cardsContainer.getChildren().clear();
 
-                FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-                cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
+        for(Card c : cardList.cards) {
+            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
+            try {
+                VBox cardNode = cardLoader.load();
 
-                try {
-                    VBox cardNode = cardLoader.load();
-                    prepareCardNode(cardNode);
-                    cardsContainer.getChildren().add(cardNode);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                cardNode.setUserData(c);
+                prepareCardNode(cardNode);
 
-                children.add(cardLoader.getController());
-            } else if (children.size() > cardsOrdered.size()) {
-                cardsContainer.getChildren().remove(children.size() - 1);
-                children.remove(children.size() - 1);
+                cardsContainer.getChildren().add(cardNode);
+
+                CardCtrl cardCtrl = cardLoader.getController();
+                cardCtrl.propagate(c);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-        }
-
-        for(int i = 0; i < children.size(); i++) {
-            children.get(i).propagate(cardsOrdered.get(i));
         }
     }
 
-    public void prepareCardNode(VBox cardNode) {
+    public void prepareCardNode(Node cardNode) {
+        prepareCardFocus(cardNode);
+        prepareCardTitle(cardNode);
+        prepareCardKeyEvents(cardNode);
+    }
+
+    public void prepareCardFocus(Node cardNode) {
+        cardNode.setFocusTraversable(true);
+
+        cardNode.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) {
+                cardNode.setEffect(new Glow(1));
+            } else {
+                cardNode.setEffect(null);
+            }
+        });
+
         cardNode.setOnMouseEntered(e -> {
-            cardNode.setEffect(new Glow(0.8));
+            cardNode.setEffect(new Glow(1));
+            e.consume();
         });
         cardNode.setOnMouseExited(e -> {
             cardNode.setEffect(null);
+            e.consume();
         });
+    }
+
+    public void prepareCardKeyEvents(Node cardNode) {
+        cardNode.setOnKeyPressed(e -> {
+            if (cardNode.isFocused()) {
+                Card card = (Card) cardNode.getUserData();
+                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP)) {
+                    if (card.index > 0) {
+                        Card prev = cardList.cards.get(card.index - 1);
+                        server.updateCard(card.id, "swap", prev.id);
+                    }
+                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN)){
+                    if (card.index < cardList.cards.size() - 1) {
+                        Card next = cardList.cards.get(card.index + 1);
+                        server.updateCard(card.id, "swap", next.id);
+                    }
+                } else if(e.getCode().equals(KeyCode.E)) {
+                    //TODO : edit title
+
+                } else if (e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
+                    server.deleteCard(card.id);
+                } else if(e.getCode().equals(KeyCode.ENTER)) {
+                    mainCtrl.showCardDetails(card);
+                }
+            }
+        });
+    }
+
+    public void prepareCardTitle(Node cardNode) {
+        Card card = (Card) cardNode.getUserData();
     }
 
     public void propagate(CardList newState) {

@@ -53,6 +53,8 @@ public class CardDetailsCtrl {
      * @param c The initial state.
      */
     public void prepare(Card c){
+        server.deregister();
+
         this.card = c;
         refresh(c, true);
 
