@@ -263,6 +263,11 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showBoards();
     }
 
+    @FXML
+    public void showHelp() {
+        mainCtrl.showHelpScreen("logon");
+    }
+
     public void stop() {
         server.stop();
     }
