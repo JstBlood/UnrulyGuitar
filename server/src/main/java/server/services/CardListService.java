@@ -1,7 +1,5 @@
 package server.services;
 
-import java.util.Optional;
-
 import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
