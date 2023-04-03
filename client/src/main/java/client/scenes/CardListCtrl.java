@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Glow;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -136,6 +137,7 @@ public class CardListCtrl implements Initializable {
 
                 try {
                     VBox cardNode = cardLoader.load();
+                    prepareCardNode(cardNode);
                     cardsContainer.getChildren().add(cardNode);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -153,6 +155,15 @@ public class CardListCtrl implements Initializable {
         }
     }
 
+    public void prepareCardNode(VBox cardNode) {
+        cardNode.setOnMouseEntered(e -> {
+            cardNode.setEffect(new Glow(0.8));
+        });
+        cardNode.setOnMouseExited(e -> {
+            cardNode.setEffect(null);
+        });
+    }
+
     public void propagate(CardList newState) {
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
@@ -163,7 +174,6 @@ public class CardListCtrl implements Initializable {
 
         showCards();
     }
-
 
     @FXML
     public void cardAdd() {

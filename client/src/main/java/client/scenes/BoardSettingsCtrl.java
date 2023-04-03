@@ -72,6 +72,6 @@ public class BoardSettingsCtrl implements Initializable {
 
     @FXML
     public void showHelp() {
-        mainCtrl.showHelpScreen("logon");
+        mainCtrl.showHelpScreen("boardSettings");
     }
 }
