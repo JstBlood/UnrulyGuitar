@@ -52,6 +52,10 @@ public class CardListControllerTest {
         sut = new CardListController(service);
     }
 
+    private boolean isEmptyOrNull(String s) {
+        return s == null || s.isEmpty();
+    }
+
     @Test
     public void cannotAddNullList() {
         var actual = sut.add(null, "", "");
@@ -86,7 +90,7 @@ public class CardListControllerTest {
     }
 
     @Test
-    public void cannotDeleteInexistentList() {
+    public void cannotDeleteNonexistentList() {
         var actual = sut.delete(-1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -101,7 +105,7 @@ public class CardListControllerTest {
     }
 
     @Test
-    public void cannotUpdateInexistentList() {
+    public void cannotUpdateNonexistentList() {
         var actual = sut.updateTitle(-1, "newTitle", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -127,6 +131,13 @@ public class CardListControllerTest {
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void updates() {
+        String actual = sut.getUpdates().toString();
+
+        Assertions.assertFalse(isEmptyOrNull(actual));
     }
 
     @SuppressWarnings("serial")
