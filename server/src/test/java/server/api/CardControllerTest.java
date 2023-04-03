@@ -84,9 +84,15 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotDeleteInexistentCard() {
+    public void cannotDeleteNonexistentCard() {
         var actual = sut.delete(-1, "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotFindNonexistentCard() {
+        var actual = sut.updateIndex(1234567890, "2", "", "");
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -101,7 +107,7 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotUpdateInexistentCard() {
+    public void cannotUpdateNonexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -157,6 +163,15 @@ public class CardControllerTest {
     public void updateIndex() {
         repo.save(SOME_CARD);
         var actual = sut.updateIndex(SOME_CARD.id, 0, "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateDescription() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateDescription(SOME_CARD.id, "Description", "", "");
 
         Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
