@@ -53,6 +53,7 @@ public class CardCtrl implements Initializable {
 
         this.description.setText(card.description);
         this.description.setPrefRowCount((int) card.description.lines().count());
+        mainCtrl.accessUsedPresets().add(card.colors.id);
     }
 
     private void prepareTitle() {
@@ -134,6 +135,7 @@ public class CardCtrl implements Initializable {
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
         }
+        mainCtrl.accessUsedPresets().add(newState.colors.id);
 
         setTitleColors();
 

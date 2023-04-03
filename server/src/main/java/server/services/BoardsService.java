@@ -181,6 +181,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         ColorPreset preset = colorRepo.findById(id).get();
 
+
         b.defaultPreset = preset;
 
         repo.saveAndFlush(b);

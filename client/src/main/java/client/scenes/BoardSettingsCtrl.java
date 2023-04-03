@@ -26,7 +26,7 @@ public class BoardSettingsCtrl implements Initializable {
     @FXML
     private HBox presetList;
 
-    public Board board;
+    private Board board;
 
     @FXML
     private ColorPicker foregroundColor;
@@ -40,6 +40,11 @@ public class BoardSettingsCtrl implements Initializable {
     @FXML
     private ChoiceBox<String> defPreset;
 
+    /**
+     * The Board settings view.
+     * @param server The server connection.
+     * @param mainCtrl The main (root) controller.
+     */
     @Inject
     public BoardSettingsCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -50,6 +55,10 @@ public class BoardSettingsCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
     }
 
+    /**
+     * Update the board to a new state.
+     * @param newState The new state to merge with our current one.
+     */
     public void update(Board newState) {
         board = newState;
         prepareTags();
@@ -68,6 +77,9 @@ public class BoardSettingsCtrl implements Initializable {
         }
     }
 
+    /**
+     * Add all tags on the merge to our current ones.
+     */
     private void prepareTags() {
         tagsBar.getChildren().clear();
         for(Tag tag : board.tags) {
@@ -106,73 +118,114 @@ public class BoardSettingsCtrl implements Initializable {
         }
     }
 
+    /**
+     * Add a new tag.
+     * @throws IOException Never thrown.
+     */
     @FXML
     public void addTag() throws IOException {
         server.addTag(generateTag());
     }
 
+    /**
+     * Change this board's foreground.
+     */
     @FXML
     public void foregroundChange() {
         server.updateBoard(board.key, "foreground",
                 "#" + foregroundColor.getValue().toString().substring(2));
     }
 
+    /**
+     * Change this board's background.
+     */
     @FXML
     public void backgroundChange() {
         server.updateBoard(board.key, "background",
                 "#" + backgroundColor.getValue().toString().substring(2));
     }
 
+    /**
+     * Reset this board's foreground.
+     */
     @FXML
     public void resetBoardForeground() {
         server.updateBoard(board.key, "foreground",
                 Board.getDefaultForeground());
     }
 
+    /**
+     * Reset this board's background.
+     */
     @FXML
     public void resetBoardBackground() {
         server.updateBoard(board.key, "background",
                 Board.getDefaultBackground());
     }
 
+    /**
+     * Reset this board's list foreground.
+     */
     @FXML
     public void resetListForeground() {
         server.updateBoard(board.key, "list/foreground",
                 Board.getDefaultForeground());
     }
 
+    /**
+     * Reset this board's list background.
+     */
     @FXML
     public void resetListBackground() {
         server.updateBoard(board.key, "list/background",
                 Board.getDefaultBackground());
     }
 
+    /**
+     * Change this board's list foreground.
+     */
     @FXML
     public void foregroundChangeList() {
         server.updateBoard(board.key, "list/foreground",
                 "#" + foregroundColorList.getValue().toString().substring(2));
     }
 
+    /**
+     * Change this board's list background.
+     */
     @FXML
     public void backgroundChangeList() {
         server.updateBoard(board.key, "list/background",
                 "#" + backgroundColorList.getValue().toString().substring(2));
     }
 
+    /**
+     * Add a new color preset with default values.
+     */
     public void addPreset() {
         server.addBoardPreset(board.key, new ColorPreset());
     }
 
+    /**
+     * Generate a new tag with default values.
+     * @return The new tag in question.
+     */
     private Tag generateTag() {
         return new Tag("New tag", null, mainCtrl.getCurrentBoard());
     }
 
+    /**
+     * Save all the preset changes.
+     */
     public void save() {
         updatePreset();
         updatePreset();
         mainCtrl.showBoardOverview();
     }
 
+    /**
+     * Update the boards' default preset based on the value in the ChoiceBox.
+     */
     private void updatePreset() {
         server.updateBoardDefaultPreset(board.key, Long.parseLong(defPreset.getSelectionModel().getSelectedItem()
                 .substring(4)));

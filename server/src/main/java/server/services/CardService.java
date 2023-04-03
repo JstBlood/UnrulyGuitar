@@ -69,7 +69,11 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Card card = cardRepo.findById(id).get();
 
-        card.colors = colorRepo.findById(newId).get();
+        if(newId == -1) {
+            card.colors = null;
+        } else {
+            card.colors = colorRepo.findById(newId).get();
+        }
 
         // This is needed here for the simple reason
         // that one save does not suffice in this case

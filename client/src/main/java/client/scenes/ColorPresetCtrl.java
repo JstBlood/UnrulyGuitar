@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import commons.ColorPreset;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,6 +60,11 @@ public class ColorPresetCtrl implements Initializable {
 
     @FXML
     public void delete() {
+        if(mainCtrl.accessUsedPresets().contains(colorPreset.id)) {
+            UIUtils.showError("You cannot remove this preset it is used by cards or as a default");
+            return;
+        }
+
         server.deleteBoardPreset(parentKey, colorPreset.id);
     }
 }

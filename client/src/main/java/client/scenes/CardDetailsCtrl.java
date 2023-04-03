@@ -48,12 +48,21 @@ public class CardDetailsCtrl {
     private ChoiceBox<String> presetChoice;
     private List<Task> subtasks;
 
+    /**
+     * This controller shows the details of a card.
+     * @param server The server connection.
+     * @param mainCtrl The main (root) controller.
+     */
     @Inject
     public CardDetailsCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * Populate this controller with an initial Card state.
+     * @param c The initial state.
+     */
     public void prepare(Card c){
         this.card = c;
         refresh(c, true);
@@ -122,6 +131,13 @@ public class CardDetailsCtrl {
         return addTagEvent;
     }
 
+    /**
+     * Add a handler for a TextField/TextArea so that it gets updated whenever the user defocuses from it.
+     * @param r The control to attach the events to.
+     * @param run The function to run on update.
+     * @param ff The field of the card to compare the data to.
+     * @param onEnter Where or not to attach a event on pressing the enter key.
+     */
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
         r.textProperty().addListener((o, oldV, newV) -> {
             try {
@@ -147,11 +163,17 @@ public class CardDetailsCtrl {
         });
     }
 
+    /**
+     * Update the title.
+     */
     private void updateTitle() {
         title.setStyle("-fx-text-fill: white;");
         server.updateCard(card.id, "title", title.getText());
     }
 
+    /**
+     * Update the description.
+     */
     private void updateDescription() {
         description.setStyle("-fx-text-fill: black;");
         server.updateCard(card.id, "description", description.getText());
@@ -162,6 +184,11 @@ public class CardDetailsCtrl {
             t.parentCard = newState;
     }
 
+    /**
+     * Refresh the state of this controller.
+     * @param newState The new state to merge to our current one.
+     * @param pass Whether to perform a comparison between the new one and the old one.
+     */
     private void refresh(Card newState, boolean pass) {
         relink(newState);
 
@@ -170,6 +197,11 @@ public class CardDetailsCtrl {
         }
 
         presetChoice.getItems().clear();
+        presetChoice.getItems().add("[Default]");
+
+        if(newState.colors == null)
+            presetChoice.getSelectionModel().select(0);
+
         for(ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
             presetChoice.getItems().add("No #" + c.id);
 
@@ -201,6 +233,9 @@ public class CardDetailsCtrl {
         }
     }
 
+    /**
+     * Finish editing and return to the board overview.
+     */
     public void submitCard(){
         // go back to the overview
         updatePreset();
@@ -209,19 +244,37 @@ public class CardDetailsCtrl {
         mainCtrl.showBoardOverview();
     }
 
+    /**
+     * Update the chosen preset of our card.
+     */
     private void updatePreset() {
+        if(presetChoice.getSelectionModel().getSelectedItem().equals("[Default]")) {
+            server.updateCardPreset(card.id, -1L);
+
+        }
+
         server.updateCardPreset(card.id, Long.parseLong(presetChoice.getSelectionModel().
                 getSelectedItem().substring(4)));
     }
 
+    /**
+     * Get a new empty task object.
+     * @return The task in question.
+     */
     private Task generateTask() {
         return new Task("New Task", card);
     }
 
+    /**
+     * Add a subtask (Task) to our Card.
+     */
     public void addSubtask(){
         server.addTask(generateTask());
     }
 
+    /**
+     * Clear all of the fields. (used for changing between cards)
+     */
     public void clearFields(){
         this.title.clear();
         this.description.clear();
