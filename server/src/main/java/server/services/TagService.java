@@ -31,11 +31,6 @@ public class TagService implements StandardEntityService<Tag, Long> {
         return HttpStatus.CREATED;
     }
 
-    @Override
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        return HttpStatus.BAD_REQUEST;
-    }
-
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 

@@ -51,14 +51,28 @@ public class BoardOverviewCtrl implements Initializable {
     private HBox section;
     @FXML
     private GridPane rightBar;
+    @FXML
+    private GridPane rooter;
 
     private List<CardListCtrl> children;
 
-    public void setBoard(Board board) {
+
+    /**
+     * This function updates the internal state of the object.
+     *
+     * @param board The new state to update to.
+     */
+    private void setBoard(Board board) {
         this.board = board;
         inviteKey.getItems().get(0).setText(board.key);
     }
 
+    /**
+     * The main controller that displays all the board with the lists and tasks.
+     *
+     * @param server The server connection.
+     * @param mainCtrl The main (root) controller.
+     */
     @Inject
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -74,6 +88,10 @@ public class BoardOverviewCtrl implements Initializable {
         prepareTitleField();
     }
 
+    /**
+     * This function "preps" the controller before displaying it.
+     * @param board The initial state of the controller.
+     */
     public void prepare(Board board) {
         setBoard(board);
 
@@ -106,7 +124,10 @@ public class BoardOverviewCtrl implements Initializable {
         });
     }
 
-    public void prepareTitleField() {
+    /**
+     * This function adds all the relevant update listeners to the title field.
+     */
+    private void prepareTitleField() {
         title.textProperty().addListener((o, oldV, newV) -> {
             if(!Objects.equals(board.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
@@ -126,7 +147,12 @@ public class BoardOverviewCtrl implements Initializable {
         });
     }
 
-    public void refresh(Board newState) throws IOException {
+    /**
+     * Perform a merging backtracked refresh of the board.
+     * @param newState The new state for the controller.
+     * @throws IOException Should never be thrown.
+     */
+    private void refresh(Board newState) throws IOException {
         performRelink(newState);
 
         updateBoard(newState);
@@ -152,19 +178,32 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
+    /**
+     * Merge the changes of the new state to our current state.
+     * @param newState The new state.
+     */
     private void updateBoard(Board newState) {
         setBoard(newState);
 
         if(!newState.title.equals(title.getText())) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
         }
 
-        mainCtrl.updateBoardSettings();
+        title.setStyle("-fx-text-fill: " + newState.colors.foreground + ";");
+        rooter.setStyle("-fx-background-color: " + newState.colors.background + ";");
+
+        mainCtrl.accessUsedPresets().clear();
+        mainCtrl.accessUsedPresets().add(newState.defaultPreset.id);
+
+        mainCtrl.updateBoardSettings(newState);
 
         //TODO: update tags
     }
 
+    /**
+     * Merge the changes of the new state to our current state, by adding and removing new CardLists.
+     * @throws IOException
+     */
     private void updateCardLists() throws IOException {
         while(children.size() != board.cardLists.size()) {
             if (children.size() < board.cardLists.size()) {
@@ -192,6 +231,10 @@ public class BoardOverviewCtrl implements Initializable {
             children.get(i).propagate(board.cardLists.get(i));
         }
     }
+
+    /**
+     * Copy the invite key to the clipboard so that you can send it to someone.
+     */
     @FXML
     public void getInviteKey() {
         ClipboardContent content = new ClipboardContent();
@@ -206,33 +249,42 @@ public class BoardOverviewCtrl implements Initializable {
                     }),
                     new KeyFrame(Duration.seconds(2), event -> {
                         inviteKey.setText("Invite Key");
-                        inviteKey.setStyle("-fx-background-color: -fx-col-0");
+                        inviteKey.setStyle("-fx-background-color: " + board.colors.foreground + "");
                     })
             );
             timeline.play();
         });
     }
 
+    /**
+     * Enter the board settings.
+     */
     @FXML
     public void openSettings() {
         mainCtrl.showBoardSettings();
     }
 
+    /**
+     * Disconnect from this board.
+     */
     @FXML
     public void back() {
         server.deregister();
         mainCtrl.showBoards();
     }
 
+    /**
+     * Perform a title update.
+     */
     public void updateTitle() {
         if(title.getText().isEmpty()) {
             title.setText(board.title);
-            title.setStyle("-fx-text-fill: -fx-col-0;");
+            title.setStyle("-fx-text-fill: " + board.colors.foreground + ";");
             UIUtils.showError("Title should not be empty!");
             return;
         }
 
-        title.setStyle("-fx-text-fill: -fx-col-0;");
+        title.setStyle("-fx-text-fill: " + board.colors.foreground + ";");
 
         board.title = title.getText();
 
@@ -243,20 +295,33 @@ public class BoardOverviewCtrl implements Initializable {
         }
     }
 
+    /**
+     * Get the current state of this controller.
+     * @return current board.
+     */
     public Board getBoard() {
         return this.board;
     }
 
+    /**
+     * Add a new card list to the board.
+     */
     @FXML
     public void addCardList() {
         this.mainCtrl.showAddCardList();
     }
 
+    /**
+     * Delete this board from the server.
+     */
     @FXML
     public void removeBoard() {
         server.deleteBoard(board.key);
     }
 
+    /**
+     * Leave this board for this user.
+     */
     @FXML
     public void leaveBoard() {
         server.leaveBoard(board.key);
@@ -268,6 +333,9 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showHelpScreen("boardOverview");
     }
 
+    /**
+     * Stop all long polling threads.
+     */
     public void stop() {
         server.stop();
     }

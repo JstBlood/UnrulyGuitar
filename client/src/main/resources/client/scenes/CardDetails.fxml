@@ -4,6 +4,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -14,17 +15,77 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" prefHeight="417.0" prefWidth="610.0" styleClass="anchor-plane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
-   <stylesheets>
-      <URL value="@/client/css/AddCardStyle.css" />
-   </stylesheets>
-   <children>
-      <BorderPane focusTraversable="true" prefHeight="57.0" prefWidth="610.0">
-         <left>
-            <ImageView fitHeight="50.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+<ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
+   <content>
+      <AnchorPane fx:id="root" prefHeight="380.0" prefWidth="603.0" styleClass="anchor-plane">
+         <stylesheets>
+            <URL value="@/client/css/AddCardStyle.css" />
+         </stylesheets>
+         <children>
+            <BorderPane focusTraversable="true" prefHeight="57.0" prefWidth="610.0">
+               <left>
+                  <ImageView fitHeight="50.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@/client/images/bracket.png" />
+                     </image>
+                     <BorderPane.margin>
+                        <Insets left="20.0" />
+                     </BorderPane.margin>
+                  </ImageView>
+               </left>
+               <right>
+                  <ImageView fitHeight="50.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0" BorderPane.alignment="CENTER">
+                     <image>
+                        <Image url="@/client/images/bracket.png" />
+                     </image>
+                     <BorderPane.margin>
+                        <Insets right="20.0" />
+                     </BorderPane.margin>
+                  </ImageView>
+               </right>
+               <center>
+                  <TextField fx:id="title" alignment="CENTER" prefHeight="46.0" prefWidth="454.0" promptText="Add Card Title" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <styleClass>
+                        <String fx:value="title" />
+                        <String fx:value="text-0" />
+                     </styleClass>
+                  </TextField>
+               </center>
+            </BorderPane>
+            <TextArea fx:id="description" layoutX="11.0" layoutY="116.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
+               <styleClass>
+                  <String fx:value="plane-0" />
+                  <String fx:value="text-1" />
+                  <String fx:value="description" />
+               </styleClass>
+               <effect>
+                  <InnerShadow />
+               </effect>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </TextArea>
+            <GridPane fx:id="subtaskContainer" layoutX="3.0" layoutY="274.0" prefHeight="104.0" prefWidth="523.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <Button fx:id="submit" layoutX="533.0" layoutY="343.0" mnemonicParsing="false" onAction="#submitCardChanges" styleClass="submit" text="DONE!" />
+            <Label layoutX="52.0" layoutY="266.0" onMouseClicked="#addTask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
+            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="27.0" layoutY="263.0" onMouseClicked="#addTask" pickOnBounds="true" preserveRatio="true">
+
                <image>
                   <Image url="@/client/images/bracket.png" />
                </image>
@@ -32,60 +93,15 @@
                   <Insets left="20.0" />
                </BorderPane.margin>
             </ImageView>
-         </left>
-         <right>
-            <ImageView fitHeight="50.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true" scaleX="-1.0" BorderPane.alignment="CENTER">
-               <image>
-                  <Image url="@/client/images/bracket.png" />
-               </image>
-               <BorderPane.margin>
-                  <Insets right="20.0" />
-               </BorderPane.margin>
-            </ImageView>
-         </right>
-         <center>
-            <TextField fx:id="title" alignment="CENTER" prefHeight="46.0" prefWidth="454.0" promptText="Add Card Title" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-               <styleClass>
-                  <String fx:value="title" />
-                  <String fx:value="text-0" />
-               </styleClass>
-            </TextField>
-         </center>
-      </BorderPane>
-      <TextArea fx:id="description" layoutX="13.0" layoutY="80.0" prefHeight="156.0" prefWidth="270.0" promptText="Add a description">
-         <styleClass>
-            <String fx:value="plane-0" />
-            <String fx:value="text-1" />
-            <String fx:value="description" />
-         </styleClass>
-         <effect>
-            <InnerShadow />
-         </effect>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </TextArea>
-      <Button layoutX="544.0" layoutY="379.0" mnemonicParsing="false" onAction="#submitCardChanges" styleClass="submit" text="DONE!" />
-      <Label layoutX="13.0" layoutY="248.0" onMouseClicked="#addTask" prefHeight="18.0" prefWidth="402.0" styleClass="add-subtask-label" text="Add A Subtask..." />
-      <ImageView fx:id="addTask" fitHeight="21.0" fitWidth="23.0" layoutX="110.0" layoutY="246.0" onMouseClicked="#addTask" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@/client/images/plus_icon.png" />
-         </image>
-      </ImageView>
-      <MenuButton fx:id="tagsMenu" layoutX="333.0" layoutY="80.0" mnemonicParsing="false" text="Add tag" />
-      <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="385.0" layoutY="82.0" prefHeight="253.0" prefWidth="151.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0">
-         <content>
-            <VBox fx:id="tagsBar" prefHeight="251.0" prefWidth="146.0" />
-         </content>
-      </ScrollPane>
-      <Button layoutX="13.0" layoutY="379.0" mnemonicParsing="false" onAction="#back" text="Back" />
-      <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="14.0" layoutY="273.0" prefHeight="94.0" prefWidth="422.0">
-         <content>
-            <VBox fx:id="subtaskContainer" prefHeight="200.0" prefWidth="100.0" />
-         </content>
-      </ScrollPane>
-   </children>
-</AnchorPane>
+            <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
+            <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
+            <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="71.0" mnemonicParsing="false" text="Add tag" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="36.0" prefWidth="479.0">
+               <content>
+                  <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" />
+               </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
+   </content>
+</ScrollPane>

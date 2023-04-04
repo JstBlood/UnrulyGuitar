@@ -39,9 +39,10 @@ public class CardListController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList, @PathVariable String username,
                                  @PathVariable(required = false) String password) {
-        listeners.forEach((k, l) -> {
-            l.accept(cardList);
-        });
+        // TODO: FIX ME
+        //listeners.forEach((k, l) -> {
+        //    l.accept(cardList);
+        //});
         return ResponseEntity.status(cardListService.add(cardList, username, password)).build();
     }
 
@@ -49,13 +50,6 @@ public class CardListController {
     public ResponseEntity<?> delete(@PathVariable long id, @PathVariable String username,
                                     @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardListService.delete(id, username, password)).build();
-    }
-
-    @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                    @RequestBody Object newValue, @PathVariable String username,
-                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(cardListService.update(id, component, newValue, username, password)).build();
     }
 
     @PutMapping("/{id}/title")

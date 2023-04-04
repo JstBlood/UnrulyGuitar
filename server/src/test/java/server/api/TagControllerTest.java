@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import server.database.TestBoardsRepository;
+import server.database.TestColorPresetRepository;
 import server.database.TestTagRepository;
 import server.database.TestUserRepository;
 import server.services.*;
@@ -43,8 +44,9 @@ public class TagControllerTest {
         SocketRefreshService sockets = new TestSocketRefresher();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
         TestBoardsRepository bRepo = new TestBoardsRepository();
+        var tests = new TestColorPresetRepository();
 
-        BoardsService bService = new BoardsService(bRepo, uRepo, sockets, pwd);
+        BoardsService bService = new BoardsService(bRepo, uRepo, sockets, pwd, tests);
 
         TagService service = new TagService(repo, bService);
 
@@ -78,13 +80,6 @@ public class TagControllerTest {
         var actual = sut.delete(SOME_TAG.id, "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-    }
-
-    @Test
-    public void updateTask() {
-        var actual = sut.update(SOME_TAG.id, "", "", "", "");
-
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

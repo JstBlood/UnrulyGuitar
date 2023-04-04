@@ -55,14 +55,15 @@ public class CardControllerTest {
         bRepo = new TestBoardsRepository();
         tagRepo = new TestTagRepository();
         SocketRefreshService sockets = new TestSocketRefresher();
+        var colorRepo = new TestColorPresetRepository();
         clRepo = new TestCardListRepository();
 
 
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
 
-        CardService service = new CardService(repo,
-                new BoardsService(bRepo, uRepo, sockets, pwd),
-                clRepo, tagRepo, sockets);
+        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo),
+                clRepo, sockets, colorRepo, tagRepo);
+
 
         sut = new CardController(service);
     }
@@ -114,13 +115,6 @@ public class CardControllerTest {
     public void cannotUpdateNonexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
-    public void cannotUpdateBadComponent() {
-        repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "margin", "12", "", "");
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

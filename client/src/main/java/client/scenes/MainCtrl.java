@@ -15,6 +15,7 @@
  */
 package client.scenes;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 import client.shared.CredentialsStore;
@@ -56,6 +57,8 @@ public class MainCtrl {
     private Scene tagsPopup;
 
     private CredentialsStore cStore;
+
+    private HashSet<Long> usedPresets = new HashSet<>();
 
     public CredentialsStore accessStore() {
         return cStore;
@@ -108,6 +111,10 @@ public class MainCtrl {
 
         showLogon();
         primaryStage.show();
+    }
+
+    public HashSet<Long> accessUsedPresets() {
+        return usedPresets;
     }
 
     public void showLogon() {
@@ -190,8 +197,9 @@ public class MainCtrl {
         });
     }
 
-    public void updateBoardSettings() {
-        boardSettingsCtrl.update();
+
+    public void updateBoardSettings(Board newState) {
+        boardSettingsCtrl.update(newState);
     }
 
     public Board getCurrentBoard() {

@@ -145,6 +145,26 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+    public void updateBoardDefaultPreset(String key, Long newId) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/defaultPreset",
+                Entity.entity(newId, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void addBoardPreset(String key, ColorPreset newPreset) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/addColorPreset",
+                Entity.entity(newPreset, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteBoardPreset(String key, Long id) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/boards/" + key + "/removeColorPreset/" + id);
+    }
+
+
     // END OF BOARD RELATED FUNCTIONS
 
     // CARD LIST RELATED METHODS
@@ -216,6 +236,13 @@ public class ServerUtils {
         internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/cards/" + id + "/" + component,
                 Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateCardPreset(long id, Long newId) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/" + id + "/preset",
+                Entity.entity(newId, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.database.CardListRepository;
 import server.database.CardRepository;
+import server.database.ColorPresetRepository;
 import server.database.TagRepository;
 
 @Service
@@ -21,15 +22,17 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final TagRepository tagRepo;
     private final BoardsService boards;
     private final SocketRefreshService sockets;
+    private final ColorPresetRepository colorRepo;
 
 
     public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
-                       TagRepository tagRepo, SocketRefreshService sockets) {
+                       SocketRefreshService sockets, ColorPresetRepository colorRepo, TagRepository tagRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
         this.tagRepo = tagRepo;
         this.sockets = sockets;
+        this.colorRepo = colorRepo;
     }
 
     public HttpStatus add(Card card, String username, String password) {
@@ -63,8 +66,26 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        return HttpStatus.BAD_REQUEST;
+    public HttpStatus updatePreset(Long id, Long newId, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        if(newId == -1) {
+            card.colors = null;
+        } else {
+            if(colorRepo.findById(newId).isEmpty())
+                return HttpStatus.NOT_FOUND;
+
+            card.colors = colorRepo.findById(newId).get();
+        }
+
+        // This is needed here for the simple reason
+        // that one save does not suffice in this case
+        cardRepo.saveAndFlush(card);
+
+        return flush(card);
     }
 
     public HttpStatus updateDetails(Long id, String newValue, String username, String password) {
