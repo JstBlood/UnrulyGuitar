@@ -44,6 +44,9 @@ public class Card {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     public Set<Tag> tags = ConcurrentHashMap.newKeySet();
 
+    @OneToOne
+    public ColorPreset colors;
+
     /**
      * @param title The entry's text.
      * @param description The entry's description

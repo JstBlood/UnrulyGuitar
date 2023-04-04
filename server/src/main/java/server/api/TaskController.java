@@ -26,13 +26,6 @@ public class TaskController {
         return ResponseEntity.status(taskService.delete(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                    @RequestBody Object newValue, @PathVariable String username,
-                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(taskService.update(id, component, newValue, username, password)).build();
-    }
-
     @PutMapping("/{id}/title")
     public ResponseEntity<?> updateTitle(@PathVariable long id,
                                          @RequestBody String newValue, @PathVariable String username,

@@ -37,6 +37,17 @@ public class Board {
             cascade = CascadeType.ALL)
     public List<Tag> tags = new ArrayList<>();
 
+    @OneToOne
+    public ColorPreset colors;
+    @OneToOne
+    public ColorPreset cardListColors;
+
+    @OneToMany
+    public List<ColorPreset> cardPresets = new ArrayList<>();
+
+    @OneToOne
+    public ColorPreset defaultPreset;
+
     @SuppressWarnings("unused")
     protected Board() {
     }
@@ -62,6 +73,9 @@ public class Board {
         tags.add(newTag);
     }
 
+    public static String getDefaultForeground() { return "#bbbbbb"; }
+
+    public static String getDefaultBackground() { return "#131313"; }
 
     @Override
     public boolean equals(Object obj) {

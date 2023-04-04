@@ -28,14 +28,6 @@ public class TagController {
         return ResponseEntity.status(tagService.delete(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                    @RequestBody String newValue,
-                                    @PathVariable String username,
-                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(tagService.update(id, component, newValue, username, password)).build();
-    }
-
     @PutMapping("/{id}/name")
     public ResponseEntity<?> updateName(@PathVariable long id,
                                         @RequestBody String newValue,

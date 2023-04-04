@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import server.database.TestBoardsRepository;
+import server.database.TestColorPresetRepository;
 import server.database.TestUserRepository;
 import server.services.*;
 
@@ -36,8 +37,9 @@ public class BoardControllerTest {
         TestUserRepository uRepo = new TestUserRepository();
         SocketRefreshService sockets = new TestSocketRefresher();
         RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
+        var tests = new TestColorPresetRepository();
 
-        BoardsService service = new BoardsService(repo, uRepo, sockets, pwd);
+        BoardsService service = new BoardsService(repo, uRepo, sockets, pwd, tests);
 
         sut = new BoardsController(service);
     }
@@ -107,12 +109,6 @@ public class BoardControllerTest {
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
-    @Test
-    public void updateBoard() {
-        var actual = sut.update("any key", "any component", "any value", "", "");
-
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
 
     @Test
     public void cannotUpdateTitleWithNullBoardKey() {

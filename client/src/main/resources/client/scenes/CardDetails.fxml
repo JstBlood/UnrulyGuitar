@@ -1,26 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
+<ScrollPane hbarPolicy="NEVER" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
    <content>
       <AnchorPane fx:id="root" prefHeight="380.0" prefWidth="603.0" styleClass="anchor-plane">
          <stylesheets>
@@ -60,7 +49,7 @@
                   </TextField>
                </center>
             </BorderPane>
-            <TextArea fx:id="description" layoutX="7.0" layoutY="121.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
+            <TextArea fx:id="description" layoutX="11.0" layoutY="116.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
                <styleClass>
                   <String fx:value="plane-0" />
                   <String fx:value="text-1" />
@@ -82,12 +71,14 @@
               </rowConstraints>
             </GridPane>
             <Button fx:id="submit" layoutX="533.0" layoutY="343.0" mnemonicParsing="false" onAction="#submitCard" styleClass="submit" text="DONE!" />
-            <Label layoutX="87.0" layoutY="247.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
-            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="56.0" layoutY="246.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
+            <Label layoutX="52.0" layoutY="266.0" onMouseClicked="#addSubtask" prefHeight="15.0" prefWidth="506.0" styleClass="add-subtask-label" text="Add A Subtask..." />
+            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="27.0" layoutY="263.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@/client/images/plus_icon.png" />
                </image>
             </ImageView>
+            <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
+            <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
             <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="71.0" mnemonicParsing="false" text="Add tag" />
             <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="36.0" prefWidth="479.0">
                <content>

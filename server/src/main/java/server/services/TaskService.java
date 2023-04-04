@@ -44,11 +44,6 @@ public class TaskService implements StandardEntityService<Task, Long> {
         return HttpStatus.OK;
     }
 
-    @Override
-    public HttpStatus update(Long id, String component, Object newValue, String username, String password) {
-        return HttpStatus.BAD_REQUEST;
-    }
-
     public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);

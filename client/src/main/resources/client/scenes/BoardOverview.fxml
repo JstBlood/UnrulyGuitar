@@ -7,9 +7,9 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane vgap="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+<GridPane fx:id="rooter" vgap="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <stylesheets>
-      <URL value="@/client/css/mainStyle.css" />
+      <URL value="@/client/css/BoardStyle.css" />
       <URL value="@/client/css/BoardOverviewStyle.css" />
    </stylesheets>
    <columnConstraints>

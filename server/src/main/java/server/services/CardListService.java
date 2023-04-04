@@ -27,6 +27,11 @@ public class CardListService {
         }
 
         cardListRepo.save(cardList);
+        // fallback to websockets because
+        // long polling is completely and utterly
+        // broken for now.
+
+        forceRefresh(cardList);
 
         return HttpStatus.CREATED;
     }
@@ -43,10 +48,6 @@ public class CardListService {
         forceRefresh(cardList);
 
         return HttpStatus.OK;
-    }
-
-    public HttpStatus update(long id, String component, Object newValue, String username, String password) {
-        return HttpStatus.BAD_REQUEST;
     }
 
     public HttpStatus updateTitle(long id, Object newValue, String username, String password) {
@@ -87,11 +88,7 @@ public class CardListService {
     }
 
 
-    //TODO: Move DRAG AND DROP handlers to here
-
     public void forceRefresh(CardList cardList) {
-        //TODO: add functionality for only refreshing a certain cardList
-
         boards.forceRefresh(cardList.parentBoard.key);
     }
 
