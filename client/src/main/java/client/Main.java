@@ -44,6 +44,7 @@ public class Main extends Application {
         var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes", "CardDetails.fxml");
         var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
         var helpScreen = FXML.load(HelpScreenCtrl.class, "client", "scenes", "HelpScreen.fxml");
+        var tagsPopup = FXML.load(CardDetailsCtrl.class, "client", "scenes", "TagsPopup.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
@@ -57,6 +58,7 @@ public class Main extends Application {
                 cardDetails,
                 boardSettings,
                 helpScreen,
+                tagsPopup,
                 cStore);
 
         primaryStage.setOnCloseRequest(e -> {

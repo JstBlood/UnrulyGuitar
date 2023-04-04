@@ -134,13 +134,13 @@ public class CardListCtrl implements Initializable {
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
             try {
                 VBox cardNode = cardLoader.load();
+                CardCtrl cardCtrl = cardLoader.getController();
 
                 cardNode.setUserData(c);
-                prepareCardNode(cardNode);
+                prepareCardNode(cardNode, cardCtrl);
 
                 cardsContainer.getChildren().add(cardNode);
 
-                CardCtrl cardCtrl = cardLoader.getController();
                 cardCtrl.propagate(c);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -148,10 +148,10 @@ public class CardListCtrl implements Initializable {
         }
     }
 
-    public void prepareCardNode(Node cardNode) {
+    public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
         prepareCardFocus(cardNode);
         prepareCardTitle(cardNode);
-        prepareCardKeyEvents(cardNode);
+        prepareCardKeyEvents(cardNode, cardCtrl);
     }
 
     public void prepareCardFocus(Node cardNode) {
@@ -175,20 +175,18 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    public void prepareCardKeyEvents(Node cardNode) {
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
                 Card card = (Card) cardNode.getUserData();
-                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP)) {
-                    if (card.index > 0) {
-                        Card prev = cardList.cards.get(card.index - 1);
-                        server.updateCard(card.id, "swap", prev.id);
-                    }
-                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN)){
-                    if (card.index < cardList.cards.size() - 1) {
-                        Card next = cardList.cards.get(card.index + 1);
-                        server.updateCard(card.id, "swap", next.id);
-                    }
+                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP) && card.index > 0) {
+                    Card prev = cardList.cards.get(card.index - 1);
+                    server.updateCard(card.id, "swap", prev.id);
+                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN) &&
+                        card.index < cardList.cards.size() - 1) {
+                    Card next = cardList.cards.get(card.index + 1);
+                    server.updateCard(card.id, "swap", next.id);
                 } else if(e.getCode().equals(KeyCode.E)) {
                     //TODO : edit title
 
@@ -196,6 +194,27 @@ public class CardListCtrl implements Initializable {
                     server.deleteCard(card.id);
                 } else if(e.getCode().equals(KeyCode.ENTER)) {
                     mainCtrl.showCardDetails(card);
+                } else {
+                    switch(e.getCode()) {
+                        case E:
+                            cardCtrl.setEditableTitle();
+                            break;
+                        case BACK_SPACE:
+                            server.deleteCard(card.id);
+                            break;
+                        case DELETE:
+                            server.deleteCard(card.id);
+                            break;
+                        case ENTER:
+                            mainCtrl.showCardDetails(card);
+                            break;
+                        case T:
+                            mainCtrl.showTagsPopup(card);
+                            break;
+                        case C:
+                            //TODO: create popup for color selection
+                            break;
+                    }
                 }
             }
         });

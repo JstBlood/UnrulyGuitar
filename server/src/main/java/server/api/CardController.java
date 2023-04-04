@@ -28,7 +28,7 @@ public class CardController {
 
     @PutMapping("/{id}/title")
     public ResponseEntity<?> updateTitle(@PathVariable long id,
-                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @RequestBody String newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateTitle(id, newValue, username, password)).build();
     }
@@ -42,7 +42,7 @@ public class CardController {
 
     @PutMapping("/{id}/description")
     public ResponseEntity<?> updateDescription(@PathVariable long id,
-                                               @RequestBody Object newValue, @PathVariable String username,
+                                               @RequestBody String newValue, @PathVariable String username,
                                                @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateDescription(id, newValue, username, password)).build();
     }
@@ -92,10 +92,9 @@ public class CardController {
     }
 
     @PutMapping("/{id}/swap")
-    public ResponseEntity<?> updateSwap(@PathVariable long id,
-                                                   @RequestBody Object newValue, @PathVariable String username,
-                                                   @PathVariable(required = false) String password) {
-        System.out.println("called");
+    public ResponseEntity<?> updateSwap(@PathVariable long id, @RequestBody Object newValue,
+                                        @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateSwap(id, newValue, username, password)).build();
     }
 }

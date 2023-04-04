@@ -1,6 +1,7 @@
 package client.scenes;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -12,18 +13,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Card card;
-
     @FXML
     private TextField title;
     @FXML
@@ -33,9 +31,9 @@ public class CardDetailsCtrl {
     @FXML
     private TextArea description;
     @FXML
-    private GridPane subtaskPane;
-    @FXML
     private ChoiceBox<String> presetChoice;
+    @FXML
+    private VBox subtaskContainer;
 
     /**
      * This controller shows the details of a card.
@@ -50,51 +48,79 @@ public class CardDetailsCtrl {
 
     /**
      * Populate this controller with an initial Card state.
-     * @param c The initial state.
+     * @param card The initial state.
      */
-    public void prepare(Card c){
+    public void prepare(Card card, Boolean isPopup){
+        this.card = card;
+        prepareServer();
+        if(!isPopup) {
+            prepareDetails();
+        } else {
+            prepareTags();
+        }
+    }
+
+    private void prepareDetails() {
+        refresh(card, true);
+
+        addUpdateHandler(title, () -> updateTitle(), "title", true);
+        addUpdateHandler(description, () -> updateDescription(), "description", false);
+    }
+
+    public void prepareServer() {
         server.deregister();
 
-        this.card = c;
-        refresh(c, true);
-
         server.connect();
-        server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key, Board.class, q -> {
+
+        server.registerForMessages("/topic/board/" + card.parentCardList.parentBoard.key, Board.class, q -> {
             Platform.runLater(() -> {
                 try {
-                    refresh(q.cardLists.stream().filter(x -> x.id == c.parentCardList.id)
-                            .findFirst().get().cards.stream().filter(x -> x.id == c.id).findFirst().get(), false);
+                    refresh(q.cardLists.stream().filter(x -> x.id == card.parentCardList.id)
+                            .findFirst().get().cards.stream().filter(x -> x.id == card.id).findFirst().get(), false);
                 } catch (Exception e) {
                     // skip this because this means that the controller is hidden
                 }
             });
         });
 
-        server.registerForMessages("/topic/card/" + c.id + "/deletion", Card.class, q -> {
+        server.registerForMessages("/topic/card/" + card.id + "/deletion", Card.class, q -> {
             Platform.runLater(() -> {
                 mainCtrl.showBoardOverview();
             });
         });
 
-        server.registerForMessages("/topic/cardlist/" + c.parentCardList.id + "/deletion", CardList.class, q -> {
+        server.registerForMessages("/topic/cardlist/" + card.parentCardList.id + "/deletion", CardList.class, q -> {
             Platform.runLater(() -> {
                 mainCtrl.showBoardOverview();
             });
         });
 
-        server.registerForMessages("/topic/board/" + c.parentCardList.parentBoard.key + "/deletion", Board.class,
-                q -> {
-                    Platform.runLater(() -> {
-                        mainCtrl.showBoards();
-                    });
+        server.registerForMessages("/topic/board/" + card.parentCardList.parentBoard.key + "/deletion", Board.class,
+            q -> {
+                Platform.runLater(() -> {
+                    mainCtrl.showBoards();
                 });
+            });
+    }
 
-        addUpdateHandler(title, () -> updateTitle(), "title", true);
-        addUpdateHandler(description, () -> updateDescription(), "description", false);
+
+    private void prepareTasks() {
+        card.tasks.sort(Comparator.comparingInt(task -> task.index));
+
+        subtaskContainer.getChildren().clear();
+        for(Task t : card.tasks) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
+                loader.setControllerFactory(c -> new TaskCtrl(server, mainCtrl, t));
+                Node taskNode = loader.load();
+                subtaskContainer.getChildren().add(taskNode);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void prepareTags() {
-
         prepareTagsMenu();
         prepareTagsBar();
     }
@@ -116,34 +142,51 @@ public class CardDetailsCtrl {
         tagsMenu.getItems().clear();
 
         for(Tag t : remainingTags) {
-            MenuItem newItem = new MenuItem(t.name);
-
-            newItem.setOnAction(event -> {
-                server.updateCard(card.id, "addTag", t.id);
-            });
-
-            tagsMenu.getItems().add(newItem);
+            addTagsMenuItem(t);
         }
+    }
+
+    private void addTagsMenuItem(Tag t) {
+        MenuItem newItem = new MenuItem(t.name);
+        newItem.setUserData(t);
+
+        newItem.setOnAction(e -> {
+            server.updateCard(card.id, "addTag", t.id);
+        });
+
+        tagsMenu.getItems().add(newItem);
     }
 
     private void prepareTagsBar() {
         tagsBar.getChildren().clear();
 
-        for(Tag tag : card.tags) {
-            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
+        for(Tag t : card.tags) {
+            addTagsBarNode(t);
+        }
+    }
 
-            tagLoader.setControllerFactory(c ->
-                    new TagSmallCtrl(tag)
-            );
+    private void addTagsBarNode(Tag t) {
+        FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
+        tagLoader.setControllerFactory(c ->
+                new TagCtrl(this.server, this.mainCtrl, t)
+        );
+        Node newTagNode = null;
+        try {
+            newTagNode = tagLoader.load();
+            TagCtrl tagCtrl = tagLoader.getController();
 
-            Node newTagNode = null;
-            try {
-                newTagNode = tagLoader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Node finalNewTagNode = newTagNode;
+
+            tagCtrl.foregroundColor.setVisible(false);
+            tagCtrl.backgroundColor.setVisible(false);
+
+            tagCtrl.delete.setOnAction(e -> {
+                server.updateCard(card.id, "removeTag", t.id);
+            });
 
             tagsBar.getChildren().add(newTagNode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -200,6 +243,7 @@ public class CardDetailsCtrl {
             t.parentCard = newState;
     }
 
+
     /**
      * Refresh the state of this controller.
      * @param newState The new state to merge to our current one.
@@ -207,22 +251,19 @@ public class CardDetailsCtrl {
      */
     private void refresh(Card newState, boolean pass) {
         relink(newState);
-
-        if(newState.hashCode() == card.hashCode() && !pass) {
-            return;
-        }
+        card = newState;
 
         presetChoice.getItems().clear();
         presetChoice.getItems().add("[Default]");
 
-        if(newState.colors == null)
+        if (newState.colors == null)
             presetChoice.getSelectionModel().select(0);
 
-        for(ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
+        for (ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
             presetChoice.getItems().add("No #" + c.id);
 
-            if(newState.colors != null && c.id == newState.colors.id) {
-                presetChoice.getSelectionModel().select(presetChoice.getItems().size()-1);
+            if (newState.colors != null && c.id == newState.colors.id) {
+                presetChoice.getSelectionModel().select(presetChoice.getItems().size() - 1);
             }
         }
 
@@ -233,32 +274,21 @@ public class CardDetailsCtrl {
         title.setText(newState.title);
         description.setText(newState.description);
 
-        subtaskPane.getRowConstraints().clear();
-        subtaskPane.getChildren().clear();
-
-        for(Task t : card.tasks) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/Task.fxml"));
-                loader.setControllerFactory(c -> new TaskCtrl(server, mainCtrl, t));
-                Parent root = loader.load();
-                subtaskPane.add(root, 0, t.index);
-                subtaskPane.getRowConstraints().add(new RowConstraints());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
+        prepareTasks();
         prepareTags();
     }
 
     /**
      * Finish editing and return to the board overview.
      */
-    public void submitCard(){
+    public void submitCard() {
         // go back to the overview
         updatePreset();
         updatePreset();
-        clearFields();
+        back();
+    }
+
+    public void back() {
         mainCtrl.showBoardOverview();
     }
 

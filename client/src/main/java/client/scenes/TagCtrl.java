@@ -29,10 +29,10 @@ public class TagCtrl implements Initializable {
     public Button delete;
 
     @FXML
-    private ColorPicker backgroundColor;
+    public ColorPicker backgroundColor;
 
     @FXML
-    private ColorPicker foregroundColor;
+    public ColorPicker foregroundColor;
 
     private Tag tag;
 
