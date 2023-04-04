@@ -157,6 +157,9 @@ public class CardCtrl implements Initializable {
     }
 
     public void updateTitle() {
+        title.setEditable(false);
+        title.setFocusTraversable(false);
+
         if(title.getText().isEmpty()) {
             title.setText(card.title);
             title.setStyle("-fx-text-fill: white;");
@@ -175,9 +178,14 @@ public class CardCtrl implements Initializable {
         }
     }
 
+    public void setEditableTitle() {
+        title.setEditable(true);
+        title.setFocusTraversable(true);
+        title.requestFocus();
+    }
+
     @FXML
     public void delete() {
         server.deleteCard(this.card.id);
     }
-
 }

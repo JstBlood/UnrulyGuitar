@@ -52,6 +52,9 @@ public class MainCtrl {
     private HelpScreenCtrl helpScreenCtrl;
     private Scene helpScreen;
 
+    private CardDetailsCtrl tagsPopupCtrl;
+    private Scene tagsPopup;
+
     private CredentialsStore cStore;
 
     public CredentialsStore accessStore() {
@@ -67,6 +70,7 @@ public class MainCtrl {
                            Pair<CardDetailsCtrl, Parent> cardDetails,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
                            Pair<HelpScreenCtrl, Parent> helpScreen,
+                           Pair<CardDetailsCtrl, Parent> tagsPopup,
                            CredentialsStore cStore) {
 
         this.primaryStage = primaryStage;
@@ -89,6 +93,9 @@ public class MainCtrl {
 
         this.helpScreenCtrl = helpScreen.getKey();
         this.helpScreen = new Scene(helpScreen.getValue());
+
+        this.tagsPopupCtrl = tagsPopup.getKey();
+        this.tagsPopup = new Scene(tagsPopup.getValue());
 
         this.cStore = cStore;
 
@@ -115,8 +122,8 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    public void showCardDetails(Card about) {
-        cardDetailsCtrl.prepare(about);
+    public void showCardDetails(Card card) {
+        cardDetailsCtrl.prepare(card, false);
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(cardDetails);
     }
@@ -140,6 +147,12 @@ public class MainCtrl {
         helpScreenCtrl.setPrevScene(prevScene);
         primaryStage.setTitle("Help");
         primaryStage.setScene(helpScreen);
+    }
+
+    public void showTagsPopup(Card card) {
+        tagsPopupCtrl.prepare(card, true);
+        primaryStage.setTitle("Tags popup");
+        primaryStage.setScene(tagsPopup);
     }
 
     public void prepareHelp() {
@@ -188,4 +201,6 @@ public class MainCtrl {
     public void setupBoardOverview(Board board) {
         boardOverviewCtrl.prepare(board);
     }
+
+
 }

@@ -134,13 +134,13 @@ public class CardListCtrl implements Initializable {
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
             try {
                 VBox cardNode = cardLoader.load();
+                CardCtrl cardCtrl = cardLoader.getController();
 
                 cardNode.setUserData(c);
-                prepareCardNode(cardNode);
+                prepareCardNode(cardNode, cardCtrl);
 
                 cardsContainer.getChildren().add(cardNode);
 
-                CardCtrl cardCtrl = cardLoader.getController();
                 cardCtrl.propagate(c);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -148,10 +148,10 @@ public class CardListCtrl implements Initializable {
         }
     }
 
-    public void prepareCardNode(Node cardNode) {
+    public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
         prepareCardFocus(cardNode);
         prepareCardTitle(cardNode);
-        prepareCardKeyEvents(cardNode);
+        prepareCardKeyEvents(cardNode, cardCtrl);
     }
 
     public void prepareCardFocus(Node cardNode) {
@@ -175,7 +175,7 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    public void prepareCardKeyEvents(Node cardNode) {
+    public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
                 Card card = (Card) cardNode.getUserData();
@@ -189,7 +189,7 @@ public class CardListCtrl implements Initializable {
                 } else {
                     switch(e.getCode()) {
                         case E:
-                            //TODO : edit title
+                            cardCtrl.setEditableTitle();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);
@@ -201,7 +201,7 @@ public class CardListCtrl implements Initializable {
                             mainCtrl.showCardDetails(card);
                             break;
                         case T:
-                            //TODO: create popup for adding tags
+                            mainCtrl.showTagsPopup(card);
                             break;
                         case C:
                             //TODO: create popup for color selection
