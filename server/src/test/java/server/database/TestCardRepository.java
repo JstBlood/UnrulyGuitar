@@ -11,8 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class TestCardRepository implements CardRepository {
 
     public final List<Card> cards = new ArrayList<>();
@@ -27,6 +29,19 @@ public class TestCardRepository implements CardRepository {
         if (!temp)
             return null;
         return cards.stream().filter(q -> q.id == id).findFirst();
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        cards.clear();
+        calledMethods.clear();
     }
 
     @Override

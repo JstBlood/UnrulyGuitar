@@ -1,54 +1,59 @@
 package server.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import java.awt.*;
 import java.util.Random;
 
-import commons.Board;
-import commons.Card;
-import commons.CardList;
-import commons.Tag;
+import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import server.database.TestBoardsRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestTagRepository;
 import server.database.TestUserRepository;
 import server.services.*;
 
+@SpringBootTest
 public class TagControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
-    private final Tag SOME_TAG = new Tag("name", Color.RED, SOME_BOARD);
-    public int nextInt;
-    private MyRandom random;
+    private final Tag SOME_TAG = new Tag("name",  SOME_BOARD);
+    @Autowired
     private TestUserRepository uRepo;
+    @Autowired
     private TestBoardsRepository bRepo;
+    @Autowired
     private TestTagRepository repo;
     private TagController sut;
 
+    @Autowired
+    private TestColorPresetRepository colorRepo;
+
+    @Autowired
+    private RepositoryBasedAuthService pwd;
+
+    @Autowired
+    @Qualifier("testSocketRefresher")
+    private SocketRefreshService sockets;
+
     @BeforeEach
     public void setup() {
-        random = new MyRandom();
-        uRepo = new TestUserRepository();
-        bRepo = new TestBoardsRepository();
-        repo = new TestTagRepository();
+        repo.clean();
+        uRepo.clean();
+        colorRepo.clean();
+        bRepo.clean();
 
-        TestUserRepository uRepo = new TestUserRepository();
-        SocketRefreshService sockets = new TestSocketRefresher();
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        TestBoardsRepository bRepo = new TestBoardsRepository();
-        var tests = new TestColorPresetRepository();
+        SOME_TAG.colors = new ColorPreset();
 
-        BoardsService bService = new BoardsService(bRepo, uRepo, sockets, pwd, tests);
+        BoardsService bService = new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo);
 
-        TagService service = new TagService(repo, bService);
+        TagService service = new TagService(repo, bService, colorRepo);
 
         sut = new TagController(service);
     }
@@ -103,12 +108,12 @@ public class TagControllerTest {
         var actual = sut.updateName(SOME_TAG.id, "some name", "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 
     @Test
     public void cannotUpdateColorNonexistentTask() {
-        var actual = sut.updateColor(1234567890, Color.RED, "", "");
+        var actual = sut.updateForeground(1234567890, "#121212", "", "");
 
         Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
@@ -116,7 +121,7 @@ public class TagControllerTest {
     @Test
     public void cannotUpdateToNullColor() {
         repo.save(SOME_TAG);
-        var actual = sut.updateColor(SOME_TAG.id, null, "", "");
+        var actual = sut.updateBackground(SOME_TAG.id, null, "", "");
 
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -124,20 +129,9 @@ public class TagControllerTest {
     @Test
     public void updateColor() {
         repo.save(SOME_TAG);
-        var actual = sut.updateColor(SOME_TAG.id, Color.RED, "", "");
+        var actual = sut.updateBackground(SOME_TAG.id, "#101010", "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-    }
-
-    @SuppressWarnings("serial")   public class MyRandom extends Random {
-
-        public boolean wasCalled = false;
-
-        @Override
-        public int nextInt(int bound) {
-            wasCalled = true;
-            return nextInt;
-        }
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 }

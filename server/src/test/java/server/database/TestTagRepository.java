@@ -10,13 +10,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+@Service
 public class TestTagRepository implements TagRepository {
 
-    public final List<Tag> tagList = new ArrayList<>();
-    public final List<String> calledMethods = new ArrayList<>();
+    private final List<Tag> tagList = new ArrayList<>();
+    private final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
@@ -27,6 +29,18 @@ public class TestTagRepository implements TagRepository {
         return tagList.stream().filter(q -> q.id == id).findFirst();
     }
 
+    public List<Tag> getTags() {
+        return tagList;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        tagList.clear();
+        calledMethods.clear();
+    }
     @Override
     public List<Tag> findAll() {
         return null;

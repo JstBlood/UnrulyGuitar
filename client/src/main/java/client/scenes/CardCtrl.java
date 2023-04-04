@@ -1,5 +1,6 @@
 package client.scenes;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -12,8 +13,9 @@ import commons.Tag;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -147,11 +149,15 @@ public class CardCtrl implements Initializable {
             description.setText(newState.description);
         }
 
-        if(card.colors == null)
+        if(card.colors == null) {
             cardBox.setStyle("-fx-background-color: " + card.parentCardList.parentBoard
                     .defaultPreset.background + " ");
-        else
+            tagContainer.setStyle("-fx-background-color: " + card.parentCardList.parentBoard
+                    .defaultPreset.background + " ");
+        } else {
             cardBox.setStyle("-fx-background-color: " + card.colors.background + " ");
+            tagContainer.setStyle("-fx-background-color: " + card.colors.background + " ");
+        }
 
         card = newState;
 
@@ -162,8 +168,20 @@ public class CardCtrl implements Initializable {
     public void showTags() {
         tagContainer.getChildren().clear();
 
-        for(Tag t : card.tags) {
-            Label newTagNode = new Label(t.name);
+        for(Tag tag : card.tags) {
+            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
+
+            tagLoader.setControllerFactory(c ->
+                    new TagSmallCtrl(tag)
+            );
+
+            Node newTagNode = null;
+            try {
+                newTagNode = tagLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             tagContainer.getChildren().add(newTagNode);
         }
     }

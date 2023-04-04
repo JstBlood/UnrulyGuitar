@@ -127,24 +127,19 @@ public class CardDetailsCtrl {
     private void prepareTagsBar() {
         tagsBar.getChildren().clear();
 
-        for(Tag t : card.tags) {
-            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
+        for(Tag tag : card.tags) {
+            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
+
             tagLoader.setControllerFactory(c ->
-                    new TagCtrl(this.server, this.mainCtrl, t)
+                    new TagSmallCtrl(tag)
             );
+
             Node newTagNode = null;
             try {
                 newTagNode = tagLoader.load();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            TagCtrl tagCtrl = tagLoader.getController();
-
-            tagCtrl.delete.setOnAction(e -> {
-                server.updateCard(card.id, "removeTag", t.id);
-                server.forceRefresh(mainCtrl.getCurrentBoard().key);
-            });
 
             tagsBar.getChildren().add(newTagNode);
         }

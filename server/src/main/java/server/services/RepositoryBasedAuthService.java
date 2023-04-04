@@ -1,6 +1,7 @@
 package server.services;
 
 import commons.User;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import server.database.UserRepository;
 
@@ -8,7 +9,7 @@ import server.database.UserRepository;
 public class RepositoryBasedAuthService implements AuthenticationService {
     private UserRepository userRepo;
 
-    public RepositoryBasedAuthService(UserRepository uRepo) {
+    public RepositoryBasedAuthService(@Qualifier("userRepository") UserRepository uRepo) {
         userRepo = uRepo;
     }
 

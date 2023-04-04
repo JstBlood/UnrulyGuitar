@@ -11,12 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class TestTaskRepository implements TaskRepository {
 
-    public final List<Task> tasks = new ArrayList<>();
-    public final List<String> calledMethods = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
+    private final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
@@ -29,7 +31,18 @@ public class TestTaskRepository implements TaskRepository {
         return tasks.stream().filter(q -> q.id == id).findFirst();
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
 
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        tasks.clear();
+        calledMethods.clear();
+    }
     @Override
     public List<Task> findAll() {
         calledMethods.add("findAll");

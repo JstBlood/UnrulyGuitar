@@ -27,22 +27,37 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class TestUserRepository implements UserRepository {
 
     public final List<Board> joinedBoards = new ArrayList<>();
-    public final List<User> cardLists = new ArrayList<>();
+    public final List<User> users = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
     }
 
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        joinedBoards.clear();
+        calledMethods.clear();
+    }
+
     @Override
     public List<User> findAll() {
         calledMethods.add("findAll");
-        return cardLists;
+        return users;
     }
 
     @Override
@@ -117,7 +132,7 @@ public class TestUserRepository implements UserRepository {
     }
 
     private Optional<User> find(Long id) {
-        return cardLists.stream().filter(q -> q.id == id).findFirst();
+        return users.stream().filter(q -> q.id == id).findFirst();
     }
 
     @Override
@@ -141,8 +156,8 @@ public class TestUserRepository implements UserRepository {
     @Override
     public <S extends User> S save(S entity) {
         call("save");
-        entity.id = (long) cardLists.size();
-        cardLists.add(entity);
+        entity.id = (long) users.size();
+        users.add(entity);
         return entity;
     }
 
@@ -160,7 +175,7 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public long count() {
-        return cardLists.size();
+        return users.size();
     }
 
     @Override

@@ -16,24 +16,24 @@
 package server.database;
 
 import commons.ColorPreset;
-import commons.ColorPreset;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 
+@Service
 public class TestColorPresetRepository implements ColorPresetRepository {
 
-    public final List<ColorPreset> presets = new ArrayList<>();
-    public final List<String> calledMethods = new ArrayList<>();
+    private final List<ColorPreset> presets = new ArrayList<>();
+    private final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
@@ -41,6 +41,19 @@ public class TestColorPresetRepository implements ColorPresetRepository {
 
     private Optional<ColorPreset> find(Long id) {
         return presets.stream().filter(q -> q.id == id).findFirst();
+    }
+
+    public List<ColorPreset> getPresets() {
+        return presets;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        presets.clear();
+        calledMethods.clear();
     }
 
     @Override
