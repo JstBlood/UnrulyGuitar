@@ -18,11 +18,10 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
+import java.awt.*;
 import java.util.Random;
 
-import commons.Board;
-import commons.Card;
-import commons.CardList;
+import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,8 @@ public class CardControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
+    private final Tag SOME_TAG = new Tag("title", Color.RED, SOME_BOARD);
+
     public int nextInt;
     private MyRandom random;
     private TestCardRepository repo;
@@ -49,6 +50,7 @@ public class CardControllerTest {
         repo = new TestCardRepository();
         uRepo = new TestUserRepository();
         bRepo = new TestBoardsRepository();
+        tagRepo = new TestTagRepository();
         SocketRefreshService sockets = new TestSocketRefresher();
         var colorRepo = new TestColorPresetRepository();
         clRepo = new TestCardListRepository();
@@ -84,9 +86,15 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotDeleteInexistentCard() {
+    public void cannotDeleteNonexistentCard() {
         var actual = sut.delete(-1, "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotFindNonexistentCard() {
+        var actual = sut.updateIndex(1234567890, "2", "", "");
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -101,7 +109,7 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotUpdateInexistentCard() {
+    public void cannotUpdateNonexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -123,10 +131,25 @@ public class CardControllerTest {
     }
 
     @Test
-    public void cannotUpdateBadList() {
+    public void cannotUpdateParentNonexistentCard() {
+        var actual = sut.updateParent(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadParent() {
         repo.save(SOME_CARD);
         var actual = sut.updateParent(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentParent() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateParent(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -156,6 +179,22 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotUpdateDescriptionBadId() {
+        var actual = sut.updateDescription(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateDescription() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateDescription(SOME_CARD.id, "Description", "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotUpdateBadDD() {
         repo.save(SOME_CARD);
         var actual = sut.updateDragAndDrop(SOME_CARD.id, -1, "", "");
@@ -164,6 +203,21 @@ public class CardControllerTest {
         actual = sut.updateDragAndDrop(SOME_CARD.id, SOME_CARD.id, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
 
+    }
+
+    @Test
+    public void cannotUpdateDDNonexistentCard() {
+        var actual = sut.updateDragAndDrop(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateDDEmptyParent() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateDragAndDrop(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
@@ -184,10 +238,75 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotUpdateListDragAndDropBadId() {
+        var actual = sut.updateListDragAndDrop(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotUpdateBadLDD() {
         repo.save(SOME_CARD);
         var actual = sut.updateListDragAndDrop(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentListDragAndDrop() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateListDragAndDrop(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddTagBadId() {
+        var actual = sut.updateAddTag(-1, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddTagNonexistentTag() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateAddTag(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void addTag() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+        var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+    }
+
+    @Test
+    public void cannotRemoveTagBadId() {
+        var actual = sut.updateRemoveTag(-1, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotRemoveNonexistentTag() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateRemoveTag(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void removeTag() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+        var actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
     }
 
     @Test

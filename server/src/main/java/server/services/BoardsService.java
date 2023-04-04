@@ -57,14 +57,18 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus join(String id, String username, String password) {
+    public HttpStatus join(String key, String username, String password) {
         User usr = pwd.retriveUser(username);
 
-        if(repo.findByKey(id) == null) {
+        if (isNullOrEmpty(key)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        if (repo.findByKey(key) == null) {
             return HttpStatus.NOT_FOUND;
         }
 
-        Board joined = repo.findByKey(id);
+        Board joined = repo.findByKey(key);
 
         joined.users.add(usr);
 
@@ -76,14 +80,18 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus leave(String id, String username, String password) {
+    public HttpStatus leave(String key, String username, String password) {
         User usr = pwd.retriveUser(username);
 
-        if(repo.findByKey(id) == null) {
+        if (isNullOrEmpty(key)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        if(repo.findByKey(key) == null) {
             return HttpStatus.NOT_FOUND;
         }
 
-        Board toBeLeft = repo.findByKey(id);
+        Board toBeLeft = repo.findByKey(key);
 
         usr.boards.removeIf(x -> x.id == toBeLeft.id);
         userRepo.saveAndFlush(usr);
@@ -257,16 +265,22 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         Board board = repo.findByKey(key);
 
-        if(newValue.isEmpty()) {
+        if(isNullOrEmpty(newValue)) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        board.title = newValue;
+        String newValueString = String.valueOf(newValue).trim();
+
+        board.title = newValueString;
 
         return flush(board);
     }
 
     public HttpStatus prepare(String key, String username, String password) {
+        if (isNullOrEmpty(key)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
         Board optionalBoard = repo.findByKey(key);
 
         if(optionalBoard == null) {
@@ -287,15 +301,19 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return HttpStatus.OK;
     }
 
-    public HttpStatus delete(String id, String username, String password) {
-        if(repo.findByKey(id) == null)
+    public HttpStatus delete(String key, String username, String password) {
+        if (isNullOrEmpty(key)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        if(repo.findByKey(key) == null)
             return HttpStatus.NOT_FOUND;
 
-        Board rem = repo.findByKey(id);
+        Board rem = repo.findByKey(key);
 
         for(User usr : rem.users) {
             Board fRem = rem;
-            usr.boards.removeIf(x -> x.id == fRem.id);
+            usr.boards.removeIf(x -> x.key.equals(fRem.key));
             userRepo.saveAndFlush(usr);
         }
 
@@ -319,15 +337,20 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return ResponseEntity.ok(usr.boards);
     }
 
-    public Board getBoard(String id) {
-        return repo.findByKey(id);
+    public Board getBoard(String key) {
+        return repo.findByKey(key);
     }
 
-    public HttpStatus forceRefresh(String id) {
-        if(repo.findByKey(id) == null)
-            return HttpStatus.NOT_FOUND;
+    public HttpStatus forceRefresh(String key) {
+        if (isNullOrEmpty(key)) {
+            return HttpStatus.BAD_REQUEST;
+        }
 
-        sockets.broadcast(repo.findByKey(id));
+        if(repo.findByKey(key) == null) {
+            return HttpStatus.NOT_FOUND;
+        }
+
+        sockets.broadcast(repo.findByKey(key));
 
         return HttpStatus.OK;
     }

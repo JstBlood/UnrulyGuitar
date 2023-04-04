@@ -67,7 +67,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void cannotDeleteInexistentTask() {
+    public void cannotDeleteNonexistentTask() {
         var actual = sut.delete(-1, "", "");
         assertEquals(NOT_FOUND, actual.getStatusCode());
     }
@@ -82,9 +82,33 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void cannotUpdateInexistentTask() {
+    public void cannotUpdateBadIdTask() {
         var actual = sut.updateTitle(-1, "newTitle", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentTask() {
+        var actual = sut.updateTitle(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNullOrEmptyTask() {
+        repo.save(SOME_TASK);
+        var actual = sut.updateTitle(SOME_TASK.id, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateTitle() {
+        repo.save(SOME_TASK);
+        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
     @Test
@@ -95,12 +119,43 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void databaseIsUsedUpdate() {
-        repo.save(SOME_TASK);
-        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+    public void cannotUpdateIsDoneBadId() {
+        var actual = sut.updateIsDone(1234567890,  "", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateIsDone() {
+        repo.save(SOME_TASK);
+        var actual = sut.updateIsDone(SOME_TASK.id, Boolean.TRUE, "", "");
+
         Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+    }
+
+    @Test
+    public void cannotUpdateIndexBadId() {
+        var actual = sut.updateIndex(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadIndex() {
+        repo.save(SOME_TASK);
+        var actual = sut.updateIndex(SOME_TASK.id, -1, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateIndex() {
+        repo.save(SOME_TASK);
+        var actual = sut.updateIndex(SOME_TASK.id, 0, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
     }
 
     @SuppressWarnings("serial")

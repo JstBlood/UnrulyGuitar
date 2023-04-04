@@ -107,13 +107,8 @@ public class CardService implements StandardEntityService<Card, Long> {
             return prepare(id, username, password);
 
         Card card = cardRepo.findById(id).get();
-        String newValueString = String.valueOf(newValue).trim();
 
-        if(newValueString.isEmpty()) {
-            return HttpStatus.BAD_REQUEST;
-        }
-
-        card.description = newValueString;
+        card.description = String.valueOf(newValue).trim();
 
         return flush(card);
     }
@@ -148,7 +143,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         Optional<CardList> parentCardList = cardListRepo.findById(newValueLong);
 
         if (parentCardList.isEmpty()) {
-            return HttpStatus.BAD_REQUEST;
+            return HttpStatus.NOT_FOUND;
         }
 
         card.parentCardList = parentCardList.get();
@@ -170,7 +165,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Card> optionalTargetCard = cardRepo.findById(newValueLong);
 
-        if (optionalTargetCard.isEmpty()) {
+        if (optionalTargetCard == null) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -208,7 +203,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         Optional<CardList> optionalTargetList = cardListRepo.findById(newValueLong);
 
         if (optionalTargetList.isEmpty()) {
-            return HttpStatus.BAD_REQUEST;
+            return HttpStatus.NOT_FOUND;
         }
 
         CardList targetList = optionalTargetList.get();
@@ -236,8 +231,8 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag.isEmpty()) {
-            return HttpStatus.BAD_REQUEST;
+        if(optionalTag == null) {
+            return HttpStatus.NOT_FOUND;
         }
 
         Tag tag = optionalTag.get();
@@ -257,8 +252,8 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag.isEmpty()) {
-            return HttpStatus.BAD_REQUEST;
+        if(optionalTag == null) {
+            return HttpStatus.NOT_FOUND;
         }
 
         Tag tag = optionalTag.get();
@@ -275,7 +270,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Card> optionalCard = cardRepo.findById(id);
 
-        if(optionalCard.isEmpty()) {
+        if(optionalCard == null) {
             return HttpStatus.NOT_FOUND;
         }
 
