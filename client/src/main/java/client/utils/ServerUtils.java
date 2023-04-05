@@ -114,6 +114,24 @@ public class ServerUtils {
                 new GenericType<>() {});
     }
 
+    public void validate(String key) {
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/validate",
+                new GenericType<>(){});
+    }
+
+    public void changePass(String key, String newPass) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/password",
+                Entity.entity(newPass, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void removePass(String key) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/password");
+    }
+
     public Board addBoard(Board board) {
         return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/add",

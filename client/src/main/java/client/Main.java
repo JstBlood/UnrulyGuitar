@@ -39,10 +39,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
-        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
-        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes", "AddCardList.fxml");
-        var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes", "CardDetails.fxml");
-        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
+        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client",
+                "scenes", "BoardOverview.fxml");
+        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes",
+                "AddCardList.fxml");
+        var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes",
+                "CardDetails.fxml");
+        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes",
+                "BoardSettings.fxml");
+        var locker = FXML.load(PasswordCtrl.class, "client", "scenes",
+                "PasswordEntry.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
@@ -55,6 +61,7 @@ public class Main extends Application {
                 addCardList,
                 cardDetails,
                 boardSettings,
+                locker,
                 cStore);
 
         primaryStage.setOnCloseRequest(e -> {

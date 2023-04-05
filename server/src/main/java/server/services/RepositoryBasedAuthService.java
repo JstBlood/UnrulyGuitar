@@ -1,14 +1,18 @@
 package server.services;
 
+import commons.Board;
 import commons.User;
 import org.springframework.stereotype.Service;
+import server.database.BoardRepository;
 import server.database.UserRepository;
 
 @Service
 public class RepositoryBasedAuthService implements AuthenticationService {
     private UserRepository userRepo;
+    private BoardRepository repo;
 
-    public RepositoryBasedAuthService(UserRepository uRepo) {
+    public RepositoryBasedAuthService(UserRepository uRepo, BoardRepository repo) {
+        this.repo = repo;
         userRepo = uRepo;
     }
 
@@ -19,10 +23,21 @@ public class RepositoryBasedAuthService implements AuthenticationService {
         return userRepo.findByUsername(username);
     }
 
-    public boolean hasEditAccess(String username, String bid) {
-        // TODO: Herein we will check if the user can edit our board.
+    public boolean hasEditAccess(String username, String password, String bid) {
+        if(username.endsWith("_admin"))
+            return checkAdminPass(password);
 
-        return true;
+        Board board = repo.findByKey(bid);
+        if(board == null)
+            return false;
+
+        if(!board.isPasswordProtected)
+            return true;
+
+        if(board.password.equals(password))
+            return true;
+
+        return false;
     }
 
     public static boolean checkAdminPass(String password) { return password.equals("xyz"); }
