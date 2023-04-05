@@ -113,9 +113,4 @@ public class BoardsCtrl {
     public void back() {
         mainCtrl.showLogon();
     }
-
-    @FXML
-    public void showHelp() {
-        mainCtrl.showHelpScreen("logon");
-    }
 }

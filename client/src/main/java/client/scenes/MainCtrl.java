@@ -24,7 +24,6 @@ import commons.Card;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -50,12 +49,6 @@ public class MainCtrl {
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
 
-    private HelpScreenCtrl helpScreenCtrl;
-    private Scene helpScreen;
-
-    private CardDetailsCtrl tagsPopupCtrl;
-    private Scene tagsPopup;
-
     private CredentialsStore cStore;
 
     private HashSet<Long> usedPresets = new HashSet<>();
@@ -70,10 +63,8 @@ public class MainCtrl {
                            Pair<BoardsCtrl, Parent> boards,
                            Pair<BoardOverviewCtrl, Parent> boardOverview,
                            Pair<AddCardListCtrl, Parent> addCardList,
-                           Pair<CardDetailsCtrl, Parent> cardDetails,
+                           Pair<CardDetailsCtrl, Parent> addCard,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
-                           Pair<HelpScreenCtrl, Parent> helpScreen,
-                           Pair<CardDetailsCtrl, Parent> tagsPopup,
                            CredentialsStore cStore) {
 
         this.primaryStage = primaryStage;
@@ -88,29 +79,20 @@ public class MainCtrl {
 
         this.addCardList = new Scene(addCardList.getValue());
 
-        this.cardDetailsCtrl = cardDetails.getKey();
-        this.cardDetails = new Scene(cardDetails.getValue());
+        this.cardDetailsCtrl = addCard.getKey();
+        this.cardDetails = new Scene(addCard.getValue());
 
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
-
-        this.helpScreenCtrl = helpScreen.getKey();
-        this.helpScreen = new Scene(helpScreen.getValue());
-
-        this.tagsPopupCtrl = tagsPopup.getKey();
-        this.tagsPopup = new Scene(tagsPopup.getValue());
 
         this.cStore = cStore;
 
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
                 .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
-        prepareHelp();
-        prepareBoardOverview();
-        prepareCardDetails();
-
         showLogon();
         primaryStage.show();
+
     }
 
     public HashSet<Long> accessUsedPresets() {
@@ -129,8 +111,8 @@ public class MainCtrl {
         primaryStage.show();
     }
 
-    public void showCardDetails(Card card) {
-        cardDetailsCtrl.prepare(card, false);
+    public void showCardDetails(Card about) {
+        cardDetailsCtrl.prepare(about);
         primaryStage.setTitle("Adding Card");
         primaryStage.setScene(cardDetails);
     }
@@ -150,54 +132,6 @@ public class MainCtrl {
         primaryStage.setScene(boardSettings);
     }
 
-    public void showHelpScreen(String prevScene) {
-        helpScreenCtrl.setPrevScene(prevScene);
-        primaryStage.setTitle("Help");
-        primaryStage.setScene(helpScreen);
-    }
-
-    public void showTagsPopup(Card card) {
-        tagsPopupCtrl.prepare(card, true);
-        primaryStage.setTitle("Tags popup");
-        primaryStage.setScene(tagsPopup);
-    }
-
-    public void prepareHelp() {
-        logon.setOnKeyPressed(e -> {
-            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
-                showHelpScreen("logon");
-            }
-        });
-        boards.setOnKeyPressed(e -> {
-            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
-                showHelpScreen("boards");
-            }
-        });
-        boardOverview.setOnKeyPressed(e -> {
-            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
-                showHelpScreen("boardOverview");
-            }
-        });
-        boardSettings.setOnKeyPressed(e -> {
-            if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
-                showHelpScreen("boardSettings");
-            }
-        });
-    }
-
-    public void prepareBoardOverview() {
-        //TODO : set traversal engine
-    }
-
-    public void prepareCardDetails() {
-        cardDetails.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ESCAPE)) {
-                showBoardOverview();
-            }
-        });
-    }
-
-
     public void updateBoardSettings(Board newState) {
         boardSettingsCtrl.update(newState);
     }
@@ -209,6 +143,4 @@ public class MainCtrl {
     public void setupBoardOverview(Board board) {
         boardOverviewCtrl.prepare(board);
     }
-
-
 }
