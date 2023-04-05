@@ -1,12 +1,10 @@
 package server.services;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.Optional;
 
 import commons.ColorPreset;
 import commons.Tag;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.ColorPresetRepository;
@@ -18,8 +16,8 @@ public class TagService implements StandardEntityService<Tag, Long> {
     private final BoardsService boardsService;
     private final ColorPresetRepository colorRepo;
 
-    public TagService(@Qualifier("tagRepository") TagRepository tagRepo, BoardsService boardsService,
-                      @Qualifier("colorPresetRepository") ColorPresetRepository colorRepo) {
+    public TagService(TagRepository tagRepo, BoardsService boardsService,
+                      ColorPresetRepository colorRepo) {
         this.tagRepo = tagRepo;
         this.boardsService = boardsService;
         this.colorRepo = colorRepo;

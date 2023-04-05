@@ -19,8 +19,6 @@ package server.api;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.Random;
-
 import commons.Board;
 import commons.CardList;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestColorPresetRepository;
@@ -36,6 +36,7 @@ import server.database.TestUserRepository;
 import server.services.*;
 
 @SpringBootTest
+@Import(ConfigTest.class)
 public class CardListControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
@@ -46,15 +47,11 @@ public class CardListControllerTest {
     private TestBoardsRepository bRepo;
     @Autowired
     private TestUserRepository uRepo;
-    @Autowired
-    private RepositoryBasedAuthService pwd;
+
     @Autowired
     private TestColorPresetRepository colorRepo;
 
     @Autowired
-    @Qualifier("testSocketRefresher")
-    private SocketRefreshService sockets;
-
     private CardListController sut;
 
     @BeforeEach
@@ -63,13 +60,6 @@ public class CardListControllerTest {
         bRepo.clean();
         uRepo.clean();
         colorRepo.clean();
-
-        repo = new TestCardListRepository();
-
-        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo,
-                sockets, pwd, colorRepo), sockets);
-
-        sut = new CardListController(service);
     }
 
     private boolean isEmptyOrNull(String s) {

@@ -3,7 +3,6 @@ package server.services;
 import java.util.Optional;
 
 import commons.Task;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.TaskRepository;
@@ -13,7 +12,7 @@ public class TaskService implements StandardEntityService<Task, Long> {
     private final TaskRepository taskRepo;
     private final BoardsService boards;
 
-    public TaskService(@Qualifier("taskRepository") TaskRepository taskRepo, BoardsService boards) {
+    public TaskService(TaskRepository taskRepo, BoardsService boards) {
         this.taskRepo = taskRepo;
         this.boards = boards;
     }

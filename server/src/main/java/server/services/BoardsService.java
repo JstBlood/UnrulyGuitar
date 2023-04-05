@@ -3,7 +3,6 @@ package server.services;
 import commons.Board;
 import commons.ColorPreset;
 import commons.User;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,11 @@ public class BoardsService implements StandardEntityService<Board, String> {
     private final SocketRefreshService sockets;
     private final RepositoryBasedAuthService pwd;
 
-    public BoardsService(@Qualifier("boardRepository") BoardRepository repo,
-                         @Qualifier("userRepository") UserRepository userRepo,
-                         @Qualifier("socketRefreshService") SocketRefreshService messages,
+    public BoardsService(BoardRepository repo,
+                         UserRepository userRepo,
+                         SocketRefreshService messages,
                          RepositoryBasedAuthService pwd,
-                         @Qualifier("colorPresetRepository") ColorPresetRepository colorRepo) {
+                         ColorPresetRepository colorRepo) {
 
         this.repo = repo;
         this.sockets = messages;

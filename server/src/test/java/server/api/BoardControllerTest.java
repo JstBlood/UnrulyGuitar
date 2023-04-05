@@ -3,7 +3,6 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.Random;
 
 import commons.Board;
 import commons.Card;
@@ -13,14 +12,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.TestBoardsRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestUserRepository;
 import server.services.*;
 
 @SpringBootTest
+@Import(ConfigTest.class)
 public class BoardControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
@@ -35,22 +38,12 @@ public class BoardControllerTest {
     private TestUserRepository uRepo;
     @Autowired
     private TestColorPresetRepository colorRepo;
-    @Autowired
-    private RepositoryBasedAuthService pwd;
-    @Autowired
-    @Qualifier("testSocketRefresher")
-    private SocketRefreshService sockets;
-
 
     @BeforeEach
     public void setup() {
         repo.clean();
         colorRepo.clean();
         uRepo.clean();
-
-        BoardsService service = new BoardsService(repo, uRepo, sockets, pwd, colorRepo);
-
-        sut = new BoardsController(service);
     }
 
     @Test

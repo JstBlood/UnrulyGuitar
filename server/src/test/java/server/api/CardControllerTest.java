@@ -18,27 +18,23 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import java.awt.*;
-import java.util.Random;
-
 import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.*;
-import server.services.*;
 
 @SpringBootTest
+@Import(ConfigTest.class)
 public class CardControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
     private final Tag SOME_TAG = new Tag("title", SOME_BOARD);
-    private Board pBoard;
 
     @Autowired
     private TestCardRepository repo;
@@ -50,10 +46,8 @@ public class CardControllerTest {
     private TestCardListRepository clRepo;
     @Autowired
     private TestTagRepository tagRepo;
-    private CardController sut;
     @Autowired
-    @Qualifier("testSocketRefresher")
-    private SocketRefreshService sockets;
+    private CardController sut;
     @Autowired
     private TestColorPresetRepository colorRepo;
 
@@ -65,15 +59,6 @@ public class CardControllerTest {
         clRepo.clean();
         tagRepo.clean();
         colorRepo.clean();
-
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-
-        CardService service = new CardService(repo,
-                new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo),
-                clRepo, sockets, colorRepo, tagRepo);
-
-
-        sut = new CardController(service);
     }
 
     @Test

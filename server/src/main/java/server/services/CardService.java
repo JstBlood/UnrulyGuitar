@@ -6,7 +6,6 @@ import java.util.Optional;
 import commons.Card;
 import commons.CardList;
 import commons.Tag;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +24,11 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final ColorPresetRepository colorRepo;
 
 
-    public CardService(@Qualifier("cardRepository") CardRepository cardRepo,
-                       BoardsService boards,@Qualifier("cardListRepository") CardListRepository cardListRepo,
-                       @Qualifier("socketRefreshService")  SocketRefreshService sockets,
-                       @Qualifier("colorPresetRepository") ColorPresetRepository colorRepo,
-                       @Qualifier("tagRepository") TagRepository tagRepo) {
+    public CardService(CardRepository cardRepo,
+                       BoardsService boards,CardListRepository cardListRepo,
+                       SocketRefreshService sockets,
+                       ColorPresetRepository colorRepo,
+                       TagRepository tagRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;

@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.*;
 import server.services.BoardsService;
 import server.services.RepositoryBasedAuthService;
@@ -22,6 +24,7 @@ import server.services.SocketRefreshService;
 import server.services.TaskService;
 
 @SpringBootTest
+@Import(ConfigTest.class)
 public class TaskControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
@@ -29,19 +32,16 @@ public class TaskControllerTest {
     private final Task SOME_TASK = new Task("title", SOME_CARD);
     @Autowired
     private TestTaskRepository repo;
+
+    @Autowired
     private TaskController sut;
+
     @Autowired
     private TestUserRepository uRepo;
     @Autowired
     private TestBoardsRepository bRepo;
     @Autowired
     private TestColorPresetRepository colorRepo;
-    @Autowired
-    private RepositoryBasedAuthService pwd;
-
-    @Autowired
-    @Qualifier("testSocketRefresher")
-    private SocketRefreshService sockets;
 
     @BeforeEach
     public void setup() {
@@ -49,10 +49,6 @@ public class TaskControllerTest {
         uRepo.clean();
         colorRepo.clean();
         bRepo.clean();
-
-        TaskService service = new TaskService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo));
-
-        sut = new TaskController(service);
     }
 
     @Test

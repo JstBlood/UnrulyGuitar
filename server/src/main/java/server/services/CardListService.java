@@ -1,7 +1,6 @@
 package server.services;
 
 import commons.CardList;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import server.database.CardListRepository;
@@ -12,8 +11,8 @@ public class CardListService {
     private final BoardsService boards;
     private final SocketRefreshService sockets;
 
-    public CardListService(@Qualifier("cardListRepository") CardListRepository cardListRepo, BoardsService boards,
-                           @Qualifier("socketRefreshService")  SocketRefreshService sockets) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards,
+                           SocketRefreshService sockets) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
         this.sockets = sockets;

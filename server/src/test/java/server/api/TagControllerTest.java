@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.TestBoardsRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestTagRepository;
@@ -18,6 +20,7 @@ import server.database.TestUserRepository;
 import server.services.*;
 
 @SpringBootTest
+@Import(ConfigTest.class)
 public class TagControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
@@ -30,17 +33,11 @@ public class TagControllerTest {
     private TestBoardsRepository bRepo;
     @Autowired
     private TestTagRepository repo;
+    @Autowired
     private TagController sut;
 
     @Autowired
     private TestColorPresetRepository colorRepo;
-
-    @Autowired
-    private RepositoryBasedAuthService pwd;
-
-    @Autowired
-    @Qualifier("testSocketRefresher")
-    private SocketRefreshService sockets;
 
     @BeforeEach
     public void setup() {
@@ -50,12 +47,6 @@ public class TagControllerTest {
         bRepo.clean();
 
         SOME_TAG.colors = new ColorPreset();
-
-        BoardsService bService = new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo);
-
-        TagService service = new TagService(repo, bService, colorRepo);
-
-        sut = new TagController(service);
     }
 
     @Test
