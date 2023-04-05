@@ -2,6 +2,7 @@ package server.services;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Scanner;
 
 import commons.Card;
 import commons.CardList;
@@ -46,6 +47,7 @@ public class CardService implements StandardEntityService<Card, Long> {
         return HttpStatus.CREATED;
     }
 
+
     @Transactional
     public HttpStatus delete(Long id, String username, String password) {
         HttpStatus res = prepare(id, username, password);
@@ -86,6 +88,60 @@ public class CardService implements StandardEntityService<Card, Long> {
         return flush(card);
     }
 
+    public HttpStatus updateDetails(Long id, String newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Scanner sc = new Scanner(newValue);
+        sc.nextLine();
+
+        card.title = sc.nextLine();
+
+        if(card.title.equals("")) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        card.description = sc.nextLine();
+
+        card.tags.clear();
+
+        while(sc.hasNextLine()) {
+            Optional<Tag> optionalTag = tagRepo.findById(Long.valueOf(sc.nextLine()));
+            if(optionalTag == null) {
+                return HttpStatus.BAD_REQUEST;
+            }
+            Tag tag = optionalTag.get();
+            card.tags.add(tag);
+        }
+
+        return flush(card);
+    }
+
+    public HttpStatus updateTags(Long id, String newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+
+        Scanner sc = new Scanner(newValue);
+        sc.nextLine();
+
+        card.tags.clear();
+
+        while(sc.hasNextLine()) {
+            Optional<Tag> optionalTag = tagRepo.findById(Long.valueOf(sc.nextLine()));
+            if(optionalTag == null) {
+                return HttpStatus.BAD_REQUEST;
+            }
+            Tag tag = optionalTag.get();
+            card.tags.add(tag);
+        }
+
+        return flush(card);
+    }
+
     public HttpStatus updateTitle(Long id, Object newValue, String username, String password) {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);
@@ -98,17 +154,6 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         card.title = newValueString;
-
-        return flush(card);
-    }
-
-    public HttpStatus updateDescription(Long id, Object newValue, String username, String password) {
-        if (!prepare(id, username, password).equals(HttpStatus.OK))
-            return prepare(id, username, password);
-
-        Card card = cardRepo.findById(id).get();
-
-        card.description = String.valueOf(newValue).trim();
 
         return flush(card);
     }
@@ -221,44 +266,27 @@ public class CardService implements StandardEntityService<Card, Long> {
         return flush(card);
     }
 
-    public HttpStatus updateAddTag(long id, Object newValue, String username, String password) {
+    @Transactional
+    public HttpStatus updateSwap(Long id, Object newValue, String username, String password) {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);
 
         Card card = cardRepo.findById(id).get();
+        long newValueLong = Long.parseLong(String.valueOf(newValue).trim());
 
-        Long tagId = Long.valueOf(String.valueOf(newValue));
+        Optional<Card> optionalTargetCard = cardRepo.findById(newValueLong);
 
-        Optional<Tag> optionalTag = tagRepo.findById(tagId);
-
-        if(optionalTag == null) {
-            return HttpStatus.NOT_FOUND;
+        if (optionalTargetCard == null) {
+            return HttpStatus.BAD_REQUEST;
         }
 
-        Tag tag = optionalTag.get();
+        Card targetCard = optionalTargetCard.get();
 
-        card.tags.add(tag);
+        int aux = card.index;
+        card.index = targetCard.index;
+        targetCard.index = aux;
 
-        return flush(card);
-    }
-
-    public HttpStatus updateRemoveTag(long id, Object newValue, String username, String password) {
-        if (!prepare(id, username, password).equals(HttpStatus.OK))
-            return prepare(id, username, password);
-
-        Card card = cardRepo.findById(id).get();
-
-        Long tagId = Long.valueOf(String.valueOf(newValue));
-
-        Optional<Tag> optionalTag = tagRepo.findById(tagId);
-
-        if(optionalTag == null) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        Tag tag = optionalTag.get();
-
-        card.removeTag(tag);
+        cardRepo.saveAndFlush(targetCard);
 
         return flush(card);
     }

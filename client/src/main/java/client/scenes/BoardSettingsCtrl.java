@@ -231,8 +231,14 @@ public class BoardSettingsCtrl implements Initializable {
     /**
      * Update the boards' default preset based on the value in the ChoiceBox.
      */
+
     private void updatePreset() {
         server.updateBoardDefaultPreset(board.key, Long.parseLong(defPreset.getSelectionModel().getSelectedItem()
                 .substring(4)));
+    }
+
+    @FXML
+    public void showHelp() {
+        mainCtrl.showHelpScreen("boardSettings");
     }
 }
