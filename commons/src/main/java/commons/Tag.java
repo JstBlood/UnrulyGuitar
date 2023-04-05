@@ -24,8 +24,6 @@ public class Tag {
     @Column(nullable = false)
     public String name;
 
-    public Color color;
-
     @ManyToOne
     @JoinColumn(name = "board_id",
             nullable = false)
@@ -34,11 +32,13 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     public Set<Card> cards = ConcurrentHashMap.newKeySet();
 
+    @OneToOne
+    public ColorPreset colors;
+
     @SuppressWarnings("unused")
     protected Tag() {}
 
-    public Tag(String name, Color color, Board parentBoard) {
-        this.color = color;
+    public Tag(String name, Board parentBoard) {
         this.name = name;
         this.parentBoard = parentBoard;
     }

@@ -49,7 +49,7 @@
                   </TextField>
                </center>
             </BorderPane>
-            <TextArea fx:id="description" layoutX="11.0" layoutY="116.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
+            <TextArea fx:id="description" layoutX="11.0" layoutY="129.0" prefHeight="122.0" prefWidth="588.0" promptText="Add a description">
                <styleClass>
                   <String fx:value="plane-0" />
                   <String fx:value="text-1" />
@@ -80,9 +80,9 @@
             <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
             <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
             <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="71.0" mnemonicParsing="false" text="Add tag" />
-            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="36.0" prefWidth="479.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="66.0" prefHeight="49.0" prefWidth="479.0" vbarPolicy="NEVER">
                <content>
-                  <HBox fx:id="tagsBar" prefHeight="100.0" prefWidth="200.0" />
+                  <HBox fx:id="tagsBar" prefHeight="51.0" prefWidth="477.0" />
                </content>
             </ScrollPane>
          </children>

@@ -12,47 +12,54 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
+
 package server.api;
 
 import static org.springframework.http.HttpStatus.*;
-
-import java.util.Random;
 
 import commons.Board;
 import commons.CardList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestUserRepository;
 import server.services.*;
 
+@SpringBootTest
+@Import(ConfigTest.class)
 public class CardListControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
-    public int nextInt;
-    private MyRandom random;
+    @Autowired
     private TestCardListRepository repo;
+    @Autowired
+    private TestBoardsRepository bRepo;
+    @Autowired
+    private TestUserRepository uRepo;
+
+    @Autowired
+    private TestColorPresetRepository colorRepo;
+
+    @Autowired
     private CardListController sut;
 
     @BeforeEach
     public void setup() {
-        random = new MyRandom();
-        repo = new TestCardListRepository();
-
-        TestBoardsRepository bRepo = new TestBoardsRepository();
-        TestUserRepository uRepo = new TestUserRepository();
-        SocketRefreshService sockets = new TestSocketRefresher();
-        var colorRepo = new TestColorPresetRepository();
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        CardListService service = new CardListService(repo, new BoardsService(bRepo, uRepo,
-                sockets, pwd, colorRepo), sockets);
-
-        sut = new CardListController(service);
+        repo.clean();
+        bRepo.clean();
+        uRepo.clean();
+        colorRepo.clean();
     }
 
     private boolean isEmptyOrNull(String s) {
@@ -88,7 +95,7 @@ public class CardListControllerTest {
     public void databaseIsUsedAdd() {
         var actual = sut.add(SOME_CARDLIST, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("save"));
+        Assertions.assertTrue(repo.getCalled().contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
     }
 
@@ -103,7 +110,7 @@ public class CardListControllerTest {
         repo.save(SOME_CARDLIST);
         var actual = sut.delete(SOME_CARDLIST.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
+        Assertions.assertTrue(repo.getCalled().contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -125,7 +132,7 @@ public class CardListControllerTest {
         repo.save(SOME_CARDLIST);
         var actual = sut.updateTitle(SOME_CARDLIST.id, "newTitle", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -134,17 +141,5 @@ public class CardListControllerTest {
         String actual = sut.getUpdates().toString();
 
         Assertions.assertFalse(isEmptyOrNull(actual));
-    }
-
-    @SuppressWarnings("serial")
-    public class MyRandom extends Random {
-
-        public boolean wasCalled = false;
-
-        @Override
-        public int nextInt(int bound) {
-            wasCalled = true;
-            return nextInt;
-        }
     }
 }

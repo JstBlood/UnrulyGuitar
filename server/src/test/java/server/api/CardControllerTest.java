@@ -18,51 +18,47 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import java.awt.*;
-import java.util.Random;
-
 import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
 import server.database.*;
-import server.services.*;
 
+@SpringBootTest
+@Import(ConfigTest.class)
 public class CardControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
-    private final Tag SOME_TAG = new Tag("title", Color.RED, SOME_BOARD);
+    private final Tag SOME_TAG = new Tag("title", SOME_BOARD);
 
-    public int nextInt;
-    private MyRandom random;
+    @Autowired
     private TestCardRepository repo;
-    private Board pBoard;
+    @Autowired
     private TestUserRepository uRepo;
+    @Autowired
     private TestBoardsRepository bRepo;
+    @Autowired
     private TestCardListRepository clRepo;
+    @Autowired
     private TestTagRepository tagRepo;
+    @Autowired
     private CardController sut;
+    @Autowired
+    private TestColorPresetRepository colorRepo;
 
     @BeforeEach
     public void setup() {
-        random = new MyRandom();
-        repo = new TestCardRepository();
-        uRepo = new TestUserRepository();
-        bRepo = new TestBoardsRepository();
-        tagRepo = new TestTagRepository();
-        SocketRefreshService sockets = new TestSocketRefresher();
-        var colorRepo = new TestColorPresetRepository();
-        clRepo = new TestCardListRepository();
-
-
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo),
-                clRepo, sockets, colorRepo, tagRepo);
-
-
-        sut = new CardController(service);
+        repo.clean();
+        uRepo.clean();
+        bRepo.clean();
+        clRepo.clean();
+        tagRepo.clean();
+        colorRepo.clean();
     }
 
     @Test
@@ -81,7 +77,7 @@ public class CardControllerTest {
     public void databaseIsUsedAdd() {
         var actual = sut.add(SOME_CARD, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("save"));
+        Assertions.assertTrue(repo.getCalled().contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
     }
 
@@ -103,8 +99,8 @@ public class CardControllerTest {
         repo.shiftCardsUp(SOME_CARD.index, SOME_CARD.parentCardList.id);
         var actual = sut.delete(SOME_CARD.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("deleteById"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -126,7 +122,7 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -158,7 +154,7 @@ public class CardControllerTest {
         clRepo.save(SOME_CARDLIST);
         var actual = sut.updateParent(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -174,7 +170,7 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateIndex(SOME_CARD.id, 0, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -190,7 +186,7 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateDescription(SOME_CARD.id, "Description", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -231,9 +227,9 @@ public class CardControllerTest {
 
         var actual = sut.updateDragAndDrop(SOME_CARD.id, newCard.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsDown"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsDown"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -281,7 +277,7 @@ public class CardControllerTest {
         var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id, "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 
     @Test
@@ -306,7 +302,7 @@ public class CardControllerTest {
         var actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id, "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 
     @Test
@@ -322,26 +318,14 @@ public class CardControllerTest {
 
         var actual = sut.updateListDragAndDrop(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
 
         actual = sut.updateListDragAndDrop(SOME_CARD.id, newList.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
-    }
-
-    @SuppressWarnings("serial")
-    public class MyRandom extends Random {
-
-        public boolean wasCalled = false;
-
-        @Override
-        public int nextInt(int bound) {
-            wasCalled = true;
-            return nextInt;
-        }
     }
 }

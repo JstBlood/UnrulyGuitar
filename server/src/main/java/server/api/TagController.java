@@ -36,11 +36,19 @@ public class TagController {
         return ResponseEntity.status(tagService.updateName(id, newValue, username, password)).build();
     }
 
-    @PutMapping("/{id}/color")
-    public ResponseEntity<?> updateColor(@PathVariable long id,
-                                         @RequestBody Color newValue,
+    @PutMapping("/{id}/foreground")
+    public ResponseEntity<?> updateForeground(@PathVariable long id,
+                                         @RequestBody String newValue,
                                          @PathVariable String username,
                                          @PathVariable(required = false) String password) {
-        return ResponseEntity.status(tagService.updateColor(id, newValue, username, password)).build();
+        return ResponseEntity.status(tagService.updateForeground(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/background")
+    public ResponseEntity<?> updateBackground(@PathVariable long id,
+                                              @RequestBody String newValue,
+                                              @PathVariable String username,
+                                              @PathVariable(required = false) String password) {
+        return ResponseEntity.status(tagService.updateBackground(id, newValue, username, password)).build();
     }
 }

@@ -24,8 +24,11 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final ColorPresetRepository colorRepo;
 
 
-    public CardService(CardRepository cardRepo, BoardsService boards, CardListRepository cardListRepo,
-                       SocketRefreshService sockets, ColorPresetRepository colorRepo, TagRepository tagRepo) {
+    public CardService(CardRepository cardRepo,
+                       BoardsService boards,CardListRepository cardListRepo,
+                       SocketRefreshService sockets,
+                       ColorPresetRepository colorRepo,
+                       TagRepository tagRepo) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;

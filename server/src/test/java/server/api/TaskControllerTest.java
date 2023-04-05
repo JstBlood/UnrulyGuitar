@@ -12,38 +12,43 @@ import commons.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.TestBoardsRepository;
-import server.database.TestColorPresetRepository;
-import server.database.TestTaskRepository;
-import server.database.TestUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
+import server.database.*;
 import server.services.BoardsService;
 import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
 import server.services.TaskService;
 
+@SpringBootTest
+@Import(ConfigTest.class)
 public class TaskControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
     private final Task SOME_TASK = new Task("title", SOME_CARD);
-    public int nextInt;
-    private MyRandom random;
+    @Autowired
     private TestTaskRepository repo;
+
+    @Autowired
     private TaskController sut;
+
+    @Autowired
+    private TestUserRepository uRepo;
+    @Autowired
+    private TestBoardsRepository bRepo;
+    @Autowired
+    private TestColorPresetRepository colorRepo;
 
     @BeforeEach
     public void setup() {
-        random = new MyRandom();
-        repo = new TestTaskRepository();
-
-        TestUserRepository uRepo = new TestUserRepository();
-        TestBoardsRepository bRepo = new TestBoardsRepository();
-        SocketRefreshService sockets = new SocketRefreshService(null);
-        var colorRepo = new TestColorPresetRepository();
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-        TaskService service = new TaskService(repo, new BoardsService(bRepo, uRepo, sockets, pwd, colorRepo));
-
-        sut = new TaskController(service);
+        repo.clean();
+        uRepo.clean();
+        colorRepo.clean();
+        bRepo.clean();
     }
 
     @Test
@@ -62,7 +67,7 @@ public class TaskControllerTest {
     public void databaseIsUsedAdd() {
         var actual = sut.add(SOME_TASK, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("save"));
+        Assertions.assertTrue(repo.getCalled().contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
     }
 
@@ -77,7 +82,7 @@ public class TaskControllerTest {
         repo.save(SOME_TASK);
         var actual = sut.delete(SOME_CARD.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
+        Assertions.assertTrue(repo.getCalled().contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -107,7 +112,7 @@ public class TaskControllerTest {
         repo.save(SOME_TASK);
         var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -131,7 +136,7 @@ public class TaskControllerTest {
         var actual = sut.updateIsDone(SOME_TASK.id, Boolean.TRUE, "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 
     @Test
@@ -155,18 +160,6 @@ public class TaskControllerTest {
         var actual = sut.updateIndex(SOME_TASK.id, 0, "", "");
 
         Assertions.assertEquals(OK, actual.getStatusCode());
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-    }
-
-    @SuppressWarnings("serial")
-    public class MyRandom extends Random {
-
-        public boolean wasCalled = false;
-
-        @Override
-        public int nextInt(int bound) {
-            wasCalled = true;
-            return nextInt;
-        }
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 }

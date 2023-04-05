@@ -15,11 +15,6 @@
  */
 package server.database;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 import commons.Board;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -27,6 +22,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class TestBoardsRepository implements BoardRepository {
 
@@ -39,6 +38,18 @@ public class TestBoardsRepository implements BoardRepository {
 
     public Optional<Board> find(long id) {
         return boardList.stream().filter(q -> q.id == id).findFirst();
+    }
+
+    public List<Board> getBoards() {
+        return boardList;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+    public void clean() {
+        boardList.clear();
+        calledMethods.clear();
     }
 
     @Override

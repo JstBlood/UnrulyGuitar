@@ -15,11 +15,6 @@
  */
 package server.database;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 import commons.CardList;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -28,10 +23,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 public class TestCardListRepository implements CardListRepository {
 
-    public final List<CardList> cardLists = new ArrayList<>();
-    public final List<String> calledMethods = new ArrayList<>();
+    private final List<CardList> cardLists = new ArrayList<>();
+    private final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
@@ -39,6 +39,19 @@ public class TestCardListRepository implements CardListRepository {
 
     private Optional<CardList> find(Long id) {
         return cardLists.stream().filter(q -> q.id == id).findFirst();
+    }
+
+    public List<CardList> getLists() {
+        return cardLists;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        cardLists.clear();
+        calledMethods.clear();
     }
 
     @Override

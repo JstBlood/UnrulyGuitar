@@ -11,7 +11,8 @@ public class CardListService {
     private final BoardsService boards;
     private final SocketRefreshService sockets;
 
-    public CardListService(CardListRepository cardListRepo, BoardsService boards, SocketRefreshService sockets) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards,
+                           SocketRefreshService sockets) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
         this.sockets = sockets;

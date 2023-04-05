@@ -21,8 +21,10 @@ public class BoardsService implements StandardEntityService<Board, String> {
     private final SocketRefreshService sockets;
     private final RepositoryBasedAuthService pwd;
 
-    public BoardsService(BoardRepository repo, UserRepository userRepo,
-                         SocketRefreshService messages, RepositoryBasedAuthService pwd,
+    public BoardsService(BoardRepository repo,
+                         UserRepository userRepo,
+                         SocketRefreshService messages,
+                         RepositoryBasedAuthService pwd,
                          ColorPresetRepository colorRepo) {
 
         this.repo = repo;

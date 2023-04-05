@@ -16,13 +16,14 @@ import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class BoardSettingsCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     @FXML
-    private HBox tagsBar;
+    private VBox tagsBar;
     @FXML
     private HBox presetList;
 
@@ -216,7 +217,7 @@ public class BoardSettingsCtrl implements Initializable {
      * @return The new tag in question.
      */
     private Tag generateTag() {
-        return new Tag("New tag", null, mainCtrl.getCurrentBoard());
+        return new Tag("New tag", mainCtrl.getCurrentBoard());
     }
 
     /**
