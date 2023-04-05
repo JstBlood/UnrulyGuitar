@@ -1,6 +1,8 @@
 package client.scenes;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
@@ -89,7 +91,9 @@ public class TaskCtrl implements Initializable {
     @FXML
     private void shiftUp() {
         if(t.index > 0) {
-            Task other = t.parentCard.tasks.get(t.index - 1);
+            var tasksOrdered = new ArrayList<>(t.parentCard.tasks);
+            tasksOrdered.sort(Comparator.comparingInt(task -> task.index));
+            Task other = tasksOrdered.get(t.index - 1);
             server.updateTask(t.id, "index", t.index - 1);
             server.updateTask(other.id, "index", other.index + 1);
         }
@@ -98,7 +102,9 @@ public class TaskCtrl implements Initializable {
     @FXML
     private void shiftDown() {
         if(t.index < t.parentCard.tasks.size() - 1) {
-            Task other = t.parentCard.tasks.get(t.index + 1);
+            var tasksOrdered = new ArrayList<>(t.parentCard.tasks);
+            tasksOrdered.sort(Comparator.comparingInt(task -> task.index));
+            Task other = tasksOrdered.get(t.index + 1);
             server.updateTask(t.id, "index", t.index + 1);
             server.updateTask(other.id, "index", other.index - 1);
         }

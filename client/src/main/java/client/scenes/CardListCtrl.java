@@ -12,9 +12,7 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Glow;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -47,6 +45,7 @@ public class CardListCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     public CardList cardList;
+
     private List<CardCtrl> children;
 
     @Inject
@@ -125,96 +124,33 @@ public class CardListCtrl implements Initializable {
     }
 
     public void showCards() {
-        cardList.cards.sort(Comparator.comparingInt(card -> card.index));
+        var cardsOrdered = new ArrayList<>(cardList.cards);
+        cardsOrdered.sort(Comparator.comparingInt(card -> card.index));
 
-        cardsContainer.getChildren().clear();
+        while(children.size() != cardsOrdered.size()) {
+            if (children.size() < cardsOrdered.size()) {
+                Card c = cardList.cards.get(children.size());
 
-        for(Card c : cardList.cards) {
-            FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
-            cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
-            try {
-                VBox cardNode = cardLoader.load();
-                CardCtrl cardCtrl = cardLoader.getController();
+                FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
+                cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
 
-                cardNode.setUserData(c);
-                prepareCardNode(cardNode, cardCtrl);
+                try {
+                    VBox cardNode = cardLoader.load();
+                    cardsContainer.getChildren().add(cardNode);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
-                cardsContainer.getChildren().add(cardNode);
-
-                cardCtrl.propagate(c);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                children.add(cardLoader.getController());
+            } else if (children.size() > cardsOrdered.size()) {
+                cardsContainer.getChildren().remove(children.size() - 1);
+                children.remove(children.size() - 1);
             }
         }
-    }
 
-    public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
-        prepareCardFocus(cardNode);
-        prepareCardTitle(cardNode);
-        prepareCardKeyEvents(cardNode, cardCtrl);
-    }
-
-    public void prepareCardFocus(Node cardNode) {
-        cardNode.setFocusTraversable(true);
-
-        cardNode.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) {
-                cardNode.setEffect(new Glow(1));
-            } else {
-                cardNode.setEffect(null);
-            }
-        });
-
-        cardNode.setOnMouseEntered(e -> {
-            cardNode.setEffect(new Glow(1));
-            e.consume();
-        });
-        cardNode.setOnMouseExited(e -> {
-            cardNode.setEffect(null);
-            e.consume();
-        });
-    }
-
-    public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
-        cardNode.setOnKeyPressed(e -> {
-            if (cardNode.isFocused()) {
-                Card card = (Card) cardNode.getUserData();
-                if (e.isShiftDown() && e.getCode().equals(KeyCode.UP) && card.index > 0) {
-                    Card prev = cardList.cards.get(card.index - 1);
-                    server.updateCard(card.id, "swap", prev.id);
-                } else if (e.isShiftDown() && e.getCode().equals(KeyCode.DOWN) &&
-                        card.index < cardList.cards.size() - 1) {
-                    Card next = cardList.cards.get(card.index + 1);
-                    server.updateCard(card.id, "swap", next.id);
-                } else {
-                    switch(e.getCode()) {
-                        case E:
-                            cardCtrl.setEditableTitle();
-                            break;
-                        case BACK_SPACE:
-                            server.deleteCard(card.id);
-                            break;
-                        case DELETE:
-                            server.deleteCard(card.id);
-                            break;
-                        case ENTER:
-                            mainCtrl.showCardDetails(card);
-                            break;
-                        case T:
-                            mainCtrl.showTagsPopup(card);
-                            break;
-                        case C:
-                            //TODO: create popup for color selection
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-    public void prepareCardTitle(Node cardNode) {
-        Card card = (Card) cardNode.getUserData();
-        //TODO: make title editable
+        for(int i = 0; i < children.size(); i++) {
+            children.get(i).propagate(cardsOrdered.get(i));
+        }
     }
 
     public void propagate(CardList newState) {
@@ -228,6 +164,7 @@ public class CardListCtrl implements Initializable {
 
         showCards();
     }
+
 
     @FXML
     public void cardAdd() {

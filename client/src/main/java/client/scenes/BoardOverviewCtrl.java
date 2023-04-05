@@ -328,11 +328,6 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showBoards();
     }
 
-    @FXML
-    public void showHelp() {
-        mainCtrl.showHelpScreen("boardOverview");
-    }
-
     /**
      * Stop all long polling threads.
      */
