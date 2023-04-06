@@ -1,10 +1,13 @@
 package client.scenes;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
+import javax.swing.text.Element;
+import javax.swing.text.html.ImageView;
 
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
@@ -16,10 +19,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class CardCtrl implements Initializable {
@@ -30,13 +36,15 @@ public class CardCtrl implements Initializable {
     @FXML
     private TextField title;
     @FXML
-    private TextArea description;
-    @FXML
     private VBox cardBox;
     @FXML
-    private VBox tagContainer;
+    private HBox tagContainer;
     @FXML
     private ProgressBar prog;
+    @FXML
+    private ImageView descIcon;
+    @FXML
+    private ImageView editIcon;
 
     @Inject
     public CardCtrl(ServerUtils server, MainCtrl mainCtrl, Card c, VBox cardBox) {
@@ -48,34 +56,40 @@ public class CardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle rs) {
-        prepareTitle();
+        prepareCard();
 
         handleProgress();
 
         prepareDragAndDrop();
 
-        this.description.setText(card.description);
-        this.description.setPrefRowCount((int) card.description.lines().count());
+//        this.description.setText(card.description);
+//        this.description.setPrefRowCount((int) card.description.lines().count());
         if(card.colors != null)
             mainCtrl.accessUsedPresets().add(card.colors.id);
     }
 
-    private void prepareTitle() {
-        title.textProperty().addListener((o, oldV, newV) -> {
-            if(!Objects.equals(card.title, newV)) {
-                title.setStyle("-fx-text-fill: red;");
-            }
-        });
-        title.setOnKeyPressed(e -> {
-            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        } );
-        title.focusedProperty().addListener((o, oldV, newV) -> {
-            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
-                updateTitle();
-            }
-        });
+    private void prepareCard() {
+//        title.textProperty().addListener((o, oldV, newV) -> {
+//            if(!Objects.equals(card.title, newV)) {
+//                title.setStyle("-fx-text-fill: red;");
+//            }
+//        });
+//        title.setOnKeyPressed(e -> {
+//            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+//                updateTitle();
+//            }
+//        } );
+//        title.focusedProperty().addListener((o, oldV, newV) -> {
+//            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+//                updateTitle();
+//            }
+//        });
+//        title.setEditable(false);
+//
+//        if (!card.description.isEmpty()) {
+//            descIcon.append(new ImageView((Element) new Image("@/client/images/desc_icon.png"))); ;
+//        }
+
         title.setText(card.title);
     }
 
@@ -145,9 +159,9 @@ public class CardCtrl implements Initializable {
 
         setTitleColors();
 
-        if(!newState.description.equals(description.getText())) {
-            description.setText(newState.description);
-        }
+//        if(!newState.description.equals(description.getText())) {
+//            description.setText(newState.description);
+//        }
 
         if(card.colors == null) {
             cardBox.setStyle("-fx-background-color: " + card.parentCardList.parentBoard
