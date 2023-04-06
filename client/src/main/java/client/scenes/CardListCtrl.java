@@ -238,7 +238,7 @@ public class CardListCtrl implements Initializable {
 
     @FXML
     public void cardAdd() {
-        if(cardName.getText().equals("")) {
+        if(cardName.getText().trim().equals("")) {
             UIUtils.showError("Card name cannot be empty");
             return;
         }
