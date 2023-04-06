@@ -7,9 +7,9 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane fx:id="rooter" vgap="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+<GridPane fx:id="rooter" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <stylesheets>
-      <URL value="@/client/css/BoardStyle.css" />
+      <URL value="@/client/css/secondaryStyle.css" />
       <URL value="@/client/css/BoardOverviewStyle.css" />
    </stylesheets>
    <columnConstraints>
@@ -46,7 +46,7 @@
       </ImageView>
       <HBox fx:id="section" styleClass="section" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
          <children>
-            <ScrollPane fitToHeight="true" pannable="true" prefHeight="354.0" prefWidth="480.0" HBox.hgrow="ALWAYS">
+            <ScrollPane fitToHeight="true" focusTraversable="false" pannable="true" prefHeight="354.0" prefWidth="480.0" HBox.hgrow="ALWAYS">
                <content>
                   <GridPane fx:id="listsGrid" hgap="20.0" styleClass="lists-grid">
                     <rowConstraints>
@@ -70,17 +70,17 @@
                   <RowConstraints maxHeight="79.0" minHeight="35.0" prefHeight="40.0" vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" onAction="#leaveBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+                  <Button focusTraversable="false" mnemonicParsing="false" onAction="#leaveBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Leave board" textFill="#da0606" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets top="100.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#removeBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                  <Button focusTraversable="false" mnemonicParsing="false" onAction="#removeBoard" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Remove board" textFill="#eb0e0e" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
                      <GridPane.margin>
                         <Insets top="180.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#addCardList" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
+                  <Button focusTraversable="false" mnemonicParsing="false" onAction="#addCardList" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
                </children>
             </GridPane>
          </children>
@@ -95,7 +95,7 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
-      <MenuButton fx:id="inviteKey" mnemonicParsing="false" onAction="#getInviteKey" styleClass="button-1" text="Invite Key" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+      <MenuButton fx:id="inviteKey" focusTraversable="false" mnemonicParsing="false" onAction="#getInviteKey" styleClass="button-1" text="Invite Key" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#getInviteKey" />
         </items>

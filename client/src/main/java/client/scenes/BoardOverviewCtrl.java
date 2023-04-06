@@ -317,6 +317,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void removeBoard() {
         server.deleteBoard(board.key);
+        mainCtrl.showBoards();
     }
 
     /**
@@ -331,6 +332,11 @@ public class BoardOverviewCtrl implements Initializable {
     /**
      * Stop all long polling threads.
      */
+    @FXML
+    public void showHelp() {
+        mainCtrl.showHelpScreen("boardOverview");
+    }
+
     public void stop() {
         server.stop();
     }
