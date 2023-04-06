@@ -182,6 +182,7 @@ public class CardDetailsCtrl {
 
             tagCtrl.delete.setOnAction(e -> {
                 server.updateCard(card.id, "removeTag", t.id);
+                server.forceRefresh(card.parentCardList.parentBoard.key);
             });
 
             tagsBar.getChildren().add(newTagNode);
@@ -253,28 +254,31 @@ public class CardDetailsCtrl {
         relink(newState);
         card = newState;
 
-        presetChoice.getItems().clear();
-        presetChoice.getItems().add("[Default]");
+        try {
+            presetChoice.getItems().clear();
+            presetChoice.getItems().add("[Default]");
 
-        if (newState.colors == null)
-            presetChoice.getSelectionModel().select(0);
+            if (newState.colors == null)
+                presetChoice.getSelectionModel().select(0);
 
-        for (ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
-            presetChoice.getItems().add("No #" + c.id);
+            for (ColorPreset c : newState.parentCardList.parentBoard.cardPresets) {
+                presetChoice.getItems().add("No #" + c.id);
 
-            if (newState.colors != null && c.id == newState.colors.id) {
-                presetChoice.getSelectionModel().select(presetChoice.getItems().size() - 1);
+                if (newState.colors != null && c.id == newState.colors.id) {
+                    presetChoice.getSelectionModel().select(presetChoice.getItems().size() - 1);
+                }
             }
+
+            title.setStyle("-fx-text-fill: white;");
+            description.setStyle("-fx-text-fill: black;");
+            title.setText(newState.title);
+            description.setText(newState.description);
+
+            prepareTasks();
+
+        } catch (Exception ignored) {
+
         }
-
-        card = newState;
-
-        title.setStyle("-fx-text-fill: white;");
-        description.setStyle("-fx-text-fill: black;");
-        title.setText(newState.title);
-        description.setText(newState.description);
-
-        prepareTasks();
         prepareTags();
     }
 

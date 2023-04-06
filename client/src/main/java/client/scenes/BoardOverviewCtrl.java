@@ -317,6 +317,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void removeBoard() {
         server.deleteBoard(board.key);
+        mainCtrl.showBoards();
     }
 
     /**
