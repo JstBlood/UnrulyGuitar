@@ -29,8 +29,6 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import client.scenes.MainCtrl;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.*;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -236,10 +234,10 @@ public class ServerUtils {
                 });
     }
 
-    private final ExecutorService exec = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        exec.submit(() -> {
+        executorService.submit(() -> {
             while(!Thread.interrupted()) {
                 try {
                     var res = ClientBuilder.newClient(new ClientConfig())
@@ -261,7 +259,7 @@ public class ServerUtils {
     }
 
     public void stop() {
-        exec.shutdownNow();
+        executorService.shutdownNow();
     }
 
     // END OF CARD LIST RELATED METHODS
@@ -280,17 +278,10 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/cards/" + id);
     }
 
-    public Card updateCard(long id, String component, Object newValue) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonValue = null;
-        try {
-            jsonValue = objectMapper.writeValueAsString(newValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return internalPutRequest("secure/" + store.accessStore().getUsername() +
-                        "/" + store.accessStore().getPassword() + "/cards/" + id + "/" + component,
-                Entity.json(jsonValue),
+    public void updateCard(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 

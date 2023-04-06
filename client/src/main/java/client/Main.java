@@ -49,6 +49,8 @@ public class Main extends Application {
                 "BoardSettings.fxml");
         var locker = FXML.load(PasswordCtrl.class, "client", "scenes",
                 "PasswordEntry.fxml");
+        var helpScreen = FXML.load(HelpScreenCtrl.class, "client", "scenes", "HelpScreen.fxml");
+        var tagsPopup = FXML.load(CardDetailsCtrl.class, "client", "scenes", "TagsPopup.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
 
@@ -62,6 +64,8 @@ public class Main extends Application {
                 cardDetails,
                 boardSettings,
                 locker,
+                helpScreen,
+                tagsPopup,
                 cStore);
 
         primaryStage.setOnCloseRequest(e -> {
