@@ -1,14 +1,14 @@
 package client.scenes;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+import javax.inject.Inject;
+
 import commons.Tag;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
-
-import javax.inject.Inject;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * This is the controller for the Tag scene which represents a tag.
@@ -17,7 +17,7 @@ public class TagSmallCtrl implements Initializable {
     @FXML
     private TextField name;
 
-    private Tag tag;
+    public Tag tag;
 
     /**
      * Create a small (uneditable) tag object.

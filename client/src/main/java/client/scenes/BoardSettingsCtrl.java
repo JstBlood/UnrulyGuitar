@@ -1,8 +1,6 @@
 package client.scenes;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -11,7 +9,6 @@ import commons.ColorPreset;
 import commons.Tag;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
@@ -19,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class BoardSettingsCtrl implements Initializable {
+public class BoardSettingsCtrl {
     private final MainCtrl mainCtrl;
     private final ServerUtils server;
     @FXML
@@ -50,10 +47,6 @@ public class BoardSettingsCtrl implements Initializable {
     public BoardSettingsCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
     }
 
     /**
@@ -126,10 +119,9 @@ public class BoardSettingsCtrl implements Initializable {
 
     /**
      * Add a new tag.
-     * @throws IOException Never thrown.
      */
     @FXML
-    public void addTag() throws IOException {
+    public void addTag() {
         server.addTag(generateTag());
     }
 
@@ -240,5 +232,9 @@ public class BoardSettingsCtrl implements Initializable {
     @FXML
     public void showHelp() {
         mainCtrl.showHelpScreen("boardSettings");
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

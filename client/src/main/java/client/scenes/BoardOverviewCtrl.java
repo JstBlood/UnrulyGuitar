@@ -37,7 +37,6 @@ import javafx.util.Duration;
 public class BoardOverviewCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final Clipboard clipboard;
     private Board board;
     private AddCardListCtrl addCardListCtrl;
 
@@ -62,9 +61,8 @@ public class BoardOverviewCtrl implements Initializable {
      *
      * @param board The new state to update to.
      */
-    private void setBoard(Board board) {
+    public void setBoard(Board board) {
         this.board = board;
-        inviteKey.getItems().get(0).setText(board.key);
     }
 
     /**
@@ -79,7 +77,6 @@ public class BoardOverviewCtrl implements Initializable {
         this.server = server;
 
         children = new ArrayList<>();
-        clipboard = Clipboard.getSystemClipboard();
     }
 
     @Override
@@ -95,6 +92,12 @@ public class BoardOverviewCtrl implements Initializable {
     public void prepare(Board board) {
         setBoard(board);
 
+        inviteKey.getItems().get(0).setText(board.key);
+
+        prepareServer();
+    }
+
+    public void prepareServer() {
         server.connect();
 
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
@@ -153,14 +156,14 @@ public class BoardOverviewCtrl implements Initializable {
      * @throws IOException Should never be thrown.
      */
     private void refresh(Board newState) throws IOException {
-        performRelink(newState);
+        relink(newState);
 
         updateBoard(newState);
 
         updateCardLists();
     }
 
-    private void performRelink(Board newState) {
+    public void relink(Board newState) {
         for(CardList cl : newState.cardLists) {
             cl.parentBoard = newState;
 
@@ -237,6 +240,7 @@ public class BoardOverviewCtrl implements Initializable {
      */
     @FXML
     public void getInviteKey() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
         ClipboardContent content = new ClipboardContent();
         content.putString(board.key);
         clipboard.setContent(content);
@@ -254,23 +258,6 @@ public class BoardOverviewCtrl implements Initializable {
             );
             timeline.play();
         });
-    }
-
-    /**
-     * Enter the board settings.
-     */
-    @FXML
-    public void openSettings() {
-        mainCtrl.showBoardSettings();
-    }
-
-    /**
-     * Disconnect from this board.
-     */
-    @FXML
-    public void back() {
-        server.deregister();
-        mainCtrl.showBoards();
     }
 
     /**
@@ -329,14 +316,31 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showBoards();
     }
 
-    /**
-     * Stop all long polling threads.
-     */
     @FXML
     public void showHelp() {
         mainCtrl.showHelpScreen("boardOverview");
     }
 
+    /**
+     * Enter the board settings.
+     */
+    @FXML
+    public void openSettings() {
+        mainCtrl.showBoardSettings();
+    }
+
+    /**
+     * Disconnect from this board.
+     */
+    @FXML
+    public void back() {
+        server.deregister();
+        mainCtrl.showBoards();
+    }
+
+    /**
+     * Stop all long polling threads.
+     */
     public void stop() {
         server.stop();
     }
