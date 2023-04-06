@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import server.database.*;
+import server.services.RepositoryBasedAuthService;
 import server.services.SocketRefreshService;
+import server.services.TestAuthService;
 import server.services.TestSocketRefresher;
 
 @TestConfiguration
@@ -62,6 +64,12 @@ public class ConfigTest {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public UserRepository userRepositoryMock() {
         return new TestUserRepository();
+    }
+
+    @Bean
+    @Primary
+    public RepositoryBasedAuthService repositoryBasedAuthServiceMock() {
+        return new TestAuthService();
     }
 
     @Bean

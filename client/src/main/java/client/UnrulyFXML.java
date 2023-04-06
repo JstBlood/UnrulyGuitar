@@ -28,11 +28,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-public class MyFXML {
+public class UnrulyFXML {
 
     private Injector injector;
 
-    public MyFXML(Injector injector) {
+    public UnrulyFXML(Injector injector) {
         this.injector = injector;
     }
 
@@ -49,7 +49,7 @@ public class MyFXML {
 
     private URL getLocation(String... parts) {
         var path = Path.of("", parts).toString();
-        return MyFXML.class.getClassLoader().getResource(path);
+        return UnrulyFXML.class.getClassLoader().getResource(path);
     }
 
     private class MyFactory implements BuilderFactory, Callback<Class<?>, Object> {

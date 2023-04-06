@@ -15,17 +15,23 @@ public class TagService implements StandardEntityService<Tag, Long> {
     private final TagRepository tagRepo;
     private final BoardsService boardsService;
     private final ColorPresetRepository colorRepo;
+    private final RepositoryBasedAuthService pwd;
 
     public TagService(TagRepository tagRepo, BoardsService boardsService,
-                      ColorPresetRepository colorRepo) {
+                      ColorPresetRepository colorRepo, RepositoryBasedAuthService pwd) {
         this.tagRepo = tagRepo;
         this.boardsService = boardsService;
         this.colorRepo = colorRepo;
+        this.pwd = pwd;
     }
 
     public HttpStatus add(Tag tag, String username, String password) {
         if (tag == null || tag.parentBoard == null || isNullOrEmpty(tag.name)) {
             return HttpStatus.BAD_REQUEST;
+        }
+
+        if(!pwd.hasEditAccess(username, password, tag.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         tag.colors = new ColorPreset();
@@ -44,8 +50,12 @@ public class TagService implements StandardEntityService<Tag, Long> {
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalTag.get().parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         Tag tag = optionalTag.get();
@@ -60,8 +70,12 @@ public class TagService implements StandardEntityService<Tag, Long> {
     public HttpStatus updateName(Long id, String newValue, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalTag.get().parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         Tag tag = optionalTag.get();
@@ -82,8 +96,12 @@ public class TagService implements StandardEntityService<Tag, Long> {
     public HttpStatus updateBackground(Long id, String newValue, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalTag.get().parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         Tag tag = optionalTag.get();
@@ -108,8 +126,12 @@ public class TagService implements StandardEntityService<Tag, Long> {
     public HttpStatus updateForeground(Long id, String newValue, String username, String password) {
         Optional<Tag> optionalTag = tagRepo.findById(id);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalTag.get().parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         Tag tag = optionalTag.get();

@@ -22,24 +22,30 @@ public class CardService implements StandardEntityService<Card, Long> {
     private final BoardsService boards;
     private final SocketRefreshService sockets;
     private final ColorPresetRepository colorRepo;
+    private final RepositoryBasedAuthService pwd;
 
 
     public CardService(CardRepository cardRepo,
                        BoardsService boards,CardListRepository cardListRepo,
                        SocketRefreshService sockets,
                        ColorPresetRepository colorRepo,
-                       TagRepository tagRepo) {
+                       TagRepository tagRepo, RepositoryBasedAuthService pwd) {
         this.cardRepo = cardRepo;
         this.boards = boards;
         this.cardListRepo = cardListRepo;
         this.tagRepo = tagRepo;
         this.sockets = sockets;
         this.colorRepo = colorRepo;
+        this.pwd = pwd;
     }
 
     public HttpStatus add(Card card, String username, String password) {
         if (card == null || card.parentCardList == null || isNullOrEmpty(card.title)) {
             return HttpStatus.BAD_REQUEST;
+        }
+
+        if(!pwd.hasEditAccess(username, password, card.parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         cardRepo.save(card);
@@ -57,6 +63,10 @@ public class CardService implements StandardEntityService<Card, Long> {
             return res;
 
         Card card = cardRepo.findById(id).get();
+
+        if(!pwd.hasEditAccess(username, password, card.parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
+        }
 
         cardRepo.deleteById(id);
 
@@ -168,7 +178,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Card> optionalTargetCard = cardRepo.findById(newValueLong);
 
-        if (optionalTargetCard == null) {
+        if (optionalTargetCard.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -234,7 +244,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
         }
 
@@ -255,7 +265,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag == null) {
+        if(optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
         }
 
@@ -273,8 +283,12 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Card> optionalCard = cardRepo.findById(id);
 
-        if(optionalCard == null) {
+        if(optionalCard.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalCard.get().parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         return HttpStatus.OK;

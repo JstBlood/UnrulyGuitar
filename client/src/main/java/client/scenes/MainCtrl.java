@@ -139,6 +139,7 @@ public class MainCtrl {
 
     public void showUnlock() {
         primaryStage.setTitle("Passwords");
+        lockscreenCtrl.stepTwo();
         primaryStage.setScene(lockscreen);
     }
 

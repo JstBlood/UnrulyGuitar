@@ -25,7 +25,7 @@ public class TestTaskRepository implements TaskRepository {
     private Optional<Task> find(long id) {
         boolean temp = tasks.stream().filter(q -> q.id == id).findFirst().isPresent();
         if (!temp)
-            return null;
+            return Optional.empty();
         return tasks.stream().filter(q -> q.id == id).findFirst();
     }
 

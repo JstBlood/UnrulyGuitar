@@ -3,15 +3,12 @@ package client.scenes;
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
-import commons.CardList;
-import jakarta.ws.rs.WebApplicationException;
+import commons.Board;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import jdk.internal.event.SecurityPropertyModificationEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -42,18 +39,29 @@ public class PasswordCtrl implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    }
-
-    public void prepare() {
-        server.registerForMessages("/topic/board/" + board.key, Board.class, q -> {
-            Platform.runLater(() -> {
-                updateFields();
-            });
+        password.textProperty().addListener((o, oldV, newV) -> {
+            password.setStyle("-fx-text-fill: red;");
         });
     }
 
-    private void updateFields() {
-        if(mainCtrl.getCurrentBoard().isPasswordProtected) {
+    public void stepTwo() {
+        updateFields(mainCtrl.getCurrentBoard());
+    }
+
+    public void prepare() {
+        server.connect();
+
+        server.registerForMessages("/topic/board/" + mainCtrl.getCurrentBoard().key, Board.class, q -> {
+            Platform.runLater(() -> {
+                updateFields(q);
+            });
+        });
+
+        updateFields(mainCtrl.getCurrentBoard());
+    }
+
+    private void updateFields(Board newState) {
+        if(newState.isPasswordProtected) {
             if (mainCtrl.accessStore().isAdmin()) {
                 unlock.setVisible(false);
                 changePass.setDisable(false);
@@ -74,6 +82,9 @@ public class PasswordCtrl implements Initializable{
             changePass.setDisable(true);
             removePass.setDisable(true);
         }
+
+        password.setText(mainCtrl.accessStore().getPassword());
+        password.setStyle("");
     }
 
     @FXML
@@ -85,10 +96,9 @@ public class PasswordCtrl implements Initializable{
         }
 
         if(mainCtrl.accessStore().getPassword() == null) {
-            mainCtrl.accessStore().setPassword(password.getText());
-
             try {
-                server.validate(mainCtrl.getCurrentBoard().key);
+                server.validate(mainCtrl.getCurrentBoard().key, password.getText());
+                mainCtrl.accessStore().setPassword(password.getText());
             } catch (Exception e) {
                 mainCtrl.accessStore().removePassword();
                 UIUtils.showError("Invalid password");
@@ -97,42 +107,35 @@ public class PasswordCtrl implements Initializable{
             mainCtrl.accessStore().removePassword();
         }
 
-        updateFields();
+        updateFields(mainCtrl.getCurrentBoard());
     }
 
     @FXML
     public void changePass() {
-        mainCtrl.accessStore().setPassword(password.getText());
+        String newPass = password.getText();
         try {
-            server.changePass(mainCtrl.getCurrentBoard().key, password.getText());
+            server.changePass(mainCtrl.getCurrentBoard().key, newPass);
         } catch (Exception e) {
             mainCtrl.accessStore().removePassword();
             UIUtils.showError("Invalid password");
         }
 
-        updateFields();
+        mainCtrl.accessStore().setPassword(newPass);
     }
 
     @FXML
     public void removePass() {
-        mainCtrl.accessStore().removePassword();
         try {
-            server.changePass(mainCtrl.getCurrentBoard().key, password.getText());
+            server.removePass(mainCtrl.getCurrentBoard().key);
         } catch (Exception e) {
             mainCtrl.accessStore().removePassword();
             UIUtils.showError("Invalid password");
         }
-
-        updateFields();
+        mainCtrl.accessStore().removePassword();
     }
 
     @FXML
     public void cancel() {
-        clearFields();
         mainCtrl.showBoardOverview();
-    }
-
-    private void clearFields() {
-        password.clear();
     }
 }

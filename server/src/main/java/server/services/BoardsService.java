@@ -150,8 +150,6 @@ public class BoardsService implements StandardEntityService<Board, String> {
         if (!prepare(key, username, password).equals(HttpStatus.OK))
             return prepare(key, username, password);
 
-        System.out.println("setting passwd");
-
         Board b = repo.findByKey(key);
 
         b.password = newValue;
@@ -346,6 +344,10 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         if(repo.findByKey(key) == null)
             return HttpStatus.NOT_FOUND;
+
+        if(!pwd.hasEditAccess(username, password, key)) {
+            return HttpStatus.FORBIDDEN;
+        }
 
         Board rem = repo.findByKey(key);
 

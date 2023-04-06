@@ -153,7 +153,7 @@ public class TestBoardsRepository implements BoardRepository {
     @Override
     public Optional<Board> findById(Long id) {
         // TODO Auto-generated method stub
-        return null;
+        return Optional.empty();
     }
 
     @Override

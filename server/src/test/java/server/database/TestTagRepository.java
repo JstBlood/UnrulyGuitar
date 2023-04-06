@@ -108,7 +108,7 @@ public class TestTagRepository implements TagRepository {
         Optional<Tag> tag = tagList.stream().filter(q -> q.id == id).findFirst();
 
         if (tag.isEmpty())
-            return null;
+            return Optional.empty();
         return tag;
     }
 
