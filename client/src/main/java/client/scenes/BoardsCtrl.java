@@ -37,10 +37,13 @@ public class BoardsCtrl {
     @FXML
     private Label listLabel;
 
+    private final Random rand;
+
     @Inject
-    public BoardsCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public BoardsCtrl(ServerUtils server, MainCtrl mainCtrl, Random rand) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+        this.rand = rand;
     }
 
     public void prepare() {
@@ -95,7 +98,16 @@ public class BoardsCtrl {
 
     public void create() {
         Random rng = new Random();
-        Board created = new Board(Long.toString(rng.nextLong()), "New board");
+        StringBuilder sb = new StringBuilder();
+
+        for(int j = 0; j < 3; j++) {
+            for (int i = 0; i < 6; i++) {
+                sb.append((char)('a' + rand.nextInt(26)));
+            }
+            sb.append('-');
+        }
+
+        Board created = new Board(sb.toString(), "New board");
 
         mainCtrl.setupBoardOverview(server.addBoard(created));
         mainCtrl.showBoardOverview();
