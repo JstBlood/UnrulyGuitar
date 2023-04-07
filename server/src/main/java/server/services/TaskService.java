@@ -11,15 +11,21 @@ import server.database.TaskRepository;
 public class TaskService implements StandardEntityService<Task, Long> {
     private final TaskRepository taskRepo;
     private final BoardsService boards;
+    private final RepositoryBasedAuthService pwd;
 
-    public TaskService(TaskRepository taskRepo, BoardsService boards) {
+    public TaskService(TaskRepository taskRepo, BoardsService boards, RepositoryBasedAuthService pwd) {
         this.taskRepo = taskRepo;
         this.boards = boards;
+        this.pwd = pwd;
     }
 
     public HttpStatus add(Task task, String username, String password) {
         if (task == null || task.parentCard == null || isNullOrEmpty(task.title)) {
             return HttpStatus.BAD_REQUEST;
+        }
+
+        if(!pwd.hasEditAccess(username, password, task.parentCard.parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         taskRepo.save(task);
@@ -32,8 +38,13 @@ public class TaskService implements StandardEntityService<Task, Long> {
     public HttpStatus delete(Long id, String username, String password) {
         Optional<Task> optionalTask = taskRepo.findById(id);
 
-        if(optionalTask == null) {
+        if(optionalTask.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password,
+                optionalTask.get().parentCard.parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         Task task = optionalTask.get();
@@ -96,8 +107,13 @@ public class TaskService implements StandardEntityService<Task, Long> {
 
         Optional<Task> optionalTask = taskRepo.findById(id);
 
-        if(optionalTask == null) {
+        if(optionalTask.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password,
+                optionalTask.get().parentCard.parentCardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         return HttpStatus.OK;

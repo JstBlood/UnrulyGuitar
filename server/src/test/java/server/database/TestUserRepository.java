@@ -162,7 +162,7 @@ public class TestUserRepository implements UserRepository {
     @Override
     public Optional<User> findById(Long id) {
         // TODO Auto-generated method stub
-        return null;
+        return Optional.empty();
     }
 
     @Override

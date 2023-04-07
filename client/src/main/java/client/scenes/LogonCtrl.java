@@ -81,10 +81,13 @@ public class LogonCtrl {
         mainCtrl.accessStore().setUrl(ip.getText());
         mainCtrl.accessStore().setUsername(username.getText());
 
-        if(adminChk.isSelected())
+        if(adminChk.isSelected()) {
             mainCtrl.accessStore().setPassword(admin.getText());
-        else
+            mainCtrl.accessStore().setAdmin();
+        }else {
             mainCtrl.accessStore().removePassword();
+            mainCtrl.accessStore().unsetAdmin();
+        }
 
         try {
             server.connect();

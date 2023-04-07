@@ -59,12 +59,13 @@
                   <String fx:value="lists-grid-root" />
                </styleClass>
             </ScrollPane>
-            <GridPane fx:id="rightBar" alignment="BOTTOM_RIGHT" minHeight="-Infinity" prefHeight="354.0" prefWidth="146.0">
+            <GridPane fx:id="rightBar" alignment="BOTTOM_RIGHT" minHeight="-Infinity" prefHeight="354.0" prefWidth="132.0">
               <columnConstraints>
                   <ColumnConstraints halignment="RIGHT" hgrow="NEVER" percentWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                  <RowConstraints percentHeight="-2.0" valignment="TOP" vgrow="ALWAYS" />
+                  <RowConstraints maxHeight="132.0" minHeight="115.0" percentHeight="-2.0" prefHeight="115.0" valignment="TOP" vgrow="ALWAYS" />
+                  <RowConstraints maxHeight="160.0" minHeight="10.0" percentHeight="-2.0" prefHeight="160.0" valignment="TOP" vgrow="ALWAYS" />
                   <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="0.0" prefHeight="0.0" vgrow="ALWAYS" />
                   <RowConstraints maxHeight="57.0" minHeight="38.0" percentHeight="11.0" prefHeight="39.0" vgrow="NEVER" />
                   <RowConstraints maxHeight="79.0" minHeight="35.0" prefHeight="40.0" vgrow="NEVER" />
@@ -81,6 +82,11 @@
                      </GridPane.margin>
                   </Button>
                   <Button focusTraversable="false" mnemonicParsing="false" onAction="#addCardList" prefHeight="31.0" prefWidth="130.0" styleClass="button-1" text="Add a new List" GridPane.valignment="TOP" />
+                  <ImageView fx:id="lock" fitHeight="31.0" fitWidth="47.0" onMouseClicked="#performUnlock" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                     <image>
+                        <Image url="@../images/padlock.png" />
+                     </image>
+                  </ImageView>
                </children>
             </GridPane>
          </children>

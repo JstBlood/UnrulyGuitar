@@ -20,6 +20,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
@@ -53,6 +55,9 @@ public class BoardOverviewCtrl implements Initializable {
     private GridPane rightBar;
     @FXML
     private GridPane rooter;
+
+    @FXML
+    private ImageView lock;
 
     private List<CardListCtrl> children;
 
@@ -197,6 +202,18 @@ public class BoardOverviewCtrl implements Initializable {
 
         mainCtrl.updateBoardSettings(newState);
 
+        try {
+            if (newState.isPasswordProtected)
+                lock.setImage(new Image(getClass()
+                        .getResource("/client/images/padlock.png").toURI().toString()));
+            else
+                lock.setImage(new Image(getClass()
+                        .getResource("/client/images/keys.png").toURI().toString()));
+        } catch (Exception e) {
+
+        }
+
+
         //TODO: update tags
     }
 
@@ -320,12 +337,18 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.showBoards();
     }
 
+    @FXML
+    public void performUnlock() {
+        mainCtrl.showUnlock();
+    }
+
     /**
      * Leave this board for this user.
      */
     @FXML
     public void leaveBoard() {
         server.leaveBoard(board.key);
+        mainCtrl.accessStore().removePassword();
         mainCtrl.showBoards();
     }
 

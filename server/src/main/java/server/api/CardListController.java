@@ -39,10 +39,6 @@ public class CardListController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList, @PathVariable String username,
                                  @PathVariable(required = false) String password) {
-        // TODO: FIX ME
-        //listeners.forEach((k, l) -> {
-        //    l.accept(cardList);
-        //});
         return ResponseEntity.status(cardListService.add(cardList, username, password)).build();
     }
 
