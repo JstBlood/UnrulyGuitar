@@ -14,9 +14,9 @@ The Heuristic Usability Report itself was conducted in alignment with the method
     \item Match between system and the real world.
     \item Help users recognize, diagnose, and recover from errors.
     \item Help and documentation.
-\end{enumerate}
+\end{enumerate} 
 
-Thereafter, three experts were asked to volunteer to evaluate the product, again in accordance with the article. The subject of the evaluation was the product itself, as opposed to a mock-up or a paper-only prototype, as the product at the time of the evaluation was deemed sufficiently functional to be evaluated. The output of the evaluation consisted of three lists, one per evaluator, which provided succinct explanations of how the product related to each separate heuristic, with special care given to violations of the heuristics. Then, they were aggregated and analysed by members of Group 22.
+Thereafter, three experts were asked to volunteer to evaluate the product, again in accordance with the article. The subject of the evaluation was the product itself, as opposed to a mock-up or a paper-only prototype, as the product at the time of the evaluation was deemed sufficiently functional to be evaluated. The output of the evaluation consisted of three lists, one per evaluator, which provided succinct explanations of how the product related to each separate heuristic, with special care given to violations of the heuristics. Then, they were aggregated and analysed by members of Group 22. 
 
 \subsection{Experts}
 
@@ -29,28 +29,85 @@ The experts evaluating our application were:
     \item Rares Iordan
 \end{itemize}
 
-The experts were members of a different group from our course, four of them evaluated our project, and provided us with feedback. These experts, due to also working on an application with a similar goal and utilizing the same frameworks, were well acquainted with most of the inner workings of the system and had a general idea of how the system works.
+The experts were members of a different group from our course, four of them evaluated our project, and provided us with feedback. These experts, due to also working on an application with a similar goal and utilizing the same frameworks, were well acquainted with most of the inner workings of the system and had a general idea of how the system worked. They were also well-versed with the process of Heuristic Usability Evaluation, having studied it prior to the evaluation. 
 
 
 \subsection{Procedure}
 
-Two side-by-side instances of the client facing part of our system were prepared on one machine and presented to each expert. The experts were notified that there are three servers running, two of which were servers running our application whilst one of them was a server running an incompatible application, they were given the corresponding three IP addresses.
+%  Procedure: Describe, in detail, what experts needed to do. Someone reading this section should be able to replicate what they did. 
+%  This should include:
+%    How are you instructing experts on what to do?
+%    What are the experts seeing? A prototype, application, design?
+%    What do they need to do step by step?
+%    What heuristics are they using?
 
-The experts were not instructed in any way shape or form as to how the application works or what they should expect, the only information they were provided was the aforementioned IP addresses.
-
-The experts all followed a similar pattern of actions in order:
-
+In preparation for the evaluation, some setup was required. These consisted of the following:
 \begin{itemize}
-    \item Tried to connect to a server.
-    \item Joined a board.
-    \item Added a list.
-    \item Tried to add tasks to that list.
-    \item Tried to connect to the other server.
-    \item Tried to connect with the other client to witness client synchronization.
+    \item [1.] Set up two servers running the application. Note down the IP address.
+    \item [2.] On one of the servers, add a board. Note down the board key.
+    \item [3.] Set up two client applications. Run them side-by-side on the same machine.
+    \item [4.] Set up a third server running an incompatible application. Note down the IP address.
 \end{itemize}
 
-The experts were using the heuristics mentioned at the beginning of section 2.
+Three evaluators were summoned shortly afterwards. They were provided with the machine running the client applications, as well as the IP addresses of all three servers and the board keys. Then, they were given a set of instructions.
+
+The instructors of Group 22 provided the evaluators with the following instructions:
+\begin{itemize}
+    \item [1.] Connect to a server with a given IP address.
+    \item [2.] Try to join a board with a given board key.
+    \item [3.] Try to add a list.
+    \item [4.] Try to add tasks to the list.
+    \item [5.] Connect to a different server, with a different, provided IP address.
+    \item [6.] Join the same board on both clients and observe client synchronisation.
+\end{itemize}
+
+The three evaluators conducted the evaluations individually, but they were allowed to consult each other. They were also allowed to consult the instructors in accordance with \emph{How to Conduct a Heuristics Evaluation}(1994). When prompted, the instructors provided the evaluators assistance in the form of verbal documentation on the GUI - no back-end implementation was exposed. 
+
+The evaluators were instructed to conduct three passes over the application. Each time, they were provided a different instruction set, mimicking three different common usage scenarios. The other two instruction sets consisted of the following:
+
+Second pass-through:
+\begin{itemize}
+    \item [1.] Create a total of 5 boards. Give them all a distinct name.
+    \item [2.] Rejoin all of those boards sequentially. No board keys were provided by the instructors.
+    \item [3.] Close one of the client applications. 
+    \item [4.] Join one of the newly created boards with the other client.
+    \item [5.] Close the other client application.
+    \item [6.] Run a new client application. 
+    \item [7.] Join one of the newly created boards on the new client.
+\end{itemize}
+
+Third pass-through:
+\begin{itemize}
+    \item [1.] Join a board. It does not matter which one.
+    \item [2.] Add 3 lists to the board. Give each a distinct name.
+    \item [3.] Add 10 cards to the first list. The titles of the cards are provided. These are:
+    \begin{itemize}
+        \item [3a.] "Locate a parrot store."
+        \item [3b.] "Travel to the parrot store."
+        \item [3c.] "Buy a parrot."
+        \item [3d.] "Buy bird feed."
+        \item [3e.] "Put the parrot in a suitable birdcage."
+        \item [3f.] "Research how large a birdcage should be."
+        \item [3g.] "Care for the parrot."
+        \item [3h.] "Love the parrot."
+        \item [3i.] "Hold the parrot."
+        \item [3j.] "Forfeit all material possessions to the parrot."
+    \end{itemize}
+    \item [4.] Organise the cards into lists. Change lists titles to suit if needed. Add or delete lists if needed.
+    \item [5.] Organise the cards within a list by reordering them. Changing card titles is not allowed.
+\end{itemize}
+
+During the evaluations, any problems or comments were diligently noted down by the instructors. No interpretation or editing was made to these. 
 
 \subsection{Measures}
 
-The experts where each provided a form filled with a rephrased version of our heuristics. For each of these they were asked where the following is implemented or violated, how they have come upon this discovery, and/or how they would see a solution to improve on this in any way. This completed form, as sent in by 4 evaluators was our raw data for this report.
+The experts where each provided a form filled with a rephrased version of our heuristics. For each of these they were asked:
+
+\begin{itemize}
+    \item Whether the heuristic was followed or violated, and to what degree.
+    \item How they came to that conclusion.
+    \item In case of a violation, a proposed solution.
+\end{itemize}
+
+These questions were formalised in a form. The completed forms, together with notes from the instructors, were used as the raw data for the report.
+

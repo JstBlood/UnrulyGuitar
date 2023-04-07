@@ -9,10 +9,39 @@ Before the evaluation, Group 22 had dedicated a certain amount of effort towards
 The main goal of the evaluation was to amend these flaws, by analysing the report, and translating them to concrete goals that would be added to the backlog of the developers. Group 22 sees usability as integral to the product, as the target group of the product would be largely lost if were it not up to par.
 \subsection{Prototype}
 
-The product in question consists mainly of a board overview screen, where users can organise tasks, represented as "cards", into lists. These lists could be used as "To Do", "Doing" , "Done" or any other category the user found fitting, in the style of Trello \cite{Trello}, but to allow users flexibility, this is not necessary, and users can add, remove, and name their lists in any way they see fit. Users can also add tags, sub-tasks, descriptions, and other potential addenda not yet implemented at the time of writing to the cards. The boards can be accessed in parallel by all members of the board. Editing cards and organising them into lists constitutes the core functionality of the application.
+The product in question consists mainly of a board overview screen, where users can organise tasks, represented as "cards", into lists.
 
-On a more slightly higher level, the boards have a unique ID that users can use to join them, so whole teams can have access to the same board - in this sense, a board simulates a real-life whiteboard in a meeting room. A board can be renamed, and several customisation options exist to alter the appearance of a board. Furthermore, it can be optionally password protected, which bars any users that do not have access to the password from joining. Users can also choose to leave boards if they so wish.
+\begin{figure}[h]
+\includegraphics[scale=0.3]{boardoverview.png}
+\caption{The board overview screen.}
+\end{figure}
 
-Boards are hosted on servers, which can have admins, authenticated with admin passwords. An admin has the power to see all the boards hosted on a server, as opposed to a user, who can only see the boards they previously joined. An admin can also delete boards.
+To access a board, a user first has to log on. The user can enter a username and the server IP on this screen. They can also claim admin access, and provide the admin password. Admins have access to all boards currently on the server, as opposed to users, who can only access boards if they have the invite key.
 
-The UI design of the board seeks to emulate the idea of a blackboard, with a black background and a high-contrast and bright palette. The UI can also be interacted with without use of the mouse, as all elements are traverse-able using the TAB key. Generous highlighting and "go back"-buttons provide the user with instant visual feedback on their actions.
+\begin{figure}[h]
+    \includegraphics[scale=0.4]{logon.png}
+    \caption{The logon screen.}
+\end{figure}
+ 
+ The boards can be accessed in parallel by all members of the board, using the board key. Users can also create new boards.
+
+\begin{figure}[h]
+    \includegraphics[scale=0.35]{boards.png}
+    \caption{The boards screen.}
+\end{figure}
+
+In the board settings, a board can be renamed, and several customisation options exist to alter the appearance of a board. The board can also have tags, which then become accessible to all cards of the board. Users can also choose to leave or delete boards if they so wish (not included in the illustration - not yet implemented at the time of writing).
+
+\begin{figure}[h]
+    \includegraphics[scale=0.3]{settings.png}
+    \caption{The settings screen.}
+\end{figure}
+
+When double-clicking on a specific card, a user can edit its title, tags, description, and subtasks.
+
+\begin{figure}[h]
+    \includegraphics[scale=0.3]{carddetails.png}
+    \caption{The card details screen.}
+\end{figure}
+
+The GUI design of the board seeks to emulate a blackboard, with a black background and a high-contrast, bright colour palette. The UI can also be interacted with without use of the mouse, as all elements are traverse-able using the TAB key. Generous highlighting and error pop-ups provide the user with instant visual feedback on their actions. 
