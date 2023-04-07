@@ -150,7 +150,6 @@ public class CardListCtrl implements Initializable {
 
     public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
         prepareCardFocus(cardNode);
-        prepareCardTitle(cardNode);
         prepareCardKeyEvents(cardNode, cardCtrl);
     }
 
@@ -175,7 +174,6 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    @SuppressWarnings("checkstyle:CyclomaticComplexity")
     public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
@@ -187,13 +185,6 @@ public class CardListCtrl implements Initializable {
                         card.index < cardList.cards.size() - 1) {
                     Card next = cardList.cards.get(card.index + 1);
                     server.updateCard(card.id, "swap", next.id);
-                } else if(e.getCode().equals(KeyCode.E)) {
-                    //TODO : edit title
-
-                } else if (e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
-                    server.deleteCard(card.id);
-                } else if(e.getCode().equals(KeyCode.ENTER)) {
-                    mainCtrl.showCardDetails(card);
                 } else {
                     switch(e.getCode()) {
                         case E:
@@ -218,10 +209,6 @@ public class CardListCtrl implements Initializable {
                 }
             }
         });
-    }
-
-    public void prepareCardTitle(Node cardNode) {
-        Card card = (Card) cardNode.getUserData();
     }
 
     public void propagate(CardList newState) {

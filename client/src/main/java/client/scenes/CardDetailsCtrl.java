@@ -239,7 +239,7 @@ public class CardDetailsCtrl {
         server.updateCard(card.id, "description", description.getText());
     }
 
-    private void relink(Card newState) {
+    public void relink(Card newState) {
         for(Task t : newState.tasks)
             t.parentCard = newState;
     }
@@ -313,7 +313,7 @@ public class CardDetailsCtrl {
      * Get a new empty task object.
      * @return The task in question.
      */
-    private Task generateTask() {
+    public Task generateTask() {
         return new Task("New Task", card);
     }
 
@@ -324,12 +324,8 @@ public class CardDetailsCtrl {
         server.addTask(generateTask());
     }
 
-    /**
-     * Clear all the fields. (used for changing between cards)
-     */
-    public void clearFields(){
-        this.title.clear();
-        this.description.clear();
+    public void setCard(Card card) {
+        this.card = card;
     }
 }
 

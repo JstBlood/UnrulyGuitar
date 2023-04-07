@@ -20,9 +20,9 @@ public class TaskCtrl implements Initializable {
     private final MainCtrl mainCtrl;
 
     @FXML
-    private TextField title;
+    public TextField title;
     @FXML
-    private CheckBox isDone;
+    public CheckBox isDone;
 
     public Task t;
 
@@ -87,7 +87,7 @@ public class TaskCtrl implements Initializable {
     }
 
     @FXML
-    private void shiftUp() {
+    public void shiftUp() {
         if(t.index > 0) {
             Task other = t.parentCard.tasks.get(t.index - 1);
             server.updateTask(t.id, "index", t.index - 1);
@@ -96,7 +96,7 @@ public class TaskCtrl implements Initializable {
     }
 
     @FXML
-    private void shiftDown() {
+    public void shiftDown() {
         if(t.index < t.parentCard.tasks.size() - 1) {
             Task other = t.parentCard.tasks.get(t.index + 1);
             server.updateTask(t.id, "index", t.index + 1);
