@@ -11,16 +11,37 @@ import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 
+/**
+ * This is the controller for the Tag scene which represents a tag.
+ */
 public class TagCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
     private TextField name;
-    public Tag tag;
+    @FXML
+    public Button delete;
 
+    @FXML
+    public ColorPicker backgroundColor;
+
+    @FXML
+    public ColorPicker foregroundColor;
+
+    private Tag tag;
+
+    /**
+     * Create a tag object.
+     * @param server The server connection.
+     * @param mainCtrl The main (root) controller.
+     * @param tag The initial tag object.
+     */
     @Inject
     public TagCtrl(ServerUtils server, MainCtrl mainCtrl, Tag tag) {
         this.server = server;
@@ -33,7 +54,16 @@ public class TagCtrl implements Initializable {
         prepareNameField();
     }
 
+    /**
+     * Add listeners for the name field.
+     */
     public void prepareNameField() {
+        name.setText(tag.name);
+        delete.setStyle("-fx-text-fill: " + tag.colors.foreground + ";" +
+                "-fx-background-color: " + tag.colors.background + ";");
+        name.setStyle("-fx-text-fill: " + tag.colors.foreground + ";" +
+                "-fx-background-color: " + tag.colors.background + ";");
+
         name.textProperty().addListener((o, oldV, newV) -> {
             if(!Objects.equals(tag.name, newV)) {
                 name.setStyle("-fx-text-fill: red;");
@@ -51,18 +81,23 @@ public class TagCtrl implements Initializable {
                 updateName();
             }
         });
-        name.setText(tag.name);
+
+
+        backgroundColor.setValue(Color.valueOf(tag.colors.background));
+        foregroundColor.setValue(Color.valueOf(tag.colors.foreground));
     }
 
+    /**
+     * We update the name of the tag with the function when we receive an update from the server.
+     */
     public void updateName() {
+        name.setStyle("-fx-text-fill: " + tag.colors.foreground + ";");
+
         if(name.getText().isEmpty()) {
             name.setText(tag.name);
-            name.setStyle("-fx-text-fill: -fx-col-0;");
             UIUtils.showError("Title should not be empty!");
             return;
         }
-
-        name.setStyle("-fx-text-fill: -fx-col-0;");
 
         tag.name = name.getText();
 
@@ -73,8 +108,22 @@ public class TagCtrl implements Initializable {
         }
     }
 
+    /**
+     * This function is called when the user changes the tags' foreground color.
+     */
     @FXML
-    public void delete() {
-        server.deleteTag(tag.id);
+    public void foregroundChange() {
+        server.updateTag(tag.id, "foreground",
+                "#" + foregroundColor.getValue().toString().substring(2));
+    }
+
+    /**
+     * This function is called when the user changes the tags' background color.
+     */
+    @FXML
+    public void backgroundChange() {
+        server.updateTag(tag.id, "background",
+                "#" + backgroundColor.getValue().toString().substring(2));
+
     }
 }

@@ -29,8 +29,6 @@ import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 
 import client.scenes.MainCtrl;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import commons.*;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -147,6 +145,26 @@ public class ServerUtils {
                 new GenericType<>(){});
     }
 
+    public void updateBoardDefaultPreset(String key, Long newId) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/defaultPreset",
+                Entity.entity(newId, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void addBoardPreset(String key, ColorPreset newPreset) {
+        internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/addColorPreset",
+                Entity.entity(newPreset, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void deleteBoardPreset(String key, Long id) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                store.accessStore().getPassword() + "/boards/" + key + "/removeColorPreset/" + id);
+    }
+
+
     // END OF BOARD RELATED FUNCTIONS
 
     // CARD LIST RELATED METHODS
@@ -171,29 +189,32 @@ public class ServerUtils {
                 });
     }
 
-    private ExecutorService exec;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public void registerForUpdates(Consumer<CardList> consumer) {
-        exec = Executors.newSingleThreadExecutor();
-        exec.submit(() -> {
+        executorService.submit(() -> {
             while(!Thread.interrupted()) {
-                var res = ClientBuilder.newClient(new ClientConfig())
-                        .target(getServer()).path("secure/" + store.accessStore().getUsername() +
-                                "/lists/updates")
-                        .request(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
-                        .get(Response.class);
-                if(res.getStatus() == 204) {
-                    continue;
+                try {
+                    var res = ClientBuilder.newClient(new ClientConfig())
+                            .target(getServer()).path("secure/" + store.accessStore().getUsername() +
+                                    "/lists/updates")
+                            .request(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+                            .get(Response.class);
+                    if (res.getStatus() == 204) {
+                        continue;
+                    }
+                    var cl = res.readEntity(CardList.class);
+                    consumer.accept(cl);
+                } catch (Exception ignored) {
+
                 }
-                var cl = res.readEntity(CardList.class);
-                consumer.accept(cl);
             }
         });
     }
 
     public void stop() {
-        exec.shutdownNow();
+        executorService.shutdownNow();
     }
 
     // END OF CARD LIST RELATED METHODS
@@ -211,17 +232,17 @@ public class ServerUtils {
                 store.accessStore().getPassword() + "/cards/" + id);
     }
 
-    public Card updateCard(long id, String component, Object newValue) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonValue = null;
-        try {
-            jsonValue = objectMapper.writeValueAsString(newValue);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return internalPutRequest("secure/" + store.accessStore().getUsername() +
-                        "/cards/" + id + "/" + component,
-                Entity.json(jsonValue),
+    public void updateCard(long id, String component, Object newValue) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/" + id + "/" + component,
+                Entity.entity(newValue, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void updateCardPreset(long id, Long newId) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/" + id + "/preset",
+                Entity.entity(newId, APPLICATION_JSON),
                 new GenericType<>(){});
     }
 

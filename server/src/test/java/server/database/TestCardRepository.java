@@ -23,7 +23,23 @@ public class TestCardRepository implements CardRepository {
     }
 
     private Optional<Card> find(Long id) {
+        boolean temp = cards.stream().filter(q -> q.id == id).findFirst().isPresent();
+        if (!temp)
+            return null;
         return cards.stream().filter(q -> q.id == id).findFirst();
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        cards.clear();
+        calledMethods.clear();
     }
 
     @Override

@@ -1,7 +1,5 @@
 package server.services;
 
-import java.util.Optional;
-
 import commons.CardList;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,8 @@ public class CardListService {
     private final BoardsService boards;
     private final SocketRefreshService sockets;
 
-    public CardListService(CardListRepository cardListRepo, BoardsService boards, SocketRefreshService sockets) {
+    public CardListService(CardListRepository cardListRepo, BoardsService boards,
+                           SocketRefreshService sockets) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
         this.sockets = sockets;
@@ -29,40 +28,27 @@ public class CardListService {
         }
 
         cardListRepo.save(cardList);
+        // fallback to websockets because
+        // long polling is completely and utterly
+        // broken for now.
+
+        forceRefresh(cardList);
 
         return HttpStatus.CREATED;
     }
 
     public HttpStatus delete(long id, String username, String password) {
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
-
-        if (id < 0) {
-            return HttpStatus.BAD_REQUEST;
+        if (!prepare(id, username, password).equals(HttpStatus.OK)) {
+            return prepare(id, username, password);
         }
 
-        if (optionalCardList.isEmpty()) {
-            return HttpStatus.NOT_FOUND;
-        }
-
-        CardList cardList = optionalCardList.get();
+        CardList cardList = cardListRepo.findById(id).get();
 
         cardListRepo.deleteById(id);
         sockets.broadcastRemoval(cardList);
         forceRefresh(cardList);
 
         return HttpStatus.OK;
-    }
-
-    public HttpStatus update(long id, String component, Object newValue, String username, String password) {
-//        if (!prepare(id, username, password).equals(HttpStatus.OK))
-//            return prepare(id, username, password);
-//
-//        CardList cardList = cardListRepo.findById(id).get();
-//
-//        return flush(cardList)
-
-        //Unused, delete?
-        return HttpStatus.BAD_REQUEST;
     }
 
     public HttpStatus updateTitle(long id, Object newValue, String username, String password) {
@@ -86,7 +72,7 @@ public class CardListService {
             return HttpStatus.BAD_REQUEST;
         }
 
-        Optional<CardList> optionalCardList = cardListRepo.findById(id);
+        var optionalCardList = cardListRepo.findById(id);
 
         if(optionalCardList.isEmpty()) {
             return HttpStatus.NOT_FOUND;
@@ -103,11 +89,7 @@ public class CardListService {
     }
 
 
-    //TODO: Move DRAG AND DROP handlers to here
-
     public void forceRefresh(CardList cardList) {
-        //TODO: add functionality for only refreshing a certain cardList
-
         boards.forceRefresh(cardList.parentBoard.key);
     }
 

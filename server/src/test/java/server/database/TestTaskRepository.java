@@ -15,17 +15,32 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 public class TestTaskRepository implements TaskRepository {
 
-    public final List<Task> tasks = new ArrayList<>();
-    public final List<String> calledMethods = new ArrayList<>();
+    private final List<Task> tasks = new ArrayList<>();
+    private final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
         calledMethods.add(name);
     }
-    private Optional<Task> find(Long id) {
+
+    private Optional<Task> find(long id) {
+        boolean temp = tasks.stream().filter(q -> q.id == id).findFirst().isPresent();
+        if (!temp)
+            return null;
         return tasks.stream().filter(q -> q.id == id).findFirst();
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
 
+    public List<String> getCalled() {
+        return calledMethods;
+    }
+
+    public void clean() {
+        tasks.clear();
+        calledMethods.clear();
+    }
     @Override
     public List<Task> findAll() {
         calledMethods.add("findAll");

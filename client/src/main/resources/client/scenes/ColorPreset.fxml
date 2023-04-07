@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="94.0" prefWidth="182.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.ColorPresetCtrl">
+   <children>
+      <GridPane prefHeight="94.0" prefWidth="182.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="162.39996337890625" minWidth="10.0" prefWidth="39.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="162.39996337890625" minWidth="10.0" prefWidth="129.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.20001220703125" minWidth="10.0" prefWidth="35.199951171875" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="42.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ColorPicker fx:id="background" onAction="#updateBackground" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#delete" prefHeight="26.0" prefWidth="28.0" text="❌" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <ColorPicker fx:id="foreground" onAction="#updateForeground" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Label fx:id="title" text="Preset #1" textFill="WHITE" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+            <Label text="Fg" textFill="WHITE" GridPane.rowIndex="2" />
+            <Label text="Bg" textFill="WHITE" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

@@ -26,23 +26,23 @@ public class CardController {
         return ResponseEntity.status(cardService.delete(id, username, password)).build();
     }
 
-    @PutMapping("/{id}/{component}")
-    public ResponseEntity<?> update(@PathVariable long id, @PathVariable String component,
-                                    @RequestBody Object newValue, @PathVariable String username,
-                                    @PathVariable(required = false) String password) {
-        return ResponseEntity.status(cardService.update(id, component, newValue, username, password)).build();
-    }
-
     @PutMapping("/{id}/title")
     public ResponseEntity<?> updateTitle(@PathVariable long id,
-                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @RequestBody String newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateTitle(id, newValue, username, password)).build();
     }
 
+    @PutMapping("/{id}/preset")
+    public ResponseEntity<?> updatePreset(@PathVariable long id,
+                                         @RequestBody long newId, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updatePreset(id, newId, username, password)).build();
+    }
+
     @PutMapping("/{id}/description")
     public ResponseEntity<?> updateDescription(@PathVariable long id,
-                                               @RequestBody Object newValue, @PathVariable String username,
+                                               @RequestBody String newValue, @PathVariable String username,
                                                @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateDescription(id, newValue, username, password)).build();
     }
@@ -73,5 +73,28 @@ public class CardController {
                                                    @RequestBody Object newValue, @PathVariable String username,
                                                    @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateListDragAndDrop(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/addTag")
+    public ResponseEntity<?> updateAddTag(@PathVariable long id,
+                                          @RequestBody Object newValue,
+                                          @PathVariable String username,
+                                          @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateAddTag(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/removeTag")
+    public ResponseEntity<?> updateRemoveTag(@PathVariable long id,
+                                             @RequestBody Object newValue,
+                                             @PathVariable String username,
+                                             @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateRemoveTag(id, newValue, username, password)).build();
+    }
+
+    @PutMapping("/{id}/swap")
+    public ResponseEntity<?> updateSwap(@PathVariable long id, @RequestBody Object newValue,
+                                        @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateSwap(id, newValue, username, password)).build();
     }
 }

@@ -18,49 +18,50 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.Random;
-
 import commons.Board;
 import commons.Card;
 import commons.CardList;
+import commons.Tag;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.database.TestBoardsRepository;
-import server.database.TestCardListRepository;
-import server.database.TestCardRepository;
-import server.database.TestUserRepository;
-import server.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import server.ConfigTest;
+import server.database.*;
 
+@SpringBootTest
+@Import(ConfigTest.class)
 public class CardControllerTest {
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
-    public int nextInt;
-    private MyRandom random;
+    private final Tag SOME_TAG = new Tag("title", SOME_BOARD);
+
+    @Autowired
     private TestCardRepository repo;
-    private Board pBoard;
+    @Autowired
     private TestUserRepository uRepo;
+    @Autowired
     private TestBoardsRepository bRepo;
+    @Autowired
     private TestCardListRepository clRepo;
+    @Autowired
+    private TestTagRepository tagRepo;
+    @Autowired
     private CardController sut;
+    @Autowired
+    private TestColorPresetRepository colorRepo;
 
     @BeforeEach
     public void setup() {
-        random = new MyRandom();
-        repo = new TestCardRepository();
-        uRepo = new TestUserRepository();
-        bRepo = new TestBoardsRepository();
-        SocketRefreshService sockets = new TestSocketRefresher();
-        clRepo = new TestCardListRepository();
-
-
-        RepositoryBasedAuthService pwd = new RepositoryBasedAuthService(uRepo);
-
-        CardService service = new CardService(repo, new BoardsService(bRepo, uRepo, sockets, pwd), clRepo, sockets);
-
-
-        sut = new CardController(service);
+        repo.clean();
+        uRepo.clean();
+        bRepo.clean();
+        clRepo.clean();
+        tagRepo.clean();
+        colorRepo.clean();
     }
 
     @Test
@@ -79,14 +80,20 @@ public class CardControllerTest {
     public void databaseIsUsedAdd() {
         var actual = sut.add(SOME_CARD, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("save"));
+        Assertions.assertTrue(repo.getCalled().contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
     }
 
     @Test
-    public void cannotDeleteInexistentCard() {
+    public void cannotDeleteNonexistentCard() {
         var actual = sut.delete(-1, "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotFindNonexistentCard() {
+        var actual = sut.updateIndex(1234567890, "2", "", "");
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -95,22 +102,15 @@ public class CardControllerTest {
         repo.shiftCardsUp(SOME_CARD.index, SOME_CARD.parentCardList.id);
         var actual = sut.delete(SOME_CARD.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("deleteById"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("deleteById"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
     @Test
-    public void cannotUpdateInexistentCard() {
+    public void cannotUpdateNonexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
-    }
-
-    @Test
-    public void cannotUpdateBadComponent() {
-        repo.save(SOME_CARD);
-        var actual = sut.update(SOME_CARD.id, "margin", "12", "", "");
-        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test
@@ -125,15 +125,30 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
     @Test
-    public void cannotUpdateBadList() {
+    public void cannotUpdateParentNonexistentCard() {
+        var actual = sut.updateParent(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBadParent() {
         repo.save(SOME_CARD);
         var actual = sut.updateParent(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentParent() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateParent(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -142,7 +157,7 @@ public class CardControllerTest {
         clRepo.save(SOME_CARDLIST);
         var actual = sut.updateParent(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -158,9 +173,10 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateIndex(SOME_CARD.id, 0, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
+
 
     @Test
     public void cannotUpdateBadDD() {
@@ -174,6 +190,21 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotUpdateDDNonexistentCard() {
+        var actual = sut.updateDragAndDrop(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateDDEmptyParent() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateDragAndDrop(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
     public void updateDD() {
         var newList = new CardList("asda", SOME_BOARD);
         var newCard = new Card("abc", "fasf", newList);
@@ -184,10 +215,17 @@ public class CardControllerTest {
 
         var actual = sut.updateDragAndDrop(SOME_CARD.id, newCard.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsDown"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsDown"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateListDragAndDropBadId() {
+        var actual = sut.updateListDragAndDrop(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -195,6 +233,14 @@ public class CardControllerTest {
         repo.save(SOME_CARD);
         var actual = sut.updateListDragAndDrop(SOME_CARD.id, -1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentListDragAndDrop() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateListDragAndDrop(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
     }
 
     @Test
@@ -210,26 +256,41 @@ public class CardControllerTest {
 
         var actual = sut.updateListDragAndDrop(SOME_CARD.id, SOME_CARDLIST.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
 
         actual = sut.updateListDragAndDrop(SOME_CARD.id, newList.id, "", "");
 
-        Assertions.assertTrue(repo.calledMethods.contains("saveAndFlush"));
-        Assertions.assertTrue(repo.calledMethods.contains("shiftCardsUp"));
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertTrue(repo.getCalled().contains("shiftCardsUp"));
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
-    @SuppressWarnings("serial")
-    public class MyRandom extends Random {
+    @Test
+    public void cannotUpdateSwapBadCurrId() {
+        var actual = sut.updateSwap(1234567890, "", "", "");
 
-        public boolean wasCalled = false;
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
 
-        @Override
-        public int nextInt(int bound) {
-            wasCalled = true;
-            return nextInt;
-        }
+    @Test
+    public void cannotUpdateSwapBadTargetId() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateSwap(SOME_CARD.id, "-1", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateSwap() {
+        var newCard = new Card("abc", "fasf", SOME_CARDLIST);
+        repo.save(SOME_CARD);
+        repo.save(newCard);
+
+        var actual = sut.updateSwap(SOME_CARD.id, newCard.id, "", "");
+
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertEquals(OK, actual.getStatusCode());
     }
 }
