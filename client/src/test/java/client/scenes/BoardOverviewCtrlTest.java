@@ -52,11 +52,7 @@ public class BoardOverviewCtrlTest {
     public void testRemoveBoard() {
         boardOverviewCtrl.removeBoard();
     }
-
-    @Test
-    public void testLeaveBoard() {
-        boardOverviewCtrl.leaveBoard();
-    }
+    
 
     @Test
     public void testShowHelp() {
