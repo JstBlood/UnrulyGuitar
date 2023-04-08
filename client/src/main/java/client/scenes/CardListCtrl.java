@@ -197,7 +197,8 @@ public class CardListCtrl implements Initializable {
                 } else {
                     switch(e.getCode()) {
                         case E:
-                            cardCtrl.setEditableTitle();
+                            //TODO: New Scene where edit only title.
+//                            cardCtrl.setEditableTitle();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);

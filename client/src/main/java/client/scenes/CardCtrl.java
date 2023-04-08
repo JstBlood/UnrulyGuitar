@@ -1,32 +1,27 @@
 package client.scenes;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
-import javax.swing.text.Element;
-import javax.swing.text.html.ImageView;
 
 import client.utils.ServerUtils;
-import client.utils.UIUtils;
 import commons.Card;
 import commons.Tag;
 import commons.Task;
-import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 
 public class CardCtrl implements Initializable {
     private final ServerUtils server;
@@ -34,17 +29,21 @@ public class CardCtrl implements Initializable {
     private Card card;
 
     @FXML
-    private TextField title;
+    private ProgressBar prog;
     @FXML
-    private VBox cardBox;
+    private Label progress;
+    @FXML
+    private Label title;
     @FXML
     private HBox tagContainer;
     @FXML
-    private ProgressBar prog;
+    private HBox imageContainer;
     @FXML
-    private ImageView descIcon;
+    private HBox editContainer;
     @FXML
-    private ImageView editIcon;
+    private HBox deleteContainer;
+    @FXML
+    private VBox cardBox;
 
     @Inject
     public CardCtrl(ServerUtils server, MainCtrl mainCtrl, Card c, VBox cardBox) {
@@ -56,41 +55,12 @@ public class CardCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle rs) {
-        prepareCard();
-
         handleProgress();
 
         prepareDragAndDrop();
 
-//        this.description.setText(card.description);
-//        this.description.setPrefRowCount((int) card.description.lines().count());
         if(card.colors != null)
             mainCtrl.accessUsedPresets().add(card.colors.id);
-    }
-
-    private void prepareCard() {
-//        title.textProperty().addListener((o, oldV, newV) -> {
-//            if(!Objects.equals(card.title, newV)) {
-//                title.setStyle("-fx-text-fill: red;");
-//            }
-//        });
-//        title.setOnKeyPressed(e -> {
-//            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
-//                updateTitle();
-//            }
-//        } );
-//        title.focusedProperty().addListener((o, oldV, newV) -> {
-//            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
-//                updateTitle();
-//            }
-//        });
-//        title.setEditable(false);
-//
-//        if (!card.description.isEmpty()) {
-//            descIcon.append(new ImageView((Element) new Image("@/client/images/desc_icon.png"))); ;
-//        }
-
-        title.setText(card.title);
     }
 
     private void prepareDragAndDrop() {
@@ -102,8 +72,20 @@ public class CardCtrl implements Initializable {
             }
         });
 
+        this.editContainer.setOnMouseClicked(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                mainCtrl.showCardDetails(card);
+            }
+        });
+
+        this.deleteContainer.setOnMouseClicked(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                delete();
+            }
+        });
+
         this.cardBox.setOnDragDetected(e -> {
-            this.cardBox.setStyle("-fx-opacity: 0.5");
+            this.cardBox.setStyle("-fx-opacity: 0.2");
 
             Dragboard db = cardBox.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
@@ -157,11 +139,11 @@ public class CardCtrl implements Initializable {
         if(newState.colors != null)
             mainCtrl.accessUsedPresets().add(newState.colors.id);
 
-        setTitleColors();
+        setColors();
 
-//        if(!newState.description.equals(description.getText())) {
-//            description.setText(newState.description);
-//        }
+        if (newState.description.trim().isEmpty()) {
+            imageContainer.setStyle("visibility: hidden");
+        }
 
         if(card.colors == null) {
             cardBox.setStyle("-fx-background-color: " + card.parentCardList.parentBoard
@@ -182,57 +164,29 @@ public class CardCtrl implements Initializable {
     public void showTags() {
         tagContainer.getChildren().clear();
 
+        int count = 0;
+
         for(Tag tag : card.tags) {
-            FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
 
-            tagLoader.setControllerFactory(c ->
-                    new TagSmallCtrl(tag)
-            );
+            if(count < 3) {
 
-            Node newTagNode = null;
-            try {
-                newTagNode = tagLoader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                Circle tagCircle = new Circle(7, Paint.valueOf(tag.colors.background));
+
+                tagContainer.getChildren().addAll(tagCircle);
+
+                count++;
             }
-
-            tagContainer.getChildren().add(newTagNode);
         }
     }
 
-    private void setTitleColors() {
-        if(card.colors == null)
+    private void setColors() {
+        if(card.colors == null) {
             title.setStyle("-fx-text-fill: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
-        else
+        }
+        else {
             title.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
-    }
-
-    public void updateTitle() {
-        title.setEditable(false);
-        title.setFocusTraversable(false);
-
-        if(title.getText().isEmpty()) {
-            title.setText(card.title);
-            setTitleColors();
-            UIUtils.showError("Title should not be empty!");
-            return;
+            progress.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
         }
-
-        setTitleColors();
-
-        card.title = title.getText();
-
-        try {
-            server.updateCard(card.id, "title", title.getText());
-        } catch (WebApplicationException e) {
-            UIUtils.showError(e.getMessage());
-        }
-    }
-
-    public void setEditableTitle() {
-        title.setEditable(true);
-        title.setFocusTraversable(true);
-        title.requestFocus();
     }
 
     @FXML

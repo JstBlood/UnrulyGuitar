@@ -1,0 +1,8 @@
+.edit:hover {
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
+.delete:hover {
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
