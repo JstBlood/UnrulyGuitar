@@ -20,6 +20,10 @@ public class TestSocketRefresher extends SocketRefreshService {
     }
 
     @Override
+    public void broadcastRelist() {
+    }
+
+    @Override
     public void broadcastRemoval(Card c) {
     }
 

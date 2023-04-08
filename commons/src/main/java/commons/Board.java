@@ -38,12 +38,13 @@ public class Board {
             cascade = CascadeType.ALL)
     public List<Tag> tags = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public ColorPreset colors;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     public ColorPreset cardListColors;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     public List<ColorPreset> cardPresets = new ArrayList<>();
 
     @OneToOne
@@ -55,7 +56,7 @@ public class Board {
     public String password = null;
 
     @SuppressWarnings("unused")
-    protected Board() {
+    public Board() {
     }
 
     /**

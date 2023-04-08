@@ -8,6 +8,7 @@ import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import jakarta.ws.rs.NotFoundException;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -47,6 +48,17 @@ public class BoardsCtrl {
     }
 
     public void prepare() {
+        server.connect();
+        server.registerForMessages("/topic/relist/", Board.class, q -> {
+            Platform.runLater(() -> {
+                relist();
+            });
+        });
+
+        relist();
+    }
+
+    public void relist() {
         previous.getItems().clear();
 
         if(mainCtrl.accessStore().isAdmin()) {
@@ -104,7 +116,8 @@ public class BoardsCtrl {
             for (int i = 0; i < 6; i++) {
                 sb.append((char)('a' + rand.nextInt(26)));
             }
-            sb.append('-');
+            if(j != 2)
+                sb.append('-');
         }
 
         Board created = new Board(sb.toString(), "New board");

@@ -63,32 +63,49 @@ public class PasswordCtrl implements Initializable{
     private void updateFields(Board newState) {
         if(newState.isPasswordProtected) {
             if (mainCtrl.accessStore().isAdmin()) {
+                password.setPromptText("New Password");
                 unlock.setVisible(false);
                 changePass.setDisable(false);
                 removePass.setDisable(false);
             } else {
                 if (mainCtrl.accessStore().getPassword() == null) {
+                    password.setPromptText("Password");
                     unlock.setText("Unlock");
+                    unlock.setVisible(true);
                     changePass.setDisable(true);
                     removePass.setDisable(true);
                 } else {
+                    password.setPromptText("Password");
                     unlock.setText("Forget Password");
+                    unlock.setVisible(true);
                     changePass.setDisable(false);
                     removePass.setDisable(false);
                 }
             }
         } else {
+            password.setPromptText("New Password");
             unlock.setText("Set Password");
+            unlock.setVisible(true);
             changePass.setDisable(true);
             removePass.setDisable(true);
         }
 
-        password.setText(mainCtrl.accessStore().getPassword());
-        password.setStyle("");
+        if(!mainCtrl.accessStore().isAdmin()) {
+            password.setText(mainCtrl.accessStore().getPassword());
+            password.setStyle("");
+        } else {
+            password.setText("");
+            password.setStyle("");
+        }
     }
 
     @FXML
     public void unlock() {
+        if(mainCtrl.accessStore().isAdmin()) {
+            server.changePass(mainCtrl.getCurrentBoard().key, password.getText());
+            return;
+        }
+
         if(!mainCtrl.getCurrentBoard().isPasswordProtected) {
             mainCtrl.accessStore().setPassword(password.getText());
             server.changePass(mainCtrl.getCurrentBoard().key, password.getText());
@@ -107,7 +124,7 @@ public class PasswordCtrl implements Initializable{
             mainCtrl.accessStore().removePassword();
         }
 
-        updateFields(mainCtrl.getCurrentBoard());
+        server.forceRefresh(mainCtrl.getCurrentBoard().key);
     }
 
     @FXML
@@ -120,7 +137,8 @@ public class PasswordCtrl implements Initializable{
             UIUtils.showError("Invalid password");
         }
 
-        mainCtrl.accessStore().setPassword(newPass);
+        if(!mainCtrl.accessStore().isAdmin())
+            mainCtrl.accessStore().setPassword(newPass);
     }
 
     @FXML
@@ -131,7 +149,9 @@ public class PasswordCtrl implements Initializable{
             mainCtrl.accessStore().removePassword();
             UIUtils.showError("Invalid password");
         }
-        mainCtrl.accessStore().removePassword();
+
+        if(!mainCtrl.accessStore().isAdmin())
+            mainCtrl.accessStore().removePassword();
     }
 
     @FXML

@@ -56,6 +56,8 @@ public class BoardsService implements StandardEntityService<Board, String> {
         repo.saveAndFlush(board);
         userRepo.saveAndFlush(usr);
 
+        sockets.broadcastRelist();
+
         return HttpStatus.OK;
     }
 
@@ -107,6 +109,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         usr.boards.removeIf(x -> x.id == toBeLeft.id);
         userRepo.saveAndFlush(usr);
+        sockets.broadcastRelist();
 
         return HttpStatus.OK;
     }
@@ -360,6 +363,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
         repo.delete(rem);
 
         sockets.broadcastRemoval(rem);
+        sockets.broadcastRelist();
 
         return HttpStatus.OK;
     }
