@@ -1,5 +1,7 @@
 package client.scenes;
 
+import java.util.Random;
+
 import client.utils.ServerUtils;
 import commons.Board;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +16,14 @@ public class BoardsCtrlTest {
     private MainCtrl mainCtrl;
     @Mock
     private Board board;
+    private Random rand;
     private BoardsCtrl boardsCtrl;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        boardsCtrl = new BoardsCtrl(serverUtils, mainCtrl);
+        rand = new Random();
+        boardsCtrl = new BoardsCtrl(serverUtils, mainCtrl, rand);
     }
 
     @Test
