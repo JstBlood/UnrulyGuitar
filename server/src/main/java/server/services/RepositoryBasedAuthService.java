@@ -40,5 +40,5 @@ public class RepositoryBasedAuthService implements AuthenticationService {
         return false;
     }
 
-    public static boolean checkAdminPass(String password) { return password.equals("xyz"); }
+    public boolean checkAdminPass(String password) { return password.equals("xyz"); }
 }

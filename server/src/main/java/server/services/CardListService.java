@@ -34,9 +34,6 @@ public class CardListService {
         }
 
         cardListRepo.save(cardList);
-        // fallback to websockets because
-        // long polling is completely and utterly
-        // broken for now.
 
         forceRefresh(cardList);
 

@@ -30,6 +30,11 @@ public class ConfigTest {
     }
 
     @Bean
+    public TestAuthService testAuthService() {
+        return (TestAuthService) context.getBean(RepositoryBasedAuthService.class);
+    }
+
+    @Bean
     public TestUserRepository testUserRepository() {
         return (TestUserRepository) context.getBean(UserRepository.class);
     }
@@ -68,6 +73,7 @@ public class ConfigTest {
 
     @Bean
     @Primary
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RepositoryBasedAuthService repositoryBasedAuthServiceMock() {
         return new TestAuthService();
     }
