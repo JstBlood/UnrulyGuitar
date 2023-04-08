@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardListService;
 
+
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/lists", "/secure/{username}/lists"})
 public class CardListController {
@@ -62,12 +63,9 @@ public class CardListController {
         var res = new DeferredResult<ResponseEntity<CardList>>(2000L, noContent);
 
         var key = new Object();
-        listeners.put(key, cardList -> {
-            res.setResult(ResponseEntity.ok(cardList));
-        });
-        res.onCompletion(() -> {
-            listeners.remove(key);
-        });
+
+        listeners.put(key, cardList -> {res.setResult(ResponseEntity.ok(cardList));});
+        res.onCompletion(() -> {listeners.remove(key);});
 
         return res;
     }

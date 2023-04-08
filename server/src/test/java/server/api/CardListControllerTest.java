@@ -50,6 +50,8 @@ public class CardListControllerTest {
 
     @Autowired
     private TestColorPresetRepository colorRepo;
+    @Autowired
+    private TestAuthService auth;
 
     @Autowired
     private CardListController sut;
@@ -60,6 +62,7 @@ public class CardListControllerTest {
         bRepo.clean();
         uRepo.clean();
         colorRepo.clean();
+        auth.setNoFail();
     }
 
     private boolean isEmptyOrNull(String s) {
@@ -100,6 +103,14 @@ public class CardListControllerTest {
     }
 
     @Test
+    public void cannotAddInvalidPassword() {
+        auth.setFail();
+        var actual = sut.add(SOME_CARDLIST, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotDeleteNonexistentList() {
         var actual = sut.delete(-1, "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
@@ -112,6 +123,15 @@ public class CardListControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotDeleteWrongPassword() {
+        auth.setFail();
+        repo.save(SOME_CARDLIST);
+        var actual = sut.delete(SOME_CARDLIST.id, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test
@@ -134,6 +154,15 @@ public class CardListControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateWrongPassword() {
+        auth.setFail();
+        repo.save(SOME_CARDLIST);
+        var actual = sut.updateTitle(SOME_CARDLIST.id, "newTitle", "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test

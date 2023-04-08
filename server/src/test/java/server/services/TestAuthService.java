@@ -1,14 +1,22 @@
 package server.services;
 
 import commons.User;
-import org.springframework.stereotype.Service;
 import server.database.BoardRepository;
 import server.database.UserRepository;
 
-@Service
 public class TestAuthService extends RepositoryBasedAuthService {
     private UserRepository userRepo;
     private BoardRepository repo;
+
+    private boolean doFail = false;
+
+    public void setFail() {
+        doFail = true;
+    }
+
+    public void setNoFail() {
+        doFail = false;
+    }
 
     public TestAuthService() {
         super(null, null);
@@ -19,8 +27,8 @@ public class TestAuthService extends RepositoryBasedAuthService {
     }
 
     public boolean hasEditAccess(String username, String password, String bid) {
-        return true;
+        return !doFail;
     }
 
-    public static boolean checkAdminPass(String password) { return true; }
+    public boolean checkAdminPass(String password) { return !doFail; }
 }
