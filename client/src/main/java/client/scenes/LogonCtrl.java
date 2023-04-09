@@ -78,6 +78,11 @@ public class LogonCtrl {
             return;
         }
 
+        if(username.getText().endsWith("_admin")) {
+            UIUtils.showError("Invalid username please pick a different one.");
+            return;
+        }
+
         mainCtrl.accessStore().setUrl(ip.getText());
         mainCtrl.accessStore().setUsername(username.getText());
 

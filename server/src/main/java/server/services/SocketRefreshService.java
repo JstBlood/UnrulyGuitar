@@ -18,6 +18,10 @@ public class SocketRefreshService {
         messages.convertAndSend("/topic/board/" + b.key, b);
     }
 
+    public void broadcastRelist() {
+        messages.convertAndSend("/topic/relist/", new Board());
+    }
+
     public void broadcastRemoval(Board b) {
         messages.convertAndSend("/topic/board/" + b.key + "/deletion", "");
     }

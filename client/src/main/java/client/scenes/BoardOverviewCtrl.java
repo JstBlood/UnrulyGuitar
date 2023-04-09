@@ -108,6 +108,7 @@ public class BoardOverviewCtrl implements Initializable {
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
             Platform.runLater(() -> {
                 mainCtrl.showBoards();
+                mainCtrl.accessStore().removePassword();
             });
         });
 
@@ -206,7 +207,10 @@ public class BoardOverviewCtrl implements Initializable {
         mainCtrl.updateBoardSettings(newState);
 
         try {
-            if (newState.isPasswordProtected)
+            if(mainCtrl.accessStore().isAdmin() || mainCtrl.accessStore().getPassword() != null)
+                lock.setImage(new Image(getClass()
+                        .getResource("/client/images/unlocked.png").toURI().toString()));
+            else if (newState.isPasswordProtected)
                 lock.setImage(new Image(getClass()
                         .getResource("/client/images/padlock.png").toURI().toString()));
             else
@@ -215,9 +219,6 @@ public class BoardOverviewCtrl implements Initializable {
         } catch (Exception e) {
 
         }
-
-
-        //TODO: update tags
     }
 
     /**
@@ -358,6 +359,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void back() {
         server.deregister();
+        mainCtrl.accessStore().removePassword();
         mainCtrl.showBoards();
     }
 

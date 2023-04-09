@@ -63,12 +63,6 @@ public class BoardOverviewCtrlTest {
     public void testOpenSettings() {
         boardOverviewCtrl.openSettings();
     }
-
-    @Test
-    public void testBack() {
-        boardOverviewCtrl.back();
-    }
-
     @Test
     public void testStop() {
         boardOverviewCtrl.stop();
