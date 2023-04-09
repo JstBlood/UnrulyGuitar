@@ -189,6 +189,7 @@ public class CardListCtrl implements Initializable {
                     switch(e.getCode()) {
                         case E:
                             cardCtrl.setEditableTitle();
+                            e.consume();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);
@@ -225,7 +226,7 @@ public class CardListCtrl implements Initializable {
 
     @FXML
     public void cardAdd() {
-        if(cardName.getText().equals("")) {
+        if(cardName.getText().trim().equals("")) {
             UIUtils.showError("Card name cannot be empty");
             return;
         }

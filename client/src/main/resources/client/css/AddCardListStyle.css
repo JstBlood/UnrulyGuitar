@@ -1,20 +1,22 @@
 * {
-    -fx-col-0: rgb(255, 0, 181);
-    -fx-col-1: rgb(5, 0, 255);
-    -fx-col-2: rgb(0, 255, 255);
+    -fx-col-0: rgb(50, 40, 23);
+    -fx-col-1: rgb(10, 30, 15);
+    -fx-col-2: rgb(50, 80, 40);
 }
 
 .root {
-    -fx-background-image: url('../images/bg_0.png');
+    -fx-background-color: #adaaaa;
     -fx-border-color: -fx-col-0;
     -fx-border-insets: 5px;
     -fx-border-width: 2px;
     -fx-border-radius: 5;
 }
 
+
 .insert {
     -fx-background-color: transparent;
     -fx-alignment: CENTER;
+    -fx-prompt-text-fill: #666666;
 }
 
 .text-0 {
