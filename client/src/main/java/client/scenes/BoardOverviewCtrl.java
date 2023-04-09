@@ -107,8 +107,9 @@ public class BoardOverviewCtrl implements Initializable {
 
         server.registerForMessages("/topic/board/" + board.key + "/deletion", Board.class, q -> {
             Platform.runLater(() -> {
+                if(!mainCtrl.accessStore().isAdmin())
+                    mainCtrl.accessStore().removePassword();
                 mainCtrl.showBoards();
-                mainCtrl.accessStore().removePassword();
             });
         });
 
@@ -336,7 +337,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void leaveBoard() {
         server.leaveBoard(board.key);
-        mainCtrl.accessStore().removePassword();
+        if(!mainCtrl.accessStore().isAdmin())
+            mainCtrl.accessStore().removePassword();
         mainCtrl.showBoards();
     }
 
@@ -359,7 +361,8 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     public void back() {
         server.deregister();
-        mainCtrl.accessStore().removePassword();
+        if(!mainCtrl.accessStore().isAdmin())
+            mainCtrl.accessStore().removePassword();
         mainCtrl.showBoards();
     }
 
