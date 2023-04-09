@@ -96,16 +96,11 @@ public class CardCtrl implements Initializable {
     }
 
     private void prepareTitleField() {
-        this.title.setEditable(false);
-
-        this.title.setOnMouseClicked(e -> {
-            if(e.getButton().equals(MouseButton.PRIMARY)){
-                if(e.getClickCount() == 2){
-                    mainCtrl.showCardDetails(card);
-                }
+        title.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2){
+                mainCtrl.showCardDetails(card);
             }
         });
-
         title.textProperty().addListener((o, oldV, newV) -> {
             if(!Objects.equals(card.title, newV)) {
                 title.setStyle("-fx-text-fill: red;");
@@ -121,6 +116,9 @@ public class CardCtrl implements Initializable {
                 updateTitle();
             }
         });
+
+        title.setEditable(false);
+
         title.setText(card.title);
     }
 
@@ -138,18 +136,14 @@ public class CardCtrl implements Initializable {
         });
 
         this.progress.setOnMouseClicked(e -> {
-            if(e.getButton().equals(MouseButton.PRIMARY)){
-                if(e.getClickCount() == 2){
-                    mainCtrl.showCardDetails(card);
-                }
+            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2){
+                mainCtrl.showCardDetails(card);
             }
         });
 
         this.progressBar.setOnMouseClicked(e -> {
-            if(e.getButton().equals(MouseButton.PRIMARY)){
-                if(e.getClickCount() == 2){
-                    mainCtrl.showCardDetails(card);
-                }
+            if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2){
+                mainCtrl.showCardDetails(card);
             }
         });
     }
