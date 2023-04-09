@@ -58,7 +58,7 @@
                   </ImageView>
                </children>
             </HBox>
-            <TextField fx:id="title" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="233.0" promptText="Add a title..." GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+            <TextField fx:id="title" alignment="CENTER" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="168.0" promptText="Add a name to your Card" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="20.0" right="20.0" />
                </GridPane.margin>
