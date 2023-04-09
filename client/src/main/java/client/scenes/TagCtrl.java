@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 /**
@@ -24,7 +26,7 @@ public class TagCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
-    private TextField name;
+    public TextField name;
     @FXML
     public Button delete;
 
@@ -83,8 +85,10 @@ public class TagCtrl implements Initializable {
         });
 
 
-        backgroundColor.setValue(Color.valueOf(tag.colors.background));
-        foregroundColor.setValue(Color.valueOf(tag.colors.foreground));
+        if(backgroundColor != null)
+            backgroundColor.setValue(Color.valueOf(tag.colors.background));
+        if(backgroundColor != null)
+            foregroundColor.setValue(Color.valueOf(tag.colors.foreground));
     }
 
     /**

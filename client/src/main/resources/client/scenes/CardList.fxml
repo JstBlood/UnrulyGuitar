@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="mainContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="378.0" prefWidth="409.0" spacing="10.0" styleClass="card-list-root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
+<VBox fx:id="mainContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="378.0" prefWidth="389.0" spacing="10.0" styleClass="card-list-root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
    <children>
-      <GridPane prefWidth="381.0" VBox.vgrow="ALWAYS">
+      <GridPane prefHeight="321.0" prefWidth="421.0" VBox.vgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="335.0" prefWidth="385.0" />
-            <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="6.0" prefWidth="36.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="156.0" minHeight="70.0" prefHeight="84.0" vgrow="NEVER" />
@@ -16,24 +16,27 @@
         </rowConstraints>
          <children>
             <HBox prefHeight="100.0" prefWidth="413.0" />
-            <TextField fx:id="title" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="314.0" styleClass="subtitle" text="List Name" GridPane.halignment="LEFT" />
-            <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteCardList" prefHeight="30.0" prefWidth="65.0" styleClass="button-1" text="Delete" />
-            <ScrollPane focusTraversable="false" hbarPolicy="NEVER" prefHeight="93.0" prefWidth="372.0" styleClass="card-container-root" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+            <TextField fx:id="title" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="298.0" styleClass="subtitle" text="List Name" GridPane.halignment="LEFT">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin></TextField>
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteCardList" prefHeight="30.0" prefWidth="65.0" styleClass="button-1" text="Delete">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin></Button>
+            <ScrollPane focusTraversable="false" hbarPolicy="NEVER" prefHeight="237.0" prefWidth="420.0" styleClass="card-container-root" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                <content>
                   <VBox fx:id="cardsContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="10.0" />
                </content>
             </ScrollPane>
-            <Separator halignment="RIGHT" orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
-            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <HBox alignment="CENTER_RIGHT" prefHeight="9.0" prefWidth="362.0">
+      <HBox alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="424.0">
          <children>
-                <TextField fx:id="cardName" alignment="CENTER" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#cardAdd" prefHeight="25.0" prefWidth="169.0" promptText="New card title" />
+                <TextField fx:id="cardName" alignment="CENTER" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#cardAdd" prefHeight="25.0" prefWidth="169.0" promptText="New card title" styleClass="card-addition" stylesheets="@../css/CardList.css" />
             <VBox prefHeight="25.0" prefWidth="12.0" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#cardAdd" styleClass="button-1" text="Add Card" />
             <VBox prefHeight="25.0" prefWidth="68.0" />
-            <Separator halignment="RIGHT" orientation="VERTICAL" prefHeight="200.0" />
          </children>
       </HBox>
       <VBox prefHeight="14.0" prefWidth="381.0" />

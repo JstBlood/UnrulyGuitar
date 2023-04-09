@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane hbarPolicy="NEVER" prefHeight="327.0" prefWidth="602.0" vmax="2.0" vvalue="1.5" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
+<ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #adaaaa; -fx-fit-to-height: true; -fx-fit-to-width: true;" styleClass="root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
+   <stylesheets>
+      <URL value="@/client/css/AddCardStyle.css" />
+   </stylesheets>
    <content>
-      <AnchorPane fx:id="root" prefHeight="324.0" prefWidth="610.0" styleClass="anchor-plane">
-         <stylesheets>
-            <URL value="@/client/css/AddCardStyle.css" />
-         </stylesheets>
+      <AnchorPane fx:id="root" style="-fx-background-color: #adaaaa;">
          <children>
             <BorderPane focusTraversable="true" prefHeight="57.0" prefWidth="610.0">
                <left>
@@ -63,10 +73,10 @@
                </opaqueInsets>
             </TextArea>
             <Button fx:id="submit" layoutX="513.0" layoutY="291.0" mnemonicParsing="false" onAction="#submitCard" prefHeight="25.0" prefWidth="65.0" styleClass="submit" text="Save" />
-            <Label layoutX="52.0" layoutY="266.0" onMouseClicked="#addSubtask" prefHeight="17.0" prefWidth="83.0" styleClass="add-subtask-label" text="Add A Subtask" />
-            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="27.0" layoutY="263.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true">
+            <Label layoutX="52.0" layoutY="266.0" onMouseClicked="#addSubtask" prefHeight="17.0" prefWidth="83.0" style="-fx-cursor: hand;" styleClass="add-subtask-label" text="Add A Subtask" />
+            <ImageView fx:id="addSubtask" fitHeight="21.0" fitWidth="23.0" layoutX="27.0" layoutY="263.0" onMouseClicked="#addSubtask" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                <image>
-                  <Image url="@/client/images/bracket.png" />
+                  <Image url="@/client/images/plus_icon.png" />
                </image>
                <BorderPane.margin>
                   <Insets left="20.0" />
@@ -75,9 +85,9 @@
             <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
             <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
             <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="78.0" mnemonicParsing="false" text="Add tag" />
-            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="73.0" prefHeight="31.0" prefWidth="479.0" vbarPolicy="NEVER">
+            <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="73.0" prefHeight="53.0" prefWidth="480.0" vbarPolicy="NEVER">
                <content>
-                  <HBox fx:id="tagsBar" prefHeight="51.0" prefWidth="477.0" />
+                  <HBox fx:id="tagsBar" prefHeight="83.0" prefWidth="481.0" />
                </content>
             </ScrollPane>
             <VBox fx:id="subtaskContainer" layoutX="5.0" layoutY="293.0" prefHeight="27.0" prefWidth="408.0" />

@@ -166,7 +166,7 @@ public class CardDetailsCtrl {
     }
 
     private void addTagsBarNode(Tag t) {
-        FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
+        FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
         tagLoader.setControllerFactory(c ->
                 new TagCtrl(this.server, this.mainCtrl, t)
         );
@@ -177,8 +177,7 @@ public class CardDetailsCtrl {
 
             Node finalNewTagNode = newTagNode;
 
-            tagCtrl.foregroundColor.setVisible(false);
-            tagCtrl.backgroundColor.setVisible(false);
+            tagCtrl.name.setEditable(false);
 
             tagCtrl.delete.setOnAction(e -> {
                 server.updateCard(card.id, "removeTag", t.id);
@@ -211,14 +210,14 @@ public class CardDetailsCtrl {
         if(onEnter) {
             r.setOnKeyPressed(e -> {
                 if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
-                    r.setStyle("-fx-text-fill: black;");
+                    r.setStyle("-fx-text-fill: #131313;");
                 }
             } );
         }
 
         r.focusedProperty().addListener((o, oldV, newV) -> {
             if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
-                r.setStyle("-fx-text-fill: black;");
+                r.setStyle("-fx-text-fill: #131313;");
             }
         });
     }
@@ -227,7 +226,7 @@ public class CardDetailsCtrl {
      * Update the title.
      */
     private void updateTitle() {
-        title.setStyle("-fx-text-fill: white;");
+        title.setStyle("-fx-text-fill: #131313;");
         server.updateCard(card.id, "title", title.getText());
     }
 
@@ -274,7 +273,7 @@ public class CardDetailsCtrl {
                 }
             }
 
-            title.setStyle("-fx-text-fill: white;");
+            title.setStyle("-fx-text-fill: #131313;");
             description.setStyle("-fx-text-fill: black;");
             title.setText(newState.title);
             description.setText(newState.description);

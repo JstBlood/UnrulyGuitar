@@ -9,7 +9,7 @@
 
 <GridPane fx:id="rooter" vgap="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <stylesheets>
-      <URL value="@/client/css/secondaryStyle.css" />
+      <URL value="@/client/css/mainStyle.css" />
       <URL value="@/client/css/BoardOverviewStyle.css" />
    </stylesheets>
    <columnConstraints>
@@ -95,7 +95,7 @@
             <Image url="@/client/images/bracket.png" />
          </image>
       </ImageView>
-      <MenuButton fx:id="inviteKey" focusTraversable="false" mnemonicParsing="false" onAction="#getInviteKey" styleClass="button-1" text="Invite Key" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+      <MenuButton fx:id="inviteKey" style="-fx-text-fill: white;" focusTraversable="false" mnemonicParsing="false" onAction="#getInviteKey" styleClass="button-2" text="Invite Key" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
         <items>
           <MenuItem mnemonicParsing="false" onAction="#getInviteKey" />
         </items>
