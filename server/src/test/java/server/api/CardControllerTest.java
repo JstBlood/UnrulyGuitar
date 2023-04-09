@@ -578,10 +578,9 @@ public class CardControllerTest {
     public void cannotUpdateAddTagNonExistent() {
         repo.save(SOME_CARD);
 
-        var actual = sut.updateAddTag(SOME_CARD.id, -2
-                , "", "");
+        var actual = sut.updateAddTag(SOME_CARD.id, -2, "", "");
 
-        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

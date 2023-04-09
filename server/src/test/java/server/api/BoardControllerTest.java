@@ -133,7 +133,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void cannotUpdateForeground() {
+    public void cannotUpdateForegroundBadPassword() {
         auth.setFail();
         repo.save(SOME_BOARD);
         var actual = sut.updateFore(SOME_BOARD.key, "a", "-1", "");
@@ -229,6 +229,25 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void cannotUpdateNonexistentBackgroundPreset() {
+        repo.save(SOME_BOARD);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, 1234567890L, "", "", "");
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNullNewVal() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, SOME_BOARD.colors.id, null, "", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
     public void updateBackgroundPreset() {
         repo.save(SOME_BOARD);
         colorRepo.save(SOME_BOARD.colors);
@@ -296,6 +315,25 @@ public class BoardControllerTest {
                 "a", "", "");
 
         assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentForegroundPreset() {
+        repo.save(SOME_BOARD);
+
+        var actual = sut.updateForePreset(SOME_BOARD.key, 1234567890L, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateEmptyNewVal() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+
+        var actual = sut.updateForePreset(SOME_BOARD.key, SOME_BOARD.colors.id, null, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

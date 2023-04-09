@@ -239,9 +239,13 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Long tagId = Long.valueOf(String.valueOf(newValue));
 
+        if (tagId < 0) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag == null) {
+        if(optionalTag == null || optionalTag.isEmpty()) {
             return HttpStatus.NOT_FOUND;
         }
 
