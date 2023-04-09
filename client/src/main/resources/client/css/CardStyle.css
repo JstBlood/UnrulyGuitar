@@ -10,3 +10,7 @@
     -fx-border-color: #e125e1;
 }
 
+.card-title {
+    -fx-background-color: transparent;
+}
+

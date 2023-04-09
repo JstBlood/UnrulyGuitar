@@ -211,14 +211,18 @@ public class CardDetailsCtrl {
         if(onEnter) {
             r.setOnKeyPressed(e -> {
                 if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
-                    r.setStyle("-fx-text-fill: black;");
+                    r.setStyle("-fx-text-fill: white;");
                 }
             } );
         }
 
         r.focusedProperty().addListener((o, oldV, newV) -> {
             if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
-                r.setStyle("-fx-text-fill: black;");
+                if (r.equals(description)) {
+                    r.setStyle("-fx-text-fill: black;");
+                } else {
+                    r.setStyle("-fx-text-fill: white;");
+                }
             }
         });
     }
