@@ -211,14 +211,14 @@ public class CardDetailsCtrl {
         if(onEnter) {
             r.setOnKeyPressed(e -> {
                 if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
-                    run.run();
+                    r.setStyle("-fx-text-fill: black;");
                 }
             } );
         }
 
         r.focusedProperty().addListener((o, oldV, newV) -> {
             if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
-                run.run();
+                r.setStyle("-fx-text-fill: black;");
             }
         });
     }
@@ -236,7 +236,12 @@ public class CardDetailsCtrl {
      */
     private void updateDescription() {
         description.setStyle("-fx-text-fill: black;");
-        server.updateCard(card.id, "description", description.getText());
+
+        if (description.getText() == null || description.getText().trim().isEmpty()) {
+            server.updateCard(card.id, "description", " ");
+        } else {
+            server.updateCard(card.id, "description", description.getText());
+        }
     }
 
     private void relink(Card newState) {
@@ -287,8 +292,14 @@ public class CardDetailsCtrl {
      */
     public void submitCard() {
         // go back to the overview
+        updateDescription();
+        updateTitle();
         updatePreset();
         updatePreset();
+        back();
+    }
+
+    public void cancelCard() {
         back();
     }
 

@@ -6,3 +6,7 @@
     -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
 }
 
+.card-root {
+    -fx-border-color: #e125e1;
+}
+

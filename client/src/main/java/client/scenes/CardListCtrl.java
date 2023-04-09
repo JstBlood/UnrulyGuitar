@@ -190,7 +190,6 @@ public class CardListCtrl implements Initializable {
                 } else {
                     switch(e.getCode()) {
                         case E:
-                            //TODO: New Scene where edit only title.
                             cardCtrl.setEditableTitle();
                             break;
                         case BACK_SPACE:

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="mainContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="378.0" prefWidth="390.0" spacing="10.0" styleClass="card-list-root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
+<VBox fx:id="mainContainer" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="378.0" prefWidth="409.0" spacing="10.0" styleClass="card-list-root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardListCtrl">
    <children>
       <GridPane prefWidth="381.0" VBox.vgrow="ALWAYS">
         <columnConstraints>

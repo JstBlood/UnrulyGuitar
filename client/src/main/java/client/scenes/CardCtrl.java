@@ -30,7 +30,7 @@ public class CardCtrl implements Initializable {
     @FXML
     private ProgressBar progressBar;
     @FXML
-    private Label progress;
+    private Label progressLabel;
     @FXML
     private TextField title;
     @FXML
@@ -135,7 +135,7 @@ public class CardCtrl implements Initializable {
             }
         });
 
-        this.progress.setOnMouseClicked(e -> {
+        this.progressLabel.setOnMouseClicked(e -> {
             if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2){
                 mainCtrl.showCardDetails(card);
             }
@@ -225,10 +225,13 @@ public class CardCtrl implements Initializable {
     private void setColors() {
         if(card.colors == null) {
             title.setStyle("-fx-text-fill: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
+            progressLabel.setStyle("-fx-text-fill: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
+            cardBox.setStyle("-fx-border-color: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
         }
         else {
             title.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
-            progress.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
+            progressLabel.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
+            cardBox.setStyle("-fx-border-color: " + card.colors.foreground + ";");
         }
     }
 

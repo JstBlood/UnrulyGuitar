@@ -73,9 +73,9 @@ public class Board {
         tags.add(newTag);
     }
 
-    public static String getDefaultForeground() { return "#bbbbbb"; }
+    public static String getDefaultForeground() { return "#e125e1"; }
 
-    public static String getDefaultBackground() { return "#131313"; }
+    public static String getDefaultBackground() { return "#fcfce0"; }
 
     @Override
     public boolean equals(Object obj) {
