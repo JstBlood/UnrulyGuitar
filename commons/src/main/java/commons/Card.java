@@ -1,19 +1,19 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity(name = "Card")
 @Table(name = "card")
@@ -28,6 +28,8 @@ public class Card {
     @Column(nullable = false)
     public String title;
     public String description;
+    @Column
+    public String file;
 
     @ManyToOne
     @JoinColumn(name = "cardList_id",
@@ -72,6 +74,15 @@ public class Card {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    public void setFile(String file){this.file=file;}
+
+    public String getFile() {
+        return file;
+    }
+
+    public String getId() {
+        return String.valueOf(id);
     }
 
     public void removeTag(Tag tag) {

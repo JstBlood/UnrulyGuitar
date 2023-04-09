@@ -15,9 +15,6 @@
  */
 package client.scenes;
 
-import java.util.HashSet;
-import java.util.Objects;
-
 import client.shared.CredentialsStore;
 import commons.Board;
 import commons.Card;
@@ -27,6 +24,10 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Objects;
 
 public class MainCtrl {
     private Stage primaryStage;
@@ -53,6 +54,8 @@ public class MainCtrl {
 
     private HelpScreenCtrl helpScreenCtrl;
     private Scene helpScreen;
+    private MediaPlayerCtrl mediaPlayerCtrl;
+    private Scene mediaPlayer;
 
     private CardDetailsCtrl tagsPopupCtrl;
     private Scene tagsPopup;
@@ -73,6 +76,7 @@ public class MainCtrl {
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<CardDetailsCtrl, Parent> cardDetails,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
+                           Pair<MediaPlayerCtrl, Parent> mediaPlayer,
                            Pair<PasswordCtrl, Parent> locker,
                            Pair<HelpScreenCtrl, Parent> helpScreen,
                            Pair<CardDetailsCtrl, Parent> tagsPopup,
@@ -104,6 +108,9 @@ public class MainCtrl {
 
         this.tagsPopupCtrl = tagsPopup.getKey();
         this.tagsPopup = new Scene(tagsPopup.getValue());
+
+        this.mediaPlayerCtrl = mediaPlayer.getKey();
+        this.mediaPlayer = new Scene(mediaPlayer.getValue());
 
         this.cStore = cStore;
 
@@ -176,7 +183,11 @@ public class MainCtrl {
         primaryStage.setTitle("Tags popup");
         primaryStage.setScene(tagsPopup);
     }
-
+    public void showMediaPlayer(Card card) throws IOException {
+        mediaPlayerCtrl.initialize(card);
+        primaryStage.setTitle("Media Player");
+        primaryStage.setScene(mediaPlayer);
+    }
     public void prepareHelp() {
         logon.setOnKeyPressed(e -> {
             if (e.isShiftDown() && e.getCode().equals(KeyCode.SLASH)) {
