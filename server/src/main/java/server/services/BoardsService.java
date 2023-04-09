@@ -56,7 +56,19 @@ public class BoardsService implements StandardEntityService<Board, String> {
         repo.saveAndFlush(board);
         userRepo.saveAndFlush(usr);
 
+        sockets.broadcastRelist();
+
         return HttpStatus.OK;
+    }
+
+    public HttpStatus validate(String key, String username, String password) {
+        if(repo.findByKey(key) == null)
+            return HttpStatus.NOT_FOUND;
+
+        if(pwd.hasEditAccess(username, password, key))
+            return HttpStatus.OK;
+        else
+            return HttpStatus.FORBIDDEN;
     }
 
     public HttpStatus join(String key, String username, String password) {
@@ -97,6 +109,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         usr.boards.removeIf(x -> x.id == toBeLeft.id);
         userRepo.saveAndFlush(usr);
+        sockets.broadcastRelist();
 
         return HttpStatus.OK;
     }
@@ -136,18 +149,42 @@ public class BoardsService implements StandardEntityService<Board, String> {
         return flush(board);
     }
 
+    public HttpStatus changePass(String key, String newValue, String username, String password) {
+        if (!prepare(key, username, password).equals(HttpStatus.OK))
+            return prepare(key, username, password);
+
+        Board b = repo.findByKey(key);
+
+        b.password = newValue;
+        b.isPasswordProtected = true;
+
+        return flush(b);
+    }
+
+    public HttpStatus removePass(String key, String username, String password) {
+        if (!prepare(key, username, password).equals(HttpStatus.OK))
+            return prepare(key, username, password);
+
+        Board b = repo.findByKey(key);
+
+        b.password = null;
+        b.isPasswordProtected = false;
+
+        return flush(b);
+    }
+
     public HttpStatus updateForegroundPreset(String key, Long id, String newValue, String username, String password) {
         if (!prepare(key, username, password).equals(HttpStatus.OK))
             return prepare(key, username, password);
 
         Board b = repo.findByKey(key);
 
-        if(colorRepo.findById(id).isEmpty())
+        if(colorRepo.findById(id) == null || colorRepo.findById(id).isEmpty())
             return HttpStatus.NOT_FOUND;
 
         ColorPreset preset = colorRepo.findById(id).get();
 
-        if(newValue.isEmpty()) {
+        if(newValue == null || newValue.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -164,12 +201,13 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         Board b = repo.findByKey(key);
 
-        if(colorRepo.findById(id).isEmpty())
+        if(colorRepo.findById(id) == null || colorRepo.findById(id).isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
 
         ColorPreset preset = colorRepo.findById(id).get();
 
-        if(newValue.isEmpty()) {
+        if(newValue == null || newValue.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -271,7 +309,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
             return HttpStatus.BAD_REQUEST;
         }
 
-        String newValueString = String.valueOf(newValue).trim();
+        String newValueString = newValue.trim();
 
         board.title = newValueString;
 
@@ -289,7 +327,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
             return HttpStatus.NOT_FOUND;
         }
 
-        if(!pwd.hasEditAccess(password, key)) {
+        if(!pwd.hasEditAccess(username, password, key)) {
             return HttpStatus.FORBIDDEN;
         }
 
@@ -311,6 +349,10 @@ public class BoardsService implements StandardEntityService<Board, String> {
         if(repo.findByKey(key) == null)
             return HttpStatus.NOT_FOUND;
 
+        if(!pwd.hasEditAccess(username, password, key)) {
+            return HttpStatus.FORBIDDEN;
+        }
+
         Board rem = repo.findByKey(key);
 
         for(User usr : rem.users) {
@@ -322,6 +364,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
         repo.delete(rem);
 
         sockets.broadcastRemoval(rem);
+        sockets.broadcastRelist();
 
         return HttpStatus.OK;
     }

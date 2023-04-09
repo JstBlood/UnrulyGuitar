@@ -16,3 +16,7 @@
     -fx-border-color: -fx-col-0;
 }
 
+.card-title {
+    -fx-background-color: transparent;
+}
+

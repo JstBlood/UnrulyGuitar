@@ -51,6 +51,17 @@ public class CardTest {
     }
 
     @Test
+    public void removeTag() {
+        var c = new Card("blabla", "", SOME_CARDLIST);
+        var t1 = new Tag();
+        var t2 = new Tag();
+        c.tags.add(t1);
+        c.tags.add(t2);
+        c.removeTag(t2);
+        assertFalse(c.tags.contains(t2));
+    }
+
+    @Test
     public void EqualsHashCode() {
         var a = new Card("blabla", "", SOME_CARDLIST);
         var b = new Card("blabla", "", SOME_CARDLIST);

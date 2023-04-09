@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,19 +38,25 @@ public class Board {
             cascade = CascadeType.ALL)
     public List<Tag> tags = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public ColorPreset colors;
-    @OneToOne
+
+    @OneToOne(cascade = CascadeType.ALL)
     public ColorPreset cardListColors;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     public List<ColorPreset> cardPresets = new ArrayList<>();
 
     @OneToOne
     public ColorPreset defaultPreset;
 
+    public boolean isPasswordProtected = false;
+
+    @JsonIgnore
+    public String password = null;
+
     @SuppressWarnings("unused")
-    protected Board() {
+    public Board() {
     }
 
     /**

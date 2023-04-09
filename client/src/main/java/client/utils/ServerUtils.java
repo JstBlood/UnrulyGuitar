@@ -64,14 +64,20 @@ public class ServerUtils {
     }
 
     private <T> T internalPostRequest(String path, Entity send, GenericType<T> retType) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(getServer()).path(path)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .post(send, retType);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(getServer()).path(path)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .post(send, retType);
+        } catch (ForbiddenException e) {
+            UIUtils.showError("You cannot edit this board since its password protected and you have not" +
+                    " entered a correct password.");
+            return null;
+        }
     }
 
-    private <T> T internalGetRequest(String path, GenericType<T> retType) {
+    private <T> T uncheckedInternalGetRequest(String path, GenericType<T> retType) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(getServer()).path(path)
                 .request(APPLICATION_JSON)
@@ -79,20 +85,41 @@ public class ServerUtils {
                 .get(retType);
     }
 
+    private <T> T internalGetRequest(String path, GenericType<T> retType) {
+        try {
+            return uncheckedInternalGetRequest(path, retType);
+        } catch (ForbiddenException e) {
+            UIUtils.showError("You cannot edit this board since its password protected and you have not" +
+                    " entered a correct password.");
+            return null;
+        }
+    }
+
     private void internalDeleteRequest(String path) {
-        ClientBuilder.newClient(new ClientConfig())
-                .target(getServer()).path(path)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .delete();
+        try {
+            ClientBuilder.newClient(new ClientConfig())
+                    .target(getServer()).path(path)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .delete();
+        } catch (ForbiddenException e) {
+            UIUtils.showError("You cannot edit this board since its password protected and you have not" +
+                    " entered a correct password.");
+        }
     }
 
     private <T> T internalPutRequest(String path, Entity send, GenericType<T> retType) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(getServer()).path(path)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .put(send, retType);
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(getServer()).path(path)
+                    .request(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .put(send, retType);
+        } catch (ForbiddenException e) {
+            UIUtils.showError("You cannot edit this board since its password protected and you have not" +
+                    " entered a correct password.");
+            return null;
+        }
     }
 
     // BOARD RELATED FUNCTIONS
@@ -110,6 +137,24 @@ public class ServerUtils {
         return internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/previous",
                 new GenericType<>() {});
+    }
+
+    public void validate(String key, String toTry) {
+        uncheckedInternalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        toTry + "/boards/" + key + "/validate",
+                new GenericType<>(){});
+    }
+
+    public void changePass(String key, String newPass) {
+        internalPutRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/password",
+                Entity.entity(newPass, APPLICATION_JSON),
+                new GenericType<>(){});
+    }
+
+    public void removePass(String key) {
+        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/boards/" + key + "/password");
     }
 
     public Board addBoard(Board board) {
@@ -222,7 +267,8 @@ public class ServerUtils {
     // CARD RELATED FUNCTIONS
 
     public Card addCard(Card card){
-        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/cards/add",
+        return internalPostRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/cards/add",
                 Entity.entity(card, APPLICATION_JSON),
                 new GenericType<>(){});
     }

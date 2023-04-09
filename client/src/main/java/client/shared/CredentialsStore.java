@@ -7,6 +7,7 @@ public class CredentialsStore {
     private String username = null;
     private String password = null;
     private String url = null;
+    private boolean isAdmin = false;
 
     public String getUrl() {
         return url;
@@ -29,7 +30,15 @@ public class CredentialsStore {
     }
 
     public boolean isAdmin() {
-        return password != null;
+        return isAdmin;
+    }
+
+    public void setAdmin() {
+        isAdmin = true;
+    }
+
+    public void unsetAdmin() {
+        isAdmin = false;
     }
 
     public String getPassword() {

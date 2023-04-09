@@ -36,7 +36,7 @@ public class TagCtrl implements Initializable {
     @FXML
     public ColorPicker foregroundColor;
 
-    private Tag tag;
+    public Tag tag;
 
     /**
      * Create a tag object.

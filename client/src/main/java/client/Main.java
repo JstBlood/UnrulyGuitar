@@ -28,8 +28,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private static final Injector INJECTOR = createInjector(new MyModule());
-    private static final MyFXML FXML = new MyFXML(INJECTOR);
+    private static final Injector INJECTOR = createInjector(new UnrulyModule());
+    private static final UnrulyFXML FXML = new UnrulyFXML(INJECTOR);
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
@@ -39,10 +39,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
-        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
-        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes", "AddCardList.fxml");
-        var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes", "CardDetails.fxml");
-        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes", "BoardSettings.fxml");
+        var boardOverview = FXML.load(BoardOverviewCtrl.class, "client",
+                "scenes", "BoardOverview.fxml");
+        var addCardList = FXML.load(AddCardListCtrl.class, "client", "scenes",
+                "AddCardList.fxml");
+        var cardDetails = FXML.load(CardDetailsCtrl.class, "client", "scenes",
+                "CardDetails.fxml");
+        var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes",
+                "BoardSettings.fxml");
+        var locker = FXML.load(PasswordCtrl.class, "client", "scenes",
+                "PasswordEntry.fxml");
         var helpScreen = FXML.load(HelpScreenCtrl.class, "client", "scenes", "HelpScreen.fxml");
         var tagsPopup = FXML.load(CardDetailsCtrl.class, "client", "scenes", "TagsPopup.fxml");
 
@@ -57,6 +63,7 @@ public class Main extends Application {
                 addCardList,
                 cardDetails,
                 boardSettings,
+                locker,
                 helpScreen,
                 tagsPopup,
                 cStore);
