@@ -268,11 +268,11 @@ public class BoardOverviewCtrl implements Initializable {
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, event -> {
                         inviteKey.setText("Copied to clipboard!");
-                        inviteKey.setStyle("-fx-background-color: green;");
+                        inviteKey.setStyle("-fx-background-color: green; -fx-text-fill: white;");
                     }),
                     new KeyFrame(Duration.seconds(2), event -> {
                         inviteKey.setText("Invite Key");
-                        inviteKey.setStyle("-fx-background-color: " + board.colors.foreground + "");
+                        inviteKey.setStyle("-fx-background-color: #adaaaa; -fx-text-fill: white;");
                     })
             );
             timeline.play();

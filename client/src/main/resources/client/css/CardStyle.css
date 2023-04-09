@@ -1,0 +1,22 @@
+* {
+    -fx-col-0: rgb(50, 40, 23);
+    -fx-col-1: rgb(10, 30, 15);
+    -fx-col-2: rgb(50, 80, 40);
+}
+
+.edit:hover {
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
+.delete:hover {
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
+.card-root {
+    -fx-border-color: -fx-col-0;
+}
+
+.card-title {
+    -fx-background-color: transparent;
+}
+

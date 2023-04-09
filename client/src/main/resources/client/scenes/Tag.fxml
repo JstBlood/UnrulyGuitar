@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="35.0" prefWidth="279.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TagCtrl">
+<AnchorPane fx:id="root" prefHeight="35.0" prefWidth="279.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TagCtrl">
    <children>
-      <GridPane prefHeight="35.0" prefWidth="279.0">
+      <GridPane fx:id="gPane" prefHeight="35.0" prefWidth="279.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="162.39996337890625" minWidth="10.0" prefWidth="144.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.20001220703125" minWidth="10.0" prefWidth="32.0" />
@@ -22,8 +27,14 @@
                <GridPane.margin>
                   <Insets left="2.0" right="2.0" />
                </GridPane.margin>
+               <opaqueInsets>
+                  <Insets left="15.0" right="15.0" />
+               </opaqueInsets>
             </ColorPicker>
-            <Button fx:id="delete" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="28.0" text="❌" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Button fx:id="delete" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="26.0" prefWidth="28.0" text="❌" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+               <opaqueInsets>
+                  <Insets left="15.0" right="15.0" />
+               </opaqueInsets></Button>
             <TextField fx:id="name" prefHeight="26.0" prefWidth="118.0" GridPane.halignment="CENTER">
                <GridPane.margin>
                   <Insets left="5.0" right="5.0" />
@@ -36,6 +47,9 @@
                <GridPane.margin>
                   <Insets left="2.0" right="2.0" />
                </GridPane.margin>
+               <opaqueInsets>
+                  <Insets left="15.0" right="15.0" />
+               </opaqueInsets>
             </ColorPicker>
          </children>
       </GridPane>
