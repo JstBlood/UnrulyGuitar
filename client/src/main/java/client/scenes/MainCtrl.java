@@ -29,7 +29,6 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 public class MainCtrl {
-
     private Stage primaryStage;
 
     private Scene logon;
@@ -49,6 +48,8 @@ public class MainCtrl {
 
     private BoardSettingsCtrl boardSettingsCtrl;
     private Scene boardSettings;
+    private Scene lockscreen;
+    private PasswordCtrl lockscreenCtrl;
 
     private HelpScreenCtrl helpScreenCtrl;
     private Scene helpScreen;
@@ -72,6 +73,7 @@ public class MainCtrl {
                            Pair<AddCardListCtrl, Parent> addCardList,
                            Pair<CardDetailsCtrl, Parent> cardDetails,
                            Pair<BoardSettingsCtrl, Parent> boardSettings,
+                           Pair<PasswordCtrl, Parent> locker,
                            Pair<HelpScreenCtrl, Parent> helpScreen,
                            Pair<CardDetailsCtrl, Parent> tagsPopup,
                            CredentialsStore cStore) {
@@ -93,6 +95,9 @@ public class MainCtrl {
 
         this.boardSettingsCtrl = boardSettings.getKey();
         this.boardSettings = new Scene(boardSettings.getValue());
+
+        this.lockscreen = new Scene(locker.getValue());
+        this.lockscreenCtrl = locker.getKey();
 
         this.helpScreenCtrl = helpScreen.getKey();
         this.helpScreen = new Scene(helpScreen.getValue());
@@ -148,6 +153,12 @@ public class MainCtrl {
     public void showBoardSettings() {
         primaryStage.setTitle("Settings");
         primaryStage.setScene(boardSettings);
+    }
+
+    public void showUnlock() {
+        primaryStage.setTitle("Passwords");
+        lockscreenCtrl.stepTwo();
+        primaryStage.setScene(lockscreen);
     }
 
     public void updateBoardSettings(Board newState) {
@@ -207,6 +218,7 @@ public class MainCtrl {
 
     public void setupBoardOverview(Board board) {
         boardOverviewCtrl.prepare(board);
+        lockscreenCtrl.prepare();
     }
 
 

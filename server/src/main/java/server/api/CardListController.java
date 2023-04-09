@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.services.CardListService;
 
+
 @RestController
 @RequestMapping(value = {"/secure/{username}/{password}/lists", "/secure/{username}/lists"})
 public class CardListController {
@@ -39,10 +40,7 @@ public class CardListController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CardList cardList, @PathVariable String username,
                                  @PathVariable(required = false) String password) {
-        // TODO: FIX ME
-        //listeners.forEach((k, l) -> {
-        //    l.accept(cardList);
-        //});
+        listeners.forEach((k, l) -> l.accept(cardList));
         return ResponseEntity.status(cardListService.add(cardList, username, password)).build();
     }
 
@@ -54,7 +52,7 @@ public class CardListController {
 
     @PutMapping("/{id}/title")
     public ResponseEntity<?> updateTitle(@PathVariable long id,
-                                         @RequestBody Object newValue, @PathVariable String username,
+                                         @RequestBody String newValue, @PathVariable String username,
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardListService.updateTitle(id, newValue, username, password)).build();
     }
@@ -65,12 +63,9 @@ public class CardListController {
         var res = new DeferredResult<ResponseEntity<CardList>>(2000L, noContent);
 
         var key = new Object();
-        listeners.put(key, cardList -> {
-            res.setResult(ResponseEntity.ok(cardList));
-        });
-        res.onCompletion(() -> {
-            listeners.remove(key);
-        });
+
+        listeners.put(key, cardList -> {res.setResult(ResponseEntity.ok(cardList));});
+        res.onCompletion(() -> {listeners.remove(key);});
 
         return res;
     }

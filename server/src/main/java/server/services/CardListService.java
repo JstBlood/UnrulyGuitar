@@ -10,12 +10,14 @@ public class CardListService {
     private final CardListRepository cardListRepo;
     private final BoardsService boards;
     private final SocketRefreshService sockets;
+    private final RepositoryBasedAuthService pwd;
 
     public CardListService(CardListRepository cardListRepo, BoardsService boards,
-                           SocketRefreshService sockets) {
+                           SocketRefreshService sockets, RepositoryBasedAuthService pwd) {
         this.cardListRepo = cardListRepo;
         this.boards = boards;
         this.sockets = sockets;
+        this.pwd = pwd;
     }
 
     public HttpStatus add(CardList cardList, String username, String password) {
@@ -27,12 +29,13 @@ public class CardListService {
             return HttpStatus.BAD_REQUEST;
         }
 
-        cardListRepo.save(cardList);
-        // fallback to websockets because
-        // long polling is completely and utterly
-        // broken for now.
+        if(!pwd.hasEditAccess(username, password, cardList.parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
+        }
 
-        forceRefresh(cardList);
+        cardListRepo.save(cardList);
+
+        //we send updates via long-polling
 
         return HttpStatus.CREATED;
     }
@@ -76,6 +79,10 @@ public class CardListService {
 
         if(optionalCardList.isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
+
+        if(!pwd.hasEditAccess(username, password, optionalCardList.get().parentBoard.key)) {
+            return HttpStatus.FORBIDDEN;
         }
 
         return HttpStatus.OK;

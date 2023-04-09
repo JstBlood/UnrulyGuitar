@@ -65,6 +65,27 @@ public class BoardsController {
         return ResponseEntity.ok(service.getBoard(key));
     }
 
+    @GetMapping("/{key}/validate")
+    public ResponseEntity<?> validate(@PathVariable String key,
+                                   @PathVariable String username,
+                                   @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.validate(key, username, password)).build();
+    }
+
+    @PutMapping("/{key}/password")
+    public ResponseEntity<?> changePass(@PathVariable String key,
+                                      @PathVariable String username,@RequestBody String newValue,
+                                      @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.changePass(key, newValue, username, password)).build();
+    }
+
+    @DeleteMapping("/{key}/password")
+    public ResponseEntity<?> removePass(@PathVariable String key,
+                                        @PathVariable String username,
+                                        @PathVariable(required = false) String password) {
+        return ResponseEntity.status(service.removePass(key, username, password)).build();
+    }
+
     @PostMapping("/leave/{key}")
     public ResponseEntity<?> leave(@PathVariable String key,
                                    @PathVariable String username,

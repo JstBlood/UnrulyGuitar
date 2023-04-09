@@ -78,13 +78,21 @@ public class LogonCtrl {
             return;
         }
 
+        if(username.getText().endsWith("_admin")) {
+            UIUtils.showError("Invalid username please pick a different one.");
+            return;
+        }
+
         mainCtrl.accessStore().setUrl(ip.getText());
         mainCtrl.accessStore().setUsername(username.getText());
 
-        if(adminChk.isSelected())
+        if(adminChk.isSelected()) {
             mainCtrl.accessStore().setPassword(admin.getText());
-        else
+            mainCtrl.accessStore().setAdmin();
+        }else {
             mainCtrl.accessStore().removePassword();
+            mainCtrl.accessStore().unsetAdmin();
+        }
 
         try {
             server.connect();

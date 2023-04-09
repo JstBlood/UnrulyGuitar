@@ -150,7 +150,6 @@ public class CardListCtrl implements Initializable {
 
     public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
         prepareCardFocus(cardNode);
-        prepareCardTitle(cardNode);
         prepareCardKeyEvents(cardNode, cardCtrl);
     }
 
@@ -175,7 +174,6 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    @SuppressWarnings("checkstyle:CyclomaticComplexity")
     public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
@@ -211,10 +209,6 @@ public class CardListCtrl implements Initializable {
                 }
             }
         });
-    }
-
-    public void prepareCardTitle(Node cardNode) {
-        Card card = (Card) cardNode.getUserData();
     }
 
     public void propagate(CardList newState) {
