@@ -18,10 +18,7 @@ package server.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
-import commons.Board;
-import commons.Card;
-import commons.CardList;
-import commons.Tag;
+import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import server.ConfigTest;
 import server.database.*;
+import server.services.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -38,6 +36,7 @@ public class CardControllerTest {
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
     private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
     private final Tag SOME_TAG = new Tag("title", SOME_BOARD);
+    private final ColorPreset SOME_PRESET = new ColorPreset();
 
     @Autowired
     private TestCardRepository repo;
@@ -53,6 +52,8 @@ public class CardControllerTest {
     private CardController sut;
     @Autowired
     private TestColorPresetRepository colorRepo;
+    @Autowired
+    private TestAuthService auth;
 
     @BeforeEach
     public void setup() {
@@ -62,6 +63,7 @@ public class CardControllerTest {
         clRepo.clean();
         tagRepo.clean();
         colorRepo.clean();
+        auth.setNoFail();
     }
 
     @Test
@@ -82,6 +84,23 @@ public class CardControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("save"));
         Assertions.assertEquals(CREATED, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddEmptyTitle() {
+        SOME_CARD.title = "";
+        var actual = sut.add(SOME_CARD, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+        SOME_CARD.title = "title";
+    }
+
+    @Test
+    public void cannotAddInvalidPassword() {
+        auth.setFail();
+        var actual = sut.add(SOME_CARD, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test
@@ -108,6 +127,15 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotDeleteInvalidPassword() {
+        auth.setFail();
+        repo.save(SOME_CARD);
+        var actual = sut.delete(SOME_CARD.id, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotUpdateNonexistentCard() {
         var actual = sut.updateTitle(-1, "", "", "");
         assertEquals(BAD_REQUEST, actual.getStatusCode());
@@ -121,12 +149,21 @@ public class CardControllerTest {
     }
 
     @Test
-    public void updateTitle() {
+    public void updateTitleDatabaseUsed() {
         repo.save(SOME_CARD);
         var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
 
         Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateInvalidPassword() {
+        auth.setFail();
+        repo.save(SOME_CARD);
+        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test
@@ -177,6 +214,63 @@ public class CardControllerTest {
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
+    @Test
+    public void updateDescription() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateDescription(SOME_CARD.id, "upup", "", "");
+
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertEquals("upup", SOME_CARD.description);
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void updatePreset() {
+        repo.save(SOME_CARD);
+        colorRepo.save(SOME_PRESET);
+        var actual = sut.updatePreset(SOME_CARD.id, SOME_PRESET.id, "", "");
+
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertEquals(SOME_PRESET.id, SOME_CARD.colors.id);
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void removePreset() {
+        repo.save(SOME_CARD);
+        colorRepo.save(SOME_PRESET);
+        var actual = sut.updatePreset(SOME_CARD.id, -1, "", "");
+
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+        Assertions.assertNull(SOME_CARD.colors);
+        Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotSetNonexistentPreset() {
+        repo.save(SOME_CARD);
+        var actual = sut.updatePreset(SOME_CARD.id, -2, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotPresetNoPassword() {
+        auth.setFail();
+        repo.save(SOME_CARD);
+        var actual = sut.updatePreset(SOME_CARD.id, -2, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateDescriptionNoPassword() {
+        auth.setFail();
+        repo.save(SOME_CARD);
+        var actual = sut.updateDescription(SOME_CARD.id, "asd", "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
 
     @Test
     public void cannotUpdateBadDD() {
@@ -280,6 +374,74 @@ public class CardControllerTest {
         var actual = sut.updateSwap(SOME_CARD.id, "-1", "", "");
 
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotRemoveBadTag() {
+        repo.save(SOME_CARD);
+        var actual = sut.updateRemoveTag(SOME_CARD.id, -1, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateAddTag() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id
+                , "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void cannotUpdateAddTag() {
+        auth.setFail();
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id
+                , "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateAddTagNonExistent() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, -2
+                , "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateRemoveTag() {
+        SOME_CARD.tags.add(SOME_TAG);
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id
+                , "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void updateRemoveInvalidPassword() {
+        auth.setFail();
+        SOME_CARD.tags.add(SOME_TAG);
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id
+                , "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test

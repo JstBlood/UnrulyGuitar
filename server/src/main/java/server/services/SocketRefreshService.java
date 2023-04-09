@@ -23,15 +23,15 @@ public class SocketRefreshService {
     }
 
     public void broadcastRemoval(Board b) {
-        messages.convertAndSend("/topic/board/" + b.key + "/deletion", b);
+        messages.convertAndSend("/topic/board/" + b.key + "/deletion", "");
     }
 
     public void broadcastRemoval(Card c) {
-        messages.convertAndSend("/topic/card/" + c.id + "/deletion", c);
+        messages.convertAndSend("/topic/card/" + c.id + "/deletion", "");
     }
 
     public void broadcastRemoval(CardList c) {
-        messages.convertAndSend("/topic/cardlist/" + c.id + "/deletion", c);
+        messages.convertAndSend("/topic/cardlist/" + c.id + "/deletion", "");
     }
 
 }

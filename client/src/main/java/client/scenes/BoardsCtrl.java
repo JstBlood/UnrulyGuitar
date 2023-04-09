@@ -116,8 +116,7 @@ public class BoardsCtrl {
             for (int i = 0; i < 6; i++) {
                 sb.append((char)('a' + rand.nextInt(26)));
             }
-            if(j != 2)
-                sb.append('-');
+            if(j != 2){sb.append('-');}
         }
 
         Board created = new Board(sb.toString(), "New board");

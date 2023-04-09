@@ -65,10 +65,6 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Card card = cardRepo.findById(id).get();
 
-        if(!pwd.hasEditAccess(username, password, card.parentCardList.parentBoard.key)) {
-            return HttpStatus.FORBIDDEN;
-        }
-
         cardRepo.deleteById(id);
 
         cardRepo.shiftCardsUp(card.index, card.parentCardList.id);
