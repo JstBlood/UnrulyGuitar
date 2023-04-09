@@ -35,7 +35,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
     }
 
     public HttpStatus add(Board board, String username, String password) {
-        if(board == null || isNullOrEmpty(board.key)) {
+        if(board == null || isNullOrEmpty(board.key) || isNullOrEmpty(board.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 

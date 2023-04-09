@@ -7,11 +7,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.database.*;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
-import server.services.TestAuthService;
-import server.services.TestSocketRefresher;
+import server.helpers.TestAuthService;
+import server.helpers.TestSimpMessaging;
+import server.helpers.TestSocketRefresher;
+import server.services.*;
 
 @TestConfiguration
 public class ConfigTest {
@@ -76,6 +77,18 @@ public class ConfigTest {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public RepositoryBasedAuthService repositoryBasedAuthServiceMock() {
         return new TestAuthService();
+    }
+
+    @Bean
+    public TestSimpMessaging testSimpMessaging() {
+        return (TestSimpMessaging) context.getBean(SimpMessagingTemplate.class);
+    }
+
+    @Bean
+    @Primary
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public SimpMessagingTemplate simpMessagingTemplateMock() {
+        return new TestSimpMessaging();
     }
 
     @Bean

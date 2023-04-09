@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import server.ConfigTest;
 import server.database.*;
-import server.services.TestAuthService;
+import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)

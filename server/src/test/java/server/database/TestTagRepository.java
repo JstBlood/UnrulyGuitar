@@ -66,12 +66,12 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public void deleteById(Long aLong) {
-
+        call("deleteById");
     }
 
     @Override
     public void delete(Tag entity) {
-
+        call("delete");
     }
 
     @Override
