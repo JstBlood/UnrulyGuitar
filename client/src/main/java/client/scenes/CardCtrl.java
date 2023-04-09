@@ -11,6 +11,7 @@ import commons.Card;
 import commons.Tag;
 import commons.Task;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -255,9 +256,11 @@ public class CardCtrl implements Initializable {
     }
 
     public void setEditableTitle() {
-        title.setEditable(true);
-        title.setFocusTraversable(true);
-        title.requestFocus();
+        Platform.runLater(() -> {
+            title.setEditable(true);
+            title.setFocusTraversable(true);
+            title.requestFocus();
+        });
     }
 
     @FXML

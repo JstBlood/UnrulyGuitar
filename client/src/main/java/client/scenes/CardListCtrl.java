@@ -189,6 +189,7 @@ public class CardListCtrl implements Initializable {
                     switch(e.getCode()) {
                         case E:
                             cardCtrl.setEditableTitle();
+                            e.consume();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);
