@@ -28,7 +28,6 @@ public class Card {
     @Column(nullable = false)
     public String title;
     public String description;
-    @Column
     public String file;
 
     @ManyToOne
