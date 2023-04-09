@@ -7,7 +7,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.springframework:spring-test:5.3.9'
 	implementation 'org.glassfish.jersey.core:jersey-client:2.39.1'
 	implementation 'org.glassfish.jersey.media:jersey-media-multipart:2.39.1'
 	testImplementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:3.0.2'
