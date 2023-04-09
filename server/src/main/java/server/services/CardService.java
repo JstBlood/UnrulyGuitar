@@ -235,7 +235,7 @@ public class CardService implements StandardEntityService<Card, Long> {
 
         Optional<Tag> optionalTag = tagRepo.findById(tagId);
 
-        if(optionalTag.isEmpty()) {
+        if(optionalTag == null) {
             return HttpStatus.NOT_FOUND;
         }
 
