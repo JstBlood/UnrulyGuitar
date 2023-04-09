@@ -1,17 +1,21 @@
 package client.scenes;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.inject.Inject;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import commons.Card;
 import commons.Tag;
 import commons.Task;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,11 +28,11 @@ public class CardCtrl implements Initializable {
     private Card card;
 
     @FXML
-    private ProgressBar prog;
+    private ProgressBar progressBar;
     @FXML
     private Label progress;
     @FXML
-    private Label title;
+    private TextField title;
     @FXML
     private HBox tagContainer;
     @FXML
@@ -54,6 +58,10 @@ public class CardCtrl implements Initializable {
 
         prepareDragAndDrop();
 
+        prepareTitleField();
+
+        prepareOther();
+
         if(card.colors != null)
             mainCtrl.accessUsedPresets().add(card.colors.id);
     }
@@ -64,18 +72,6 @@ public class CardCtrl implements Initializable {
         this.cardBox.setOnMouseClicked(e -> {
             if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 mainCtrl.showCardDetails(card);
-            }
-        });
-
-        this.editContainer.setOnMouseClicked(e -> {
-            if (e.getButton().equals(MouseButton.PRIMARY)) {
-                mainCtrl.showCardDetails(card);
-            }
-        });
-
-        this.deleteContainer.setOnMouseClicked(e -> {
-            if (e.getButton().equals(MouseButton.PRIMARY)) {
-                delete();
             }
         });
 
@@ -99,12 +95,70 @@ public class CardCtrl implements Initializable {
         });
     }
 
+    private void prepareTitleField() {
+        this.title.setEditable(false);
+
+        this.title.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY)){
+                if(e.getClickCount() == 2){
+                    mainCtrl.showCardDetails(card);
+                }
+            }
+        });
+
+        title.textProperty().addListener((o, oldV, newV) -> {
+            if(!Objects.equals(card.title, newV)) {
+                title.setStyle("-fx-text-fill: red;");
+            }
+        });
+        title.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.ENTER) && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        } );
+        title.focusedProperty().addListener((o, oldV, newV) -> {
+            if(!newV && title.getStyle().equals("-fx-text-fill: red;")) {
+                updateTitle();
+            }
+        });
+        title.setText(card.title);
+    }
+
+    private void prepareOther() {
+        this.editContainer.setOnMouseClicked(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                mainCtrl.showCardDetails(card);
+            }
+        });
+
+        this.deleteContainer.setOnMouseClicked(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                delete();
+            }
+        });
+
+        this.progress.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY)){
+                if(e.getClickCount() == 2){
+                    mainCtrl.showCardDetails(card);
+                }
+            }
+        });
+
+        this.progressBar.setOnMouseClicked(e -> {
+            if(e.getButton().equals(MouseButton.PRIMARY)){
+                if(e.getClickCount() == 2){
+                    mainCtrl.showCardDetails(card);
+                }
+            }
+        });
+    }
     private void handleProgress() {
         int counter = 0;
         for(Task t : card.tasks)
             counter += t.isDone ? 1 : 0;
 
-        prog.setProgress((double)counter/(double)card.tasks.size());
+        progressBar.setProgress((double)counter/(double)card.tasks.size());
     }
 
     private void handleDrop(DragEvent e) {
@@ -182,6 +236,31 @@ public class CardCtrl implements Initializable {
             title.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
             progress.setStyle("-fx-text-fill: " + card.colors.foreground + ";");
         }
+    }
+
+    public void updateTitle() {
+        title.setEditable(false);
+        title.setFocusTraversable(false);
+
+        if (title.getText().isEmpty()) {
+            title.setText(card.title);
+            UIUtils.showError("Title should not be empty!");
+            return;
+        }
+
+        card.title = title.getText();
+
+        try {
+            server.updateCard(card.id, "title", title.getText());
+        } catch (WebApplicationException e) {
+            UIUtils.showError(e.getMessage());
+        }
+    }
+
+    public void setEditableTitle() {
+        title.setEditable(true);
+        title.setFocusTraversable(true);
+        title.requestFocus();
     }
 
     @FXML

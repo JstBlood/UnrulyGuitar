@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="cardBox" alignment="CENTER" focusTraversable="true" maxWidth="1.7976931348623157E308" prefHeight="65.0" prefWidth="360.0" spacing="5.0" styleClass="card-root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardCtrl">
+<VBox fx:id="cardBox" alignment="CENTER" focusTraversable="true" maxWidth="1.7976931348623157E308" prefHeight="65.0" prefWidth="360.0" spacing="5.0" styleClass="card-root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardCtrl">
     <stylesheets>
         <URL value="@/client/css/CardStyle.css" />
     </stylesheets>
@@ -26,7 +32,7 @@
          <children>
             <HBox maxHeight="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <ProgressBar fx:id="prog" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="14.0" prefWidth="242.0" progress="0.0" />
+                  <ProgressBar fx:id="progressBar" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="14.0" prefWidth="242.0" progress="0.0" />
                </children>
             </HBox>
             <HBox fx:id="tagContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="13.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
@@ -39,11 +45,6 @@
                   </ImageView>
                </children>
             </HBox>
-            <Label fx:id="title" text="Label" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
             <Label fx:id="progress" alignment="CENTER" focusTraversable="false" prefHeight="17.0" prefWidth="53.0" text="Progress: " textFill="WHITE" GridPane.rowIndex="1" />
             <HBox fx:id="editContainer" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="21.0" GridPane.columnIndex="3" GridPane.valignment="BOTTOM">
                <children>
@@ -63,6 +64,11 @@
                   </ImageView>
                </children>
             </HBox>
+            <TextField fx:id="title" focusTraversable="false" prefHeight="14.0" prefWidth="194.0" promptText="Add a title..." GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets left="20.0" right="20.0" />
+               </GridPane.margin>
+            </TextField>
          </children>
       </GridPane>
    </children>

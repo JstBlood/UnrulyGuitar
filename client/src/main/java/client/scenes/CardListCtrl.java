@@ -187,18 +187,11 @@ public class CardListCtrl implements Initializable {
                         card.index < cardList.cards.size() - 1) {
                     Card next = cardList.cards.get(card.index + 1);
                     server.updateCard(card.id, "swap", next.id);
-                } else if(e.getCode().equals(KeyCode.E)) {
-                    //TODO : edit title
-
-                } else if (e.getCode().equals(KeyCode.BACK_SPACE) || e.getCode().equals(KeyCode.DELETE)) {
-                    server.deleteCard(card.id);
-                } else if(e.getCode().equals(KeyCode.ENTER)) {
-                    mainCtrl.showCardDetails(card);
                 } else {
                     switch(e.getCode()) {
                         case E:
                             //TODO: New Scene where edit only title.
-//                            cardCtrl.setEditableTitle();
+                            cardCtrl.setEditableTitle();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);
