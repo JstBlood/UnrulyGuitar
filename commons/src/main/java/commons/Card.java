@@ -22,12 +22,13 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    public Long id;
     @Column
     public int index;
     @Column(nullable = false)
     public String title;
     public String description;
+    @Column
     public String file;
 
     @ManyToOne

@@ -297,7 +297,9 @@ public class CardDetailsCtrl {
         updatePreset();
         back();
     }
+    public void updateFile(){
 
+    }
     public void cancelCard() {
         back();
     }

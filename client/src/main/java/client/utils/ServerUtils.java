@@ -399,8 +399,26 @@ public class ServerUtils {
 
         return renamedFile;
     }
-    public void deleteFile(String fileName){
-        internalDeleteRequest("secure/" + store.accessStore().getUsername() + "/file/" + fileName);
+    public void deleteFile(String fileName) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Create the request headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the request entity with the headers
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Send the request to the server
+        String url = getServer() + "secure/" + store.accessStore().getUsername() + "/file/" + fileName;
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+
+        // Check the response status code and print the response body
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("File deleted: " + response.getBody());
+        } else {
+            System.out.println("Error deleting file: " + response.getStatusCode());
+        }
     }
 
     // END OF FILE RELATED FUNCTIONS

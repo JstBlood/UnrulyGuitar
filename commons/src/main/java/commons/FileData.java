@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Data
 public class FileData {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String type;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public long id;
+    public String name;
+    public String type;
     @Lob
     @Column(name="filedata")
     private byte[] fileData;
