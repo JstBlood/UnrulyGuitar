@@ -1,11 +1,11 @@
 * {
-    -fx-col-0: rgb(255, 0, 181);
-    -fx-col-1: rgb(5, 0, 255);
-    -fx-col-2: rgb(0, 255, 255);
+    -fx-col-0: rgb(50, 40, 23);
+    -fx-col-1: rgb(10, 30, 15);
+    -fx-col-2: rgb(50, 80, 40);
 }
 
 .root {
-    -fx-background-image: url('../images/bg_0.png');
+    -fx-background-color: #adaaaa;
     -fx-border-color: -fx-col-0;
     -fx-border-insets: 5px;
     -fx-border-width: 2px;
@@ -60,7 +60,15 @@
 .button-1 {
     -fx-font-size: 15px;
     -fx-text-fill: white;
-    -fx-background-color: -fx-col-0;
+    -fx-background-color: -fx-col-1;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
+}
+
+.button-2 {
+    -fx-font-size: 15px;
+    -fx-text-fill: white;
+    -fx-background-color: #adaaaa;
     -fx-background-radius: 10px;
     -fx-effect: dropshadow(three-pass-box, -fx-col-2, 5.5, 0.7, 0, 0);
 }
@@ -71,4 +79,8 @@
 
 .button-1:hover {
     -fx-effect: dropshadow(three-pass-box, white, 10, 0.7, 0, 0);
+}
+
+.card-addition {
+    -fx-prompt-text-fill: #666666;
 }

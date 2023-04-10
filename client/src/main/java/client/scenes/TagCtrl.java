@@ -24,7 +24,7 @@ public class TagCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     @FXML
-    private TextField name;
+    public TextField name;
     @FXML
     public Button delete;
 
@@ -83,8 +83,10 @@ public class TagCtrl implements Initializable {
         });
 
 
-        backgroundColor.setValue(Color.valueOf(tag.colors.background));
-        foregroundColor.setValue(Color.valueOf(tag.colors.foreground));
+        if(backgroundColor != null)
+            backgroundColor.setValue(Color.valueOf(tag.colors.background));
+        if(backgroundColor != null)
+            foregroundColor.setValue(Color.valueOf(tag.colors.foreground));
     }
 
     /**

@@ -1,19 +1,21 @@
 * {
-    -fx-col-0: rgb(255, 0, 181);
-    -fx-col-1: rgb(5, 0, 255);
-    -fx-col-2: rgb(0, 255, 255);
+    -fx-col-0: rgb(50, 40, 23);
+    -fx-col-1: rgb(10, 30, 15);
+    -fx-col-2: rgb(50, 80, 40);
 }
 
-.anchor-plane {
-    -fx-background-image: url('/client/images/bg_0.png');
-    -fx-background-color: black;
+.root {
+    -fx-background-color: #adaaaa;
+    -fx-border-color: -fx-col-0;
+    -fx-prompt-text-fill: #666666;
 }
+
 .title {
     -fx-background-color: transparent;
     -fx-alignment: CENTER;
+    -fx-fill: #131313;
 }
 .plane-0 {
-    -fx-background-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 2px;
 }
 
@@ -23,7 +25,6 @@
 
 .tag {
     -fx-background-radius: 20;
-    -fx-background-color: rgb(200, 200, 200);
     -fx-text-alignment: CENTER;
 }
 
@@ -58,6 +59,7 @@
 }
 
 .text-0 {
+    -fx-prompt-text-fill: #666666;
     -fx-text-fill: -fx-col-2;
     -fx-font-size: 24px;
 }

@@ -108,6 +108,15 @@ public class TagControllerTest {
     }
 
     @Test
+    public void cannotDeleteReferencing() {
+        repo.setFail();
+        repo.save(SOME_TAG);
+        var actual = sut.delete(SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(FAILED_DEPENDENCY, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotDeleteTagNoPassword() {
         auth.setFail();
         repo.save(SOME_TAG);

@@ -157,7 +157,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void cannotUpdateForeground() {
+    public void cannotUpdateForegroundBadPassword() {
         auth.setFail();
         repo.save(SOME_BOARD);
         var actual = sut.updateFore(SOME_BOARD.key, "a", "-1", "");
@@ -248,6 +248,25 @@ public class BoardControllerTest {
     public void cannotUpdateForegroundListEmpty() {
         repo.save(SOME_BOARD);
         var actual = sut.updateForeList(SOME_BOARD.key, "", "-1", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentBackgroundPreset() {
+        repo.save(SOME_BOARD);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, 1234567890L, "", "", "");
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNullNewVal() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, SOME_BOARD.colors.id, null, "", "");
 
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }

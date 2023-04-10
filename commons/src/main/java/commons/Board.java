@@ -80,9 +80,9 @@ public class Board {
         tags.add(newTag);
     }
 
-    public static String getDefaultForeground() { return "#bbbbbb"; }
+    public static String getDefaultForeground() { return "#1a4d1a"; }
 
-    public static String getDefaultBackground() { return "#131313"; }
+    public static String getDefaultBackground() { return "#adaaaa"; }
 
     @Override
     public boolean equals(Object obj) {

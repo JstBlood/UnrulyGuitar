@@ -136,7 +136,7 @@ public class MainCtrl {
 
     public void showCardDetails(Card card) {
         cardDetailsCtrl.prepare(card, false);
-        primaryStage.setTitle("Adding Card");
+        primaryStage.setTitle("Card Details");
         primaryStage.setScene(cardDetails);
     }
 

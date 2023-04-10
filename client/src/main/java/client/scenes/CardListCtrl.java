@@ -189,6 +189,7 @@ public class CardListCtrl implements Initializable {
                     switch(e.getCode()) {
                         case E:
                             cardCtrl.setEditableTitle();
+                            e.consume();
                             break;
                         case BACK_SPACE:
                             server.deleteCard(card.id);
@@ -212,11 +213,11 @@ public class CardListCtrl implements Initializable {
     }
 
     public void propagate(CardList newState) {
-        title.setStyle("-fx-text-fill: " + newState.parentBoard.cardListColors.foreground + ";");
-        mainContainer.setStyle("-fx-background-color: " + newState.parentBoard.cardListColors.background + ";");
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
         }
+        title.setStyle("-fx-text-fill: " + newState.parentBoard.cardListColors.foreground + ";");
+        mainContainer.setStyle("-fx-background-color: " + newState.parentBoard.cardListColors.background + ";");
 
         cardList = newState;
 
@@ -225,7 +226,7 @@ public class CardListCtrl implements Initializable {
 
     @FXML
     public void cardAdd() {
-        if(cardName.getText().equals("")) {
+        if(cardName.getText().trim().equals("")) {
             UIUtils.showError("Card name cannot be empty");
             return;
         }
