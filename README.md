@@ -30,7 +30,7 @@ preferences.
 
 ## How to run it
 
-First, run the server (server.main), next the application.
+First, run the server (server.main), next the application. To run the program as an admin, use password "xyz".
 
 ## How to contribute to it
 
