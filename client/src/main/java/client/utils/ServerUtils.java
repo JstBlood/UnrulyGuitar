@@ -30,6 +30,7 @@ import javax.websocket.WebSocketContainer;
 
 import client.scenes.MainCtrl;
 import commons.*;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -97,11 +98,16 @@ public class ServerUtils {
 
     private void internalDeleteRequest(String path) {
         try {
-            ClientBuilder.newClient(new ClientConfig())
+            var status = ClientBuilder.newClient(new ClientConfig())
                     .target(getServer()).path(path)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
-                    .delete();
+                    .delete().getStatus();
+
+            if(status == 403)
+                throw new ForbiddenException();
+            else if(status == 424)
+                throw new BadRequestException();
         } catch (ForbiddenException e) {
             UIUtils.showError("You cannot edit this board since its password protected and you have not" +
                     " entered a correct password.");
