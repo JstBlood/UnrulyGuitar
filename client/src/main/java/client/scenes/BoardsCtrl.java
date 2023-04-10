@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -38,6 +39,9 @@ public class BoardsCtrl {
     @FXML
     private Label listLabel;
 
+    @FXML
+    private Button shutdown;
+
     private final Random rand;
 
     @Inject
@@ -47,6 +51,16 @@ public class BoardsCtrl {
         this.rand = rand;
     }
 
+    @FXML
+    public void shutdown() {
+        mainCtrl.showLogon();
+        try {
+            server.shutdown();
+        } catch (Exception e) {
+
+        }
+    }
+
     public void prepare() {
         server.connect();
         server.registerForMessages("/topic/relist/", Board.class, q -> {
@@ -54,6 +68,11 @@ public class BoardsCtrl {
                 relist();
             });
         });
+
+        if(mainCtrl.accessStore().isAdmin())
+            shutdown.setVisible(true);
+        else
+            shutdown.setVisible(false);
 
         relist();
     }

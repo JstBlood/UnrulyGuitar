@@ -122,6 +122,12 @@ public class ServerUtils {
         }
     }
 
+    public void shutdown() {
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/shutdown",
+                new GenericType<>() {});
+    }
+
     // BOARD RELATED FUNCTIONS
 
     public List<Board> getBoards() {
@@ -380,7 +386,11 @@ public class ServerUtils {
     }
 
     public <T> void deregister() {
-        if(this.session != null)
-            session.disconnect();
+    	try {
+            if(this.session != null)
+                session.disconnect();
+        } catch (Exception e) {
+
+        }
     }
 }

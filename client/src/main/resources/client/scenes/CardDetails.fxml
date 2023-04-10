@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.InnerShadow?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #adaaaa; -fx-fit-to-height: true; -fx-fit-to-width: true;" styleClass="root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
+<ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #adaaaa; -fx-fit-to-height: true; -fx-fit-to-width: true;" styleClass="root" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardDetailsCtrl">
    <stylesheets>
       <URL value="@/client/css/AddCardStyle.css" />
    </stylesheets>
@@ -92,6 +82,7 @@
             </ScrollPane>
             <VBox fx:id="subtaskContainer" layoutX="5.0" layoutY="293.0" prefHeight="27.0" prefWidth="408.0" />
             <Button fx:id="cancel" layoutX="428.0" layoutY="291.0" mnemonicParsing="false" onAction="#cancelCard" prefHeight="25.0" prefWidth="65.0" styleClass="submit" text="Cancel" />
+            <Label fx:id="rolabel" layoutX="79.0" layoutY="50.0" text="Read Only!" textFill="RED" />
          </children>
       </AnchorPane>
    </content>
