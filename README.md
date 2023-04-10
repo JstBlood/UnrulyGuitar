@@ -1,10 +1,16 @@
-# Starting template
-
-This README will need to contain a description of your project, how to run it, how to set up the development environment, and who worked on it.
-This information can be added throughout the course, except for the names of the group members.
-Add your own name (do not add the names for others!) to the section below.
-
 ## Description of project
+
+    The program is a task organizer that allows users to create and manage tasks using 
+a visual interface. Users can create boards for different projects or categories, 
+and each board can contain multiple lists of tasks. Within each list, users can 
+create individual cards for specific tasks. Cards can themselves include details such and subtasks.
+
+The program also allows users to assign labels or tags to tasks, making it easy to filter 
+and search for specific tasks.
+
+The program's interface is designed to be intuitive and user-friendly, with drag-and-drop functionality that makes it
+easy to move tasks between lists. Users can also customize the program's appearance and layout to suit their 
+preferences.
  
 ## Group members
 
@@ -26,6 +32,10 @@ Add your own name (do not add the names for others!) to the section below.
 
 ## How to run it
 
+First, run the server (server.main), next the application.
+
 ## How to contribute to it
+
+Contribution can be done via the gitlab repository.
 
 ## Copyright / License (opt.)
