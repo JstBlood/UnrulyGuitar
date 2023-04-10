@@ -1,11 +1,9 @@
 ## Description of project
 
-    The program is a task organizer that allows users to create and manage tasks using 
-a visual interface. Users can create boards for different projects or categories, 
+The program is a task organizer that allows users to create and manage tasks using a visual interface. Users can create boards for different projects or categories, 
 and each board can contain multiple lists of tasks. Within each list, users can 
 create individual cards for specific tasks. Cards can themselves include details such and subtasks.
-
-The program also allows users to assign labels or tags to tasks, making it easy to filter 
+It also allows users to assign labels or tags to tasks, making it easy to filter 
 and search for specific tasks.
 
 The program's interface is designed to be intuitive and user-friendly, with drag-and-drop functionality that makes it
