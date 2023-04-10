@@ -415,9 +415,9 @@ public class ServerUtils {
 
         // Check the response status code and print the response body
         if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println("File deleted: " + response.getBody());
+            System.out.println(response.getBody());
         } else {
-            System.out.println("Error deleting file: " + response.getStatusCode());
+            System.out.println(response.getStatusCode());
         }
     }
 
