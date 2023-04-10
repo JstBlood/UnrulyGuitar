@@ -3,6 +3,7 @@ package client.scenes;
 import java.io.IOException;
 
 import client.utils.ServerUtils;
+import client.utils.UIUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.ColorPreset;
@@ -88,7 +89,14 @@ public class BoardSettingsCtrl {
                 newTagNode = tagLoader.load();
                 TagCtrl tagCtrl = tagLoader.getController();
                 tagCtrl.delete.setOnAction(event -> {
-                    server.deleteTag(tag.id);
+                    try {
+                        System.out.println("test");
+                        server.deleteTag(tag.id);
+                        System.out.println("test");
+                    } catch (Exception e) {
+                        System.out.println("well shit " + e.getMessage());
+                        UIUtils.showError("You cannot delete this tag since it is utilized somewhere else");
+                    }
                     server.forceRefresh(mainCtrl.getCurrentBoard().key);
                 });
             } catch (IOException e) {

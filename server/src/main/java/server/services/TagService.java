@@ -60,7 +60,11 @@ public class TagService implements StandardEntityService<Tag, Long> {
 
         Tag tag = optionalTag.get();
 
-        tagRepo.deleteById(id);
+        try {
+            tagRepo.deleteById(id);
+        } catch (Exception e) {
+            return HttpStatus.FAILED_DEPENDENCY;
+        }
 
         forceRefresh(tag);
 
