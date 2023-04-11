@@ -268,6 +268,8 @@ Filming part of the product pitch | 1h
 
 > Date | 2023-04-03 .. 2023-04-09
 > |-|-|
+> Mandatory meeting agenda | [Agenda](/docs/agendas/meeting_7.md)
+> Mandatory meeting minute taker notes | [Notes](/docs/minute_taker_notes/meeting_7_notes.md)
 
 Update the list of user stories and tasks, closing them if they have been completed. Create new user stories if deemed necessary. Split up user stories into tasks, and assign them.
 
@@ -280,6 +282,27 @@ User stories:
 - #57: "As a user I want to define font/background colors for each tag in tag management."
 - #71: "As an admin I want to change/remove passwords of password protected boards."
 - #72: "As an admin I want to delete password-protected boards."
+
+**Done:**
+Task/Person | Estimated time
+|-|-|
+**Mikolaj** | 
+Tag customisation | 2h
+Improved the Card and CardLists Scenes with Matiss | 4h
+Passwords are now remembered | 3h
+**Matiss** | 
+Finished back-end tests | 5h
+Improved the Card Scene | 30m
+**Vlad** |
+Made a documentation screen | 2h
+Implemented various shortcuts | 5h30m
+**Bogdan** |
+Made a media player, and allowed cards to have media attachments | 10h
+**Madeline** |
+Rewrote the HUE with Michael | 6h
+**Michael** |
+Rewrote the HUE with Madeline | 4h
+Updated the README.md | 1h
 
 ### Week 9
 
