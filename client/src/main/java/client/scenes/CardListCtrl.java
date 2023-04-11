@@ -187,14 +187,14 @@ public class CardListCtrl implements Initializable {
 
         cardNode.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) {
-                cardNode.setEffect(new Glow(1));
+                cardNode.setEffect(new Glow(0.2));
             } else {
                 cardNode.setEffect(null);
             }
         });
 
         cardNode.setOnMouseEntered(e -> {
-            cardNode.setEffect(new Glow(1));
+            cardNode.setEffect(new Glow(0.2));
             e.consume();
         });
         cardNode.setOnMouseExited(e -> {
