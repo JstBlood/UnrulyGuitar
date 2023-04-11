@@ -1213,7 +1213,7 @@ TeX}\@ACM@newfontsfalse}
   \global\@ACM@journal@bibstripfalse
 }
 \if@ACM@journal\else
-\acmConference[Heuristic Usability Evaluation]{}{Delft, The Netherlands}%
+\acmConference[HUE essay]{Group 22}{April 2023}{Delft, The Netherlands}
 \fi
 \def\acmBooktitle#1{\gdef\@acmBooktitle{#1}}
 \acmBooktitle{Proceedings of \acmConference@name

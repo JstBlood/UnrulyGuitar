@@ -32,6 +32,12 @@ public class CardController {
                                          @PathVariable(required = false) String password) {
         return ResponseEntity.status(cardService.updateTitle(id, newValue, username, password)).build();
     }
+    @PutMapping("/{id}/file")
+    public ResponseEntity<?> updateFile(@PathVariable long id,
+                                         @RequestBody String newValue, @PathVariable String username,
+                                         @PathVariable(required = false) String password) {
+        return ResponseEntity.status(cardService.updateFile(id, newValue, username, password)).build();
+    }
 
     @PutMapping("/{id}/preset")
     public ResponseEntity<?> updatePreset(@PathVariable long id,

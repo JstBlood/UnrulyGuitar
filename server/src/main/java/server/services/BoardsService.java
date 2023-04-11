@@ -35,7 +35,7 @@ public class BoardsService implements StandardEntityService<Board, String> {
     }
 
     public HttpStatus add(Board board, String username, String password) {
-        if(board == null || isNullOrEmpty(board.key)) {
+        if(board == null || isNullOrEmpty(board.key) || isNullOrEmpty(board.title)) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -179,12 +179,12 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         Board b = repo.findByKey(key);
 
-        if(colorRepo.findById(id).isEmpty())
+        if(colorRepo.findById(id) == null || colorRepo.findById(id).isEmpty())
             return HttpStatus.NOT_FOUND;
 
         ColorPreset preset = colorRepo.findById(id).get();
 
-        if(newValue.isEmpty()) {
+        if(newValue == null || newValue.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 
@@ -201,12 +201,13 @@ public class BoardsService implements StandardEntityService<Board, String> {
 
         Board b = repo.findByKey(key);
 
-        if(colorRepo.findById(id).isEmpty())
+        if(colorRepo.findById(id) == null || colorRepo.findById(id).isEmpty()) {
             return HttpStatus.NOT_FOUND;
+        }
 
         ColorPreset preset = colorRepo.findById(id).get();
 
-        if(newValue.isEmpty()) {
+        if(newValue == null || newValue.isEmpty()) {
             return HttpStatus.BAD_REQUEST;
         }
 

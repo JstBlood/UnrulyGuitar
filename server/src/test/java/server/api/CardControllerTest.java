@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import server.ConfigTest;
 import server.database.*;
-import server.services.TestAuthService;
+import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -127,6 +127,55 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotUpdatePresetBadId() {
+        var actual = sut.updatePreset(-1, 0, "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdatePresetNonexistentCard() {
+        var actual = sut.updatePreset(123567890, 0, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNonexistentPreset() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updatePreset(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void resetColors() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updatePreset(SOME_CARD.id, -1, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertEquals(2, repo.getCalled().stream().filter(x -> x.equals("saveAndFlush")).count());
+        Assertions.assertNull(SOME_CARD.colors);
+    }
+
+    @Test
+    public void updatePreset() {
+        repo.save(SOME_CARD);
+        colorRepo.save(SOME_PRESET);
+
+        var actual = sut.updatePreset(SOME_CARD.id, SOME_PRESET.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertEquals(2, repo.getCalled().stream().filter(x -> x.equals("saveAndFlush")).count());
+
+        Assertions.assertEquals(SOME_PRESET.id, SOME_CARD.colors.id);
+        Assertions.assertEquals(Board.getDefaultBackground(), SOME_CARD.colors.background);
+        Assertions.assertEquals(Board.getDefaultForeground(), SOME_CARD.colors.foreground);
+    }
+
+    @Test
     public void cannotDeleteInvalidPassword() {
         auth.setFail();
         repo.save(SOME_CARD);
@@ -158,6 +207,50 @@ public class CardControllerTest {
     }
 
     @Test
+    public void cannotUpdateDescBadId() {
+        var actual = sut.updateDescription(-1, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateDescNonexistentCard() {
+        var actual = sut.updateDescription(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void updateNullDesc() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updateDescription(SOME_CARD.id, null, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void updateEmptyDesc() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updateDescription(SOME_CARD.id, "", "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void updateDesc() {
+            repo.save(SOME_CARD);
+
+            var actual = sut.updateDescription(SOME_CARD.id, "Some new Description String", "", "");
+
+            Assertions.assertEquals(OK, actual.getStatusCode());
+            Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
     public void cannotUpdateInvalidPassword() {
         auth.setFail();
         repo.save(SOME_CARD);
@@ -186,6 +279,90 @@ public class CardControllerTest {
         var actual = sut.updateParent(SOME_CARD.id, 1234567890, "", "");
 
         Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddTagBadId() {
+        var actual = sut.updateAddTag(-1, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddTagNonexistentCard() {
+        var actual = sut.updateAddTag(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddNonexistentTag() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void addTag() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void cannotRemoveTagBadId() {
+        var actual = sut.updateRemoveTag(-1, "", "", "");
+
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotRemoveTagNonexistentCard() {
+        var actual = sut.updateRemoveTag(1234567890, "", "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotRemoveNonexistentTag() {
+        repo.save(SOME_CARD);
+
+        var actual = sut.updateRemoveTag(SOME_CARD.id, 1234567890, "", "");
+
+        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void removeTagNotOnCard() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+    }
+
+    @Test
+    public void removeTag() {
+        repo.save(SOME_CARD);
+        tagRepo.save(SOME_TAG);
+
+        var actual = sut.updateAddTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
+
+        actual = sut.updateRemoveTag(SOME_CARD.id, SOME_TAG.id, "", "");
+
+        Assertions.assertEquals(OK, actual.getStatusCode());
+        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
     }
 
     @Test
@@ -221,17 +398,6 @@ public class CardControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals("upup", SOME_CARD.description);
-        Assertions.assertEquals(OK, actual.getStatusCode());
-    }
-
-    @Test
-    public void updatePreset() {
-        repo.save(SOME_CARD);
-        colorRepo.save(SOME_PRESET);
-        var actual = sut.updatePreset(SOME_CARD.id, SOME_PRESET.id, "", "");
-
-        Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
-        Assertions.assertEquals(SOME_PRESET.id, SOME_CARD.colors.id);
         Assertions.assertEquals(OK, actual.getStatusCode());
     }
 
@@ -412,10 +578,9 @@ public class CardControllerTest {
     public void cannotUpdateAddTagNonExistent() {
         repo.save(SOME_CARD);
 
-        var actual = sut.updateAddTag(SOME_CARD.id, -2
-                , "", "");
+        var actual = sut.updateAddTag(SOME_CARD.id, -2, "", "");
 
-        Assertions.assertEquals(NOT_FOUND, actual.getStatusCode());
+        Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
     @Test

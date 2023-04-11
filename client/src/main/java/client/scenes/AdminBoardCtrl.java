@@ -32,12 +32,12 @@ public class AdminBoardCtrl implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.bid.setText(b.key);
+        this.bid.setText(b.title);
     }
 
     @FXML
     public void delete() {
-        server.deleteBoard(bid.getText());
+        server.deleteBoard(b.key);
         mainCtrl.showBoards();
     }
 }

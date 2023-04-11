@@ -1,12 +1,5 @@
 package client.scenes;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import javax.inject.Inject;
-
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
@@ -17,6 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
@@ -31,9 +31,13 @@ public class CardDetailsCtrl {
     @FXML
     private TextArea description;
     @FXML
+    private Label rolabel;
+    @FXML
     private ChoiceBox<String> presetChoice;
     @FXML
     private VBox subtaskContainer;
+    @FXML
+    private Button submit;
 
     /**
      * This controller shows the details of a card.
@@ -94,13 +98,6 @@ public class CardDetailsCtrl {
                 mainCtrl.showBoardOverview();
             });
         });
-
-        server.registerForMessages("/topic/board/" + card.parentCardList.parentBoard.key + "/deletion", Board.class,
-            q -> {
-                Platform.runLater(() -> {
-                    mainCtrl.showBoards();
-                });
-            });
     }
 
 
@@ -166,7 +163,7 @@ public class CardDetailsCtrl {
     }
 
     private void addTagsBarNode(Tag t) {
-        FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/Tag.fxml"));
+        FXMLLoader tagLoader = new FXMLLoader(getClass().getResource("/client/scenes/TagSmall.fxml"));
         tagLoader.setControllerFactory(c ->
                 new TagCtrl(this.server, this.mainCtrl, t)
         );
@@ -177,8 +174,7 @@ public class CardDetailsCtrl {
 
             Node finalNewTagNode = newTagNode;
 
-            tagCtrl.foregroundColor.setVisible(false);
-            tagCtrl.backgroundColor.setVisible(false);
+            tagCtrl.name.setEditable(false);
 
             tagCtrl.delete.setOnAction(e -> {
                 server.updateCard(card.id, "removeTag", t.id);
@@ -211,6 +207,7 @@ public class CardDetailsCtrl {
         if(onEnter) {
             r.setOnKeyPressed(e -> {
                 if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
+                    r.setStyle("-fx-text-fill: #131313;");
                     run.run();
                 }
             } );
@@ -218,6 +215,7 @@ public class CardDetailsCtrl {
 
         r.focusedProperty().addListener((o, oldV, newV) -> {
             if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
+                r.setStyle("-fx-text-fill: #131313;");
                 run.run();
             }
         });
@@ -227,8 +225,9 @@ public class CardDetailsCtrl {
      * Update the title.
      */
     private void updateTitle() {
-        title.setStyle("-fx-text-fill: white;");
+        title.setStyle("-fx-text-fill: #131313;");
         server.updateCard(card.id, "title", title.getText());
+        System.out.println("updating!");
     }
 
     /**
@@ -236,7 +235,12 @@ public class CardDetailsCtrl {
      */
     private void updateDescription() {
         description.setStyle("-fx-text-fill: black;");
-        server.updateCard(card.id, "description", description.getText());
+
+        if (description.getText() == null || description.getText().trim().isEmpty()) {
+            server.updateCard(card.id, "description", " ");
+        } else {
+            server.updateCard(card.id, "description", description.getText());
+        }
     }
 
     public void relink(Card newState) {
@@ -254,6 +258,15 @@ public class CardDetailsCtrl {
         relink(newState);
         card = newState;
 
+        if(!mainCtrl.accessStore().isAdmin()
+                && newState.parentCardList.parentBoard.isPasswordProtected
+                && mainCtrl.accessStore().getPassword() == null) {
+            rolabel.setVisible(true);
+            submit.setDisable(true);
+        } else {
+            rolabel.setVisible(false);
+            submit.setDisable(false);
+        }
         try {
             presetChoice.getItems().clear();
             presetChoice.getItems().add("[Default]");
@@ -269,7 +282,7 @@ public class CardDetailsCtrl {
                 }
             }
 
-            title.setStyle("-fx-text-fill: white;");
+            title.setStyle("-fx-text-fill: #131313;");
             description.setStyle("-fx-text-fill: black;");
             title.setText(newState.title);
             description.setText(newState.description);
@@ -287,8 +300,16 @@ public class CardDetailsCtrl {
      */
     public void submitCard() {
         // go back to the overview
-        updatePreset();
-        updatePreset();
+        try {
+            updatePreset();
+            updatePreset();
+        } catch (Exception e) {
+
+        } finally {
+            back();
+        }
+    }
+    public void cancelCard() {
         back();
     }
 
@@ -326,6 +347,10 @@ public class CardDetailsCtrl {
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    public void mediaPlayer() throws IOException {
+        mainCtrl.showMediaPlayer(card);
     }
 }
 

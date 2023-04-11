@@ -4,10 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
 
-import commons.Board;
-import commons.Card;
-import commons.CardList;
-import commons.ColorPreset;
+import commons.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,7 @@ import server.ConfigTest;
 import server.database.TestBoardsRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestUserRepository;
-import server.services.*;
+import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -26,7 +23,8 @@ public class BoardControllerTest {
 
     private final Board SOME_BOARD = new Board("key", "title");
     private final CardList SOME_CARDLIST = new CardList("title", SOME_BOARD);
-    private final Card SOME_CARD = new Card("title", "description", SOME_CARDLIST);
+    private final User SOME_USER = new User("test");
+    private final User SOME_USER2 = new User("test1");
 
     @Autowired
     private BoardsController sut;
@@ -47,11 +45,37 @@ public class BoardControllerTest {
         auth.setNoFail();
         SOME_BOARD.colors = new ColorPreset();
         SOME_BOARD.cardListColors = new ColorPreset();
+        SOME_USER.boards.clear();
+        SOME_USER2.boards.clear();
+        SOME_USER.boards.add(SOME_BOARD);
+        SOME_USER2.boards.add(SOME_BOARD);
     }
 
     @Test
     public void cannotAddNullBoard() {
         var actual = sut.add(null, "", "");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddBoardWithNoTitle() {
+        var temp = SOME_BOARD.title;
+        SOME_BOARD.title = "";
+
+        var actual = sut.add(SOME_BOARD, "", "");
+
+        SOME_BOARD.title = temp;
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddBoardWithNoKey() {
+        var temp = SOME_BOARD.key;
+        SOME_BOARD.key = "";
+
+        var actual = sut.add(SOME_BOARD, "", "");
+
+        SOME_BOARD.key = temp;
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -133,7 +157,7 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void cannotUpdateForeground() {
+    public void cannotUpdateForegroundBadPassword() {
         auth.setFail();
         repo.save(SOME_BOARD);
         var actual = sut.updateFore(SOME_BOARD.key, "a", "-1", "");
@@ -229,6 +253,25 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void cannotUpdateNonexistentBackgroundPreset() {
+        repo.save(SOME_BOARD);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, 1234567890L, "", "", "");
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateNullNewVal() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+
+        var actual = sut.updateBackPreset(SOME_BOARD.key, SOME_BOARD.colors.id, null, "", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
     public void updateBackgroundPreset() {
         repo.save(SOME_BOARD);
         colorRepo.save(SOME_BOARD.colors);
@@ -299,6 +342,44 @@ public class BoardControllerTest {
     }
 
     @Test
+    public void cannotUpdateForegroundPresetDoesntExist() {
+        repo.save(SOME_BOARD);
+        var actual = sut.updateForePreset(SOME_BOARD.key, -1L,
+                "a", "", "");
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateForegroundPresetEmpty() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+        var actual = sut.updateForePreset(SOME_BOARD.key, SOME_BOARD.colors.id,
+                "", "", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBackgroundPresetDoesntExist() {
+        repo.save(SOME_BOARD);
+        var actual = sut.updateBackPreset(SOME_BOARD.key, -1L,
+                "a", "", "");
+
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateBackgroundPresetEmpty() {
+        repo.save(SOME_BOARD);
+        colorRepo.save(SOME_BOARD.colors);
+        var actual = sut.updateBackPreset(SOME_BOARD.key, SOME_BOARD.colors.id,
+                "", "", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
     public void updateForegroundList() {
         repo.save(SOME_BOARD);
         var actual = sut.updateForeList(SOME_BOARD.key, "a", "-1", "");
@@ -336,10 +417,18 @@ public class BoardControllerTest {
     public void removePreset() {
         repo.save(SOME_BOARD);
         sut.addPreset(new ColorPreset(), "", SOME_BOARD.key, "");
-        var actual = sut.removePreset(SOME_BOARD.cardPresets.get(0).id
+
+        var second  = new ColorPreset();
+        second.id = 14;
+
+        sut.addPreset(second, "", SOME_BOARD.key, "");
+
+        Assertions.assertEquals(SOME_BOARD.cardPresets.size(), 2);
+
+        var actual = sut.removePreset(SOME_BOARD.cardPresets.get(1).id
                 , "", SOME_BOARD.key, "");
 
-        Assertions.assertEquals(SOME_BOARD.cardPresets.size(), 0);
+        Assertions.assertEquals(SOME_BOARD.cardPresets.size(), 1);
         assertEquals(OK, actual.getStatusCode());
     }
 
@@ -377,6 +466,14 @@ public class BoardControllerTest {
     @Test
     public void leaveBoard() {
         repo.save(SOME_BOARD);
+        uRepo.save(SOME_USER);
+        uRepo.save(SOME_USER2);
+        SOME_BOARD.users.add(SOME_USER);
+        SOME_BOARD.users.add(SOME_USER2);
+        auth.toRetieve = SOME_USER;
+        var second = new Board("asd", "ad");
+        second.id = 14;
+        SOME_USER.boards.add(second);
         sut.join(SOME_BOARD.key, "", "");
         var actual = sut.leave(SOME_BOARD.key, "", "");
 
@@ -402,6 +499,14 @@ public class BoardControllerTest {
     public void cannotUpdateToNullTitle() {
         repo.save(SOME_BOARD);
         var actual = sut.updateTitle(SOME_BOARD.key, null, "", "");
+
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateToEmptyTitle() {
+        repo.save(SOME_BOARD);
+        var actual = sut.updateTitle(SOME_BOARD.key, "", "", "");
 
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -439,8 +544,15 @@ public class BoardControllerTest {
 
     @Test
     public void deleteBoard() {
+        uRepo.save(SOME_USER);
+        uRepo.save(SOME_USER2);
         repo.save(SOME_BOARD);
+        SOME_BOARD.users.add(SOME_USER);
+        SOME_BOARD.users.add(SOME_USER2);
         var actual = sut.delete(SOME_BOARD.key, "", "");
+
+
+        SOME_BOARD.users.clear();
 
         assertEquals(OK, actual.getStatusCode());
         Assertions.assertTrue(repo.getCalled().contains("delete"));

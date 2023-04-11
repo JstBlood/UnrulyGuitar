@@ -15,8 +15,32 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import client.scenes.MainCtrl;
+import commons.*;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import javax.inject.Inject;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
@@ -24,25 +48,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import javax.inject.Inject;
-import javax.websocket.ContainerProvider;
-import javax.websocket.WebSocketContainer;
 
-import client.scenes.MainCtrl;
-import commons.*;
-import jakarta.ws.rs.ForbiddenException;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
-import org.glassfish.jersey.client.ClientConfig;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompFrameHandler;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
@@ -97,11 +104,16 @@ public class ServerUtils {
 
     private void internalDeleteRequest(String path) {
         try {
-            ClientBuilder.newClient(new ClientConfig())
+            var status = ClientBuilder.newClient(new ClientConfig())
                     .target(getServer()).path(path)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
-                    .delete();
+                    .delete().getStatus();
+
+            if(status == 403)
+                throw new ForbiddenException();
+            else if(status == 424)
+                throw new BadRequestException();
         } catch (ForbiddenException e) {
             UIUtils.showError("You cannot edit this board since its password protected and you have not" +
                     " entered a correct password.");
@@ -120,6 +132,12 @@ public class ServerUtils {
                     " entered a correct password.");
             return null;
         }
+    }
+
+    public void shutdown() {
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/shutdown",
+                new GenericType<>() {});
     }
 
     // BOARD RELATED FUNCTIONS
@@ -340,6 +358,88 @@ public class ServerUtils {
 
     // END OF TAG RELATED FUNCTIONS
 
+    // START OF FILE RELATED FUNCTIONS
+
+    public void uploadFile(File file) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Convert the file to a multipart file
+        FileSystemResource resource = new FileSystemResource(file);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", resource);
+
+        // Create the request headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // Create the request entity with the headers and body
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // Send the request to the server
+        String url = getServer()+ "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword() +"/file/add";
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
+        // Check the response status code and print the response body
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
+            System.out.println(response.getBody());
+        } else {
+            System.out.println("Error uploading file: " + response.getStatusCode());
+        }
+    }
+
+    public File getFile(String fileName) throws IOException {
+        String url = getServer()+ "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword()+ "/file/" + fileName;
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
+        InputStream inputStream = new ByteArrayInputStream(response.getBody());
+
+        // Get the extension of the original file
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        File file = File.createTempFile("temp", extension);
+
+        OutputStream outputStream = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.close();
+        inputStream.close();
+
+        // Rename the temporary file to match the original file name
+        File renamedFile = new File(file.getParentFile(), fileName);
+        file.renameTo(renamedFile);
+
+        return renamedFile;
+    }
+
+    public void deleteFile(String fileName) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Create the request headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create the request entity with the headers
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        // Send the request to the server
+        String url = getServer() + "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword()+ "/file/" + fileName;
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+
+        // Check the response status code and print the response body
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
+            System.out.println(response.getStatusCode());
+        } else {
+            System.out.println("Error deleting file: "+response.getStatusCode());
+        }
+    }
+
+    // END OF FILE RELATED FUNCTIONS
+
     public void forceRefresh(String key) {
         internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/force_refresh/" + key,
@@ -380,7 +480,11 @@ public class ServerUtils {
     }
 
     public <T> void deregister() {
-        if(this.session != null)
-            session.disconnect();
+    	try {
+            if(this.session != null)
+                session.disconnect();
+        } catch (Exception e) {
+
+        }
     }
 }
