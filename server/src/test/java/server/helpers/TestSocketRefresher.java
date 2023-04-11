@@ -1,9 +1,10 @@
-package server.services;
+package server.helpers;
 
 import commons.Board;
 import commons.Card;
 import commons.CardList;
 import org.springframework.stereotype.Service;
+import server.services.SocketRefreshService;
 
 @Service
 public class TestSocketRefresher extends SocketRefreshService {

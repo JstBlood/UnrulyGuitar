@@ -31,7 +31,7 @@ public class AdminController {
     }
 
     @GetMapping("/shutdown")
-    public ResponseEntity<?> add(@PathVariable String username,
+    public ResponseEntity<?> shutdown(@PathVariable String username,
                                  @PathVariable(required = false) String password) {
         if(username.endsWith("_admin") && pwd.checkAdminPass(password)) {
             System.exit(0);
