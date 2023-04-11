@@ -35,6 +35,7 @@ public class StorageService {
 
     }
 
+
     public HttpStatus deleteFile(String fileName) {
         Optional<FileData> dbFileData = repository.findByName(fileName);
         if (dbFileData.isPresent()) {
