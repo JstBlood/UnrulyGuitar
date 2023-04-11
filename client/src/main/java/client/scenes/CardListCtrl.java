@@ -44,14 +44,12 @@ public class CardListCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     public CardList cardList;
-    private List<CardCtrl> children;
 
     @Inject
     public CardListCtrl(ServerUtils server, MainCtrl mainCtrl, CardList cardList) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.cardList = cardList;
-        children = new ArrayList<>();
     }
 
 

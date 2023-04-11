@@ -15,6 +15,20 @@
  */
 package client.utils;
 
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import javax.inject.Inject;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
+
 import client.scenes.MainCtrl;
 import commons.*;
 import jakarta.ws.rs.BadRequestException;
@@ -36,20 +50,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
-import javax.inject.Inject;
-import javax.websocket.ContainerProvider;
-import javax.websocket.WebSocketContainer;
-import java.io.*;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
-
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
 
@@ -479,12 +479,11 @@ public class ServerUtils {
         });
     }
 
-    public <T> void deregister() {
+    public void deregister() {
     	try {
             if(this.session != null)
                 session.disconnect();
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
     }
 }

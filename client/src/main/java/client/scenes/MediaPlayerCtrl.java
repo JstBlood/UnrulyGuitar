@@ -1,5 +1,9 @@
 package client.scenes;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import commons.Card;
 import javafx.fxml.FXML;
@@ -15,31 +19,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.inject.Inject;
-import java.io.*;
-import java.net.MalformedURLException;
-
 public class MediaPlayerCtrl {
 
     @FXML
     private Button playButton;
     @FXML
-    private Button saveButton;
-    @FXML
-    private Button openButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button backButton;
-
-    @FXML
     private Slider timeSlider;
-
     @FXML
     private MediaView mediaView;
     @FXML
     private AnchorPane anchorPane;
-
     @FXML
     private ImageView imageView;
 

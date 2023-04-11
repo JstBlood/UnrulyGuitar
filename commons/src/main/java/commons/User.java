@@ -1,16 +1,16 @@
 package commons;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import javax.persistence.*;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity(name = "User")
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
@@ -23,8 +23,6 @@ public class User {
     @Column(nullable = false)
     public String username;
     public int index;
-
-    public String passwd = null;
 
     @ManyToMany
     @JoinTable(name = "user_board",

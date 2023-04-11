@@ -1,5 +1,12 @@
 package client.scenes;
 
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
+
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
@@ -10,13 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
@@ -167,12 +167,10 @@ public class CardDetailsCtrl {
         tagLoader.setControllerFactory(c ->
                 new TagCtrl(this.server, this.mainCtrl, t)
         );
-        Node newTagNode = null;
+        Node newTagNode;
         try {
             newTagNode = tagLoader.load();
             TagCtrl tagCtrl = tagLoader.getController();
-
-            Node finalNewTagNode = newTagNode;
 
             tagCtrl.name.setEditable(false);
 
@@ -192,7 +190,7 @@ public class CardDetailsCtrl {
      * @param r The control to attach the events to.
      * @param run The function to run on update.
      * @param ff The field of the card to compare the data to.
-     * @param onEnter Where or not to attach a event on pressing the enter key.
+     * @param onEnter Where or not to attach an event on pressing the enter key.
      */
     private void addUpdateHandler(TextInputControl r, Runnable run, String ff, boolean onEnter) {
         r.textProperty().addListener((o, oldV, newV) -> {
@@ -200,7 +198,7 @@ public class CardDetailsCtrl {
                 if (!Objects.equals(card.getClass().getField(ff).get(card), newV)) {
                     r.setStyle("-fx-text-fill: red;");
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         });
 
@@ -227,7 +225,6 @@ public class CardDetailsCtrl {
     private void updateTitle() {
         title.setStyle("-fx-text-fill: #131313;");
         server.updateCard(card.id, "title", title.getText());
-        System.out.println("updating!");
     }
 
     /**
@@ -303,8 +300,7 @@ public class CardDetailsCtrl {
         try {
             updatePreset();
             updatePreset();
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         } finally {
             back();
         }

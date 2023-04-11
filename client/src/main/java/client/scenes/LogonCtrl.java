@@ -15,14 +15,16 @@
  */
 package client.scenes;
 
+import java.util.Objects;
+
 import client.utils.ServerUtils;
 import client.utils.UIUtils;
 import com.google.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 
@@ -46,9 +48,6 @@ public class LogonCtrl {
     private TextField username;
 
     @FXML
-    private Button submit;
-
-    @FXML
     private CheckBox adminChk;
 
     @FXML
@@ -66,10 +65,7 @@ public class LogonCtrl {
     }
 
     public void unveilAdmin() {
-        if(adminChk.isSelected())
-            admin.setDisable(false);
-        else
-            admin.setDisable(true);
+        admin.setDisable(!adminChk.isSelected());
     }
 
     public void tryLogon() {
@@ -113,12 +109,8 @@ public class LogonCtrl {
     public void keyPressedIP(KeyEvent e) {
 
         if (!adminChk.isSelected()) {
-            switch (e.getCode()) {
-                case ENTER:
-                    tryLogon();
-                    break;
-                default:
-                    break;
+            if (Objects.requireNonNull(e.getCode()) == KeyCode.ENTER) {
+                tryLogon();
             }
         }
 
@@ -127,12 +119,8 @@ public class LogonCtrl {
     public void keyPressedAdmin(KeyEvent e) {
 
         if (adminChk.isSelected()) {
-            switch (e.getCode()) {
-                case ENTER:
-                    tryLogon();
-                    break;
-                default:
-                    break;
+            if (Objects.requireNonNull(e.getCode()) == KeyCode.ENTER) {
+                tryLogon();
             }
         }
 
