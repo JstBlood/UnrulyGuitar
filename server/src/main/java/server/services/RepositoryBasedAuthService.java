@@ -17,8 +17,11 @@ public class RepositoryBasedAuthService implements AuthenticationService {
     }
 
     public User retriveUser(String username) {
-        if(userRepo.findByUsername(username) == null)
-            return new User(username);
+        if(userRepo.findByUsername(username) == null) {
+            var that = new User(username);
+            userRepo.saveAndFlush(that);
+            return that;
+        }
 
         return userRepo.findByUsername(username);
     }

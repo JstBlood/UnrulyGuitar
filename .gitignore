@@ -50,3 +50,6 @@ out/
 *.ist
 *.glo
 *.glg
+
+### Passwords ###
+*.bin
