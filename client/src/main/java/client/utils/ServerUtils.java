@@ -381,7 +381,7 @@ public class ServerUtils {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         // Check the response status code and print the response body
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
             System.out.println(response.getBody());
         } else {
             System.out.println("Error uploading file: " + response.getStatusCode());
@@ -431,10 +431,10 @@ public class ServerUtils {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
 
         // Check the response status code and print the response body
-        if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println(response.getBody());
-        } else {
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
             System.out.println(response.getStatusCode());
+        } else {
+            System.out.println("Error deleting file: "+response.getStatusCode());
         }
     }
 
