@@ -225,7 +225,6 @@ public class CardDetailsCtrl {
     private void updateTitle() {
         title.setStyle("-fx-text-fill: #131313;");
         server.updateCard(card.id, "title", title.getText());
-        System.out.println("updating!");
     }
 
     /**

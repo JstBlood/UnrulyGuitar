@@ -137,7 +137,6 @@ public class BoardsCtrl {
 
         mainCtrl.setupBoardOverview(server.addBoard(created));
         mainCtrl.showBoardOverview();
-        System.out.println("[DEBUG] Received board: " + created);
     }
 
     public void clearFields() {
