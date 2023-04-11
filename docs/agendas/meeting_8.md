@@ -45,11 +45,10 @@ and the HUE and hear what the TA thinks about it.
 ---
 
 - ***DEADLINE THIS EVENING 23:59!***
-- Move logic to server side?
+- Media branch discussion
 - Help with dependency injection for tests
 - Questions about the Oral Examination
 - Questions about the Teamwork Self-Reflection
-  - Reference teamwork values and stuff from the material on course share for the self reflection
 - Questions about the BuddyCheck
 
 ## Question round for coworkers and for the TA + Closing
