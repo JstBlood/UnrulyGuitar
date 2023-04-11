@@ -51,6 +51,13 @@ public class CardTest {
     }
 
     @Test
+    public void setFile() {
+        var c = new Card("blabla", "", SOME_CARDLIST);
+        c.setFile("img12");
+        assertEquals("img12", c.file);
+    }
+
+    @Test
     public void removeTag() {
         var c = new Card("blabla", "", SOME_CARDLIST);
         var t1 = new Tag();

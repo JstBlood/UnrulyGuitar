@@ -1,5 +1,11 @@
 package server.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
 import commons.FileData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,12 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import server.database.StorageRepository;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 @Service
 public class StorageService {
@@ -49,7 +49,7 @@ public class StorageService {
     public String getType(String fileName){
         Optional<FileData> dbFileData = repository.findByName(fileName);
         if (dbFileData.isPresent()) {
-            return dbFileData.get().getType();
+            return dbFileData.get().type;
         } else {
             return "File not found: " + fileName;
         }

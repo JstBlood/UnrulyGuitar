@@ -1,8 +1,8 @@
 package commons;
 
-import lombok.Data;
-
 import javax.persistence.*;
+
+import lombok.Data;
 
 @Entity
 @Table(name="FileData")
@@ -16,7 +16,10 @@ public class FileData {
     @Lob
     @Column(name="filedata")
     private byte[] fileData;
-    public FileData() {}
+
+    @SuppressWarnings("unused")
+    protected FileData() {}
+
     public FileData(String name, String type, byte[] fileData) {
         this.name = name;
         this.type = type;
@@ -24,16 +27,5 @@ public class FileData {
     }
     public byte[] getFileData() {
         return fileData;
-    }
-
-    public String getType() {
-        return type;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public Long getId() {
-        return id;
     }
 }
