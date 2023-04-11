@@ -86,6 +86,15 @@ public class TestUserRepository implements UserRepository {
     @Override
     public <S extends User> S saveAndFlush(S entity) {
         call("saveAndFlush");
+
+        for(int i =0; i < users.size(); i++) {
+            if(users.get(i).id == entity.id) {
+                users.set(i, entity);
+                return entity;
+            }
+        }
+
+        users.add(entity);
         return null;
     }
 
