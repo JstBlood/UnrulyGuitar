@@ -15,16 +15,16 @@
  */
 package client;
 
-import static com.google.inject.Guice.createInjector;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import client.scenes.*;
 import client.shared.CredentialsStore;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
 
@@ -47,6 +47,8 @@ public class Main extends Application {
                 "CardDetails.fxml");
         var boardSettings = FXML.load(BoardSettingsCtrl.class, "client", "scenes",
                 "BoardSettings.fxml");
+        var mediaPlayer = FXML.load(MediaPlayerCtrl.class, "client", "scenes",
+                "MediaPlayer.fxml");
         var locker = FXML.load(PasswordCtrl.class, "client", "scenes",
                 "PasswordEntry.fxml");
         var helpScreen = FXML.load(HelpScreenCtrl.class, "client", "scenes", "HelpScreen.fxml");
@@ -63,6 +65,7 @@ public class Main extends Application {
                 addCardList,
                 cardDetails,
                 boardSettings,
+                mediaPlayer,
                 locker,
                 helpScreen,
                 tagsPopup,

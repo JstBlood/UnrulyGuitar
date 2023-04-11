@@ -1,12 +1,5 @@
 package client.scenes;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import javax.inject.Inject;
-
 import client.utils.ServerUtils;
 import commons.*;
 import javafx.application.Platform;
@@ -17,6 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 public class CardDetailsCtrl {
     private final ServerUtils server;
@@ -309,7 +309,6 @@ public class CardDetailsCtrl {
             back();
         }
     }
-
     public void cancelCard() {
         back();
     }
@@ -348,6 +347,10 @@ public class CardDetailsCtrl {
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    public void mediaPlayer() throws IOException {
+        mainCtrl.showMediaPlayer(card);
     }
 }
 

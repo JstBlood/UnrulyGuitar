@@ -24,7 +24,7 @@ public class CardCtrlTest {
 
     @Test
     public void testDelete() {
-        card.id = 1;
+        card.id = Long.valueOf(1);
         cardCtrl.delete();
     }
 }

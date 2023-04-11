@@ -72,8 +72,8 @@
                   <Insets left="20.0" />
                </BorderPane.margin>
             </ImageView>
-            <Label layoutX="345.0" layoutY="266.0" text="Color Preset:" textFill="WHITE" />
-            <ChoiceBox fx:id="presetChoice" layoutX="428.0" layoutY="259.0" prefWidth="150.0" />
+            <Label layoutX="298.0" layoutY="264.0" text="Color Preset:" textFill="WHITE" />
+            <ChoiceBox fx:id="presetChoice" layoutX="370.0" layoutY="259.0" prefWidth="150.0" />
             <MenuButton fx:id="tagsMenu" layoutX="14.0" layoutY="78.0" mnemonicParsing="false" text="Add tag" />
             <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="105.0" layoutY="73.0" prefHeight="53.0" prefWidth="480.0" vbarPolicy="NEVER">
                <content>
@@ -83,6 +83,7 @@
             <VBox fx:id="subtaskContainer" layoutX="5.0" layoutY="293.0" prefHeight="27.0" prefWidth="408.0" />
             <Button fx:id="cancel" layoutX="428.0" layoutY="291.0" mnemonicParsing="false" onAction="#cancelCard" prefHeight="25.0" prefWidth="65.0" styleClass="submit" text="Cancel" />
             <Label fx:id="rolabel" layoutX="79.0" layoutY="50.0" text="Read Only!" textFill="RED" />
+            <Button disable="true" layoutX="521.0" layoutY="259.0" mnemonicParsing="false" onAction="#mediaPlayer" text="Attachment" />
          </children>
       </AnchorPane>
    </content>

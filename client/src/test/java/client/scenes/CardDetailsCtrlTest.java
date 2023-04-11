@@ -1,7 +1,5 @@
 package client.scenes;
 
-import java.util.ArrayList;
-
 import client.utils.ServerUtils;
 import commons.Board;
 import commons.Card;
@@ -10,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
 
 public class CardDetailsCtrlTest {
     @Mock
@@ -32,7 +32,7 @@ public class CardDetailsCtrlTest {
         cardList.parentBoard = board;
         cardList.id = 1;
         card.parentCardList = cardList;
-        card.id = 1;
+        card.id = Long.valueOf(1);
         cardDetailsCtrl.setCard(card);
     }
 
