@@ -100,7 +100,7 @@ public class CardListCtrl implements Initializable {
                     e.getDragboard().hasString()) {
 
                 this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, " +
-                        "rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
+                        "rgba(0, 0, 0, 0.7), 5, 0.4, 0, 0)");
 
             }
 
