@@ -98,7 +98,7 @@ public class CardListCtrl implements Initializable {
                     e.getDragboard().hasString()) {
 
                 this.mainContainer.setStyle("-fx-effect: dropshadow(three-pass-box, " +
-                        "rgba(255, 255, 255, 0.7), 5, 0.4, 0, 0)");
+                        "rgba(0, 0, 0, 0.7), 5, 0.4, 0, 0)");
 
             }
 
@@ -185,14 +185,14 @@ public class CardListCtrl implements Initializable {
 
         cardNode.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) {
-                cardNode.setEffect(new Glow(1));
+                cardNode.setEffect(new Glow(0.2));
             } else {
                 cardNode.setEffect(null);
             }
         });
 
         cardNode.setOnMouseEntered(e -> {
-            cardNode.setEffect(new Glow(1));
+            cardNode.setEffect(new Glow(0.2));
             e.consume();
         });
         cardNode.setOnMouseExited(e -> {
