@@ -185,6 +185,9 @@ public class MainCtrl {
         }
     }
 
+    /**
+     * removes password from a board
+     */
     public void removePassword() {
         if(accessStore().isAdmin())
             return;
@@ -194,15 +197,25 @@ public class MainCtrl {
         silenceFilesystemErrors();
     }
 
+    /**
+     * used to access the colour presets
+     * @return Hashset presets
+     */
     public HashSet<Long> accessUsedPresets() {
         return usedPresets;
     }
 
+    /**
+     * shows the Logging in screen
+     */
     public void showLogon() {
         primaryStage.setTitle("Server Connection");
         primaryStage.setScene(logon);
     }
 
+    /**
+     * shows the "board picking" screen
+     */
     public void showBoards() {
         boardsCtrl.prepare();
         primaryStage.setTitle("Pick a board");
@@ -210,12 +223,19 @@ public class MainCtrl {
         primaryStage.show();
     }
 
+    /**
+     * shows details of a card
+     * @param card
+     */
     public void showCardDetails(Card card) {
         cardDetailsCtrl.prepare(card, false);
         primaryStage.setTitle("Card Details");
         primaryStage.setScene(cardDetails);
     }
 
+    /**
+     * shows the overview of a board
+     */
     public void showBoardOverview() {
         if(!accessStore().isAdmin() && passwordStore.containsKey(getCurrentBoard().key)) {
             accessStore().setPassword(
@@ -228,6 +248,9 @@ public class MainCtrl {
         primaryStage.setScene(boardOverview);
     }
 
+    /**
+     * shows the add list button
+     */
     public void showAddCardList() {
         primaryStage.setTitle("Add a new List");
         primaryStage.setScene(addCardList);
