@@ -85,6 +85,16 @@ public class TestBoardsRepository implements BoardRepository {
     @Override
     public <S extends Board> S saveAndFlush(S entity) {
         call("saveAndFlush");
+
+        for(int i = 0; i < boardList.size(); i++) {
+            if(boardList.get(i).key == entity.key) {
+                boardList.set(i, entity);
+                return entity;
+            }
+        }
+
+        boardList.add(entity);
+
         return entity;
     }
 

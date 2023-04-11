@@ -86,12 +86,20 @@ public class TestColorPresetRepository implements ColorPresetRepository {
     @Override
     public <S extends ColorPreset> S saveAndFlush(S entity) {
         calledMethods.add("saveAndFlush");
+
+        for(int i = 0; i < presets.size(); i++) {
+            if(presets.get(i).id == entity.id) {
+                presets.set(i, entity);
+                return entity;
+            }
+        }
+
+        presets.add(entity);
         return entity;
     }
 
     @Override
     public <S extends ColorPreset> List<S> saveAllAndFlush(Iterable<S> entities) {
-        // TODO Auto-generated method stub
         return null;
     }
 

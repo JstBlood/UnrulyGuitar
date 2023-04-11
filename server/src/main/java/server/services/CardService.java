@@ -78,6 +78,9 @@ public class CardService implements StandardEntityService<Card, Long> {
         if (!prepare(id, username, password).equals(HttpStatus.OK))
             return prepare(id, username, password);
 
+        if(cardRepo.findById(id).isEmpty())
+            return HttpStatus.NOT_FOUND;
+
         Card card = cardRepo.findById(id).get();
 
         if(newId == -1) {

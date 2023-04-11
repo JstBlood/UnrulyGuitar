@@ -86,6 +86,15 @@ public class TestCardListRepository implements CardListRepository {
     @Override
     public <S extends CardList> S saveAndFlush(S entity) {
         calledMethods.add("saveAndFlush");
+
+        for(int i = 0; i < cardLists.size(); i++) {
+            if(cardLists.get(i).id == entity.id) {
+                cardLists.set(i, entity);
+                return entity;
+            }
+        }
+
+        cardLists.add(entity);
         return entity;
     }
 

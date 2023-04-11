@@ -17,6 +17,10 @@ public class TestAuthService extends RepositoryBasedAuthService {
         doFail = true;
     }
 
+    public void setRetrive(User newRetival) {
+        toRetieve = newRetival;
+    }
+
     public void setNoFail() {
         doFail = false;
     }
