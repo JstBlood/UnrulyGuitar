@@ -30,7 +30,19 @@ preferences.
 
 ## How to run it
 
-First, run the server (server.main), next the application. To run the program as an admin, use password "xyz".
+Start by initializing the server:
+```
+./gradlew bootRun
+```
+
+Then run the client and connect to the servers' ip (the default port is 8080):
+```
+./gradlew run
+```
+
+To login as an administrator, use the hardcoded password: "xyz".
+
+__**If running this from InteliJ please make sure to read the `README.md` in `client/`**__
 
 ## How to contribute to it
 
