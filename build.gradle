@@ -1,5 +1,5 @@
 plugins {
-    id 'org.kordamp.gradle.jacoco' version '0.49.0'
+	id 'org.kordamp.gradle.jacoco' version '0.49.0'
 }
 
 allprojects {
@@ -17,6 +17,7 @@ subprojects {
 	apply plugin: 'java'
 	apply plugin: 'checkstyle'
 	apply plugin: 'jacoco'
+	apply plugin: 'application'
 	
 	
 	group = 'oopp'

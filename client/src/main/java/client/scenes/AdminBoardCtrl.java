@@ -32,7 +32,7 @@ public class AdminBoardCtrl implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.bid.setText(b.key);
+        this.bid.setText(b.title);
     }
 
     @FXML
