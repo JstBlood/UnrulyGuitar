@@ -376,7 +376,8 @@ public class ServerUtils {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         // Send the request to the server
-        String url = getServer()+ "secure/" + store.accessStore().getUsername() + "/file/add";
+        String url = getServer()+ "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword() +"/file/add";
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         // Check the response status code and print the response body
@@ -386,8 +387,10 @@ public class ServerUtils {
             System.out.println("Error uploading file: " + response.getStatusCode());
         }
     }
+
     public File getFile(String fileName) throws IOException {
-        String url = getServer()+ "secure/" + store.accessStore().getUsername() + "/file/" + fileName;
+        String url = getServer()+ "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword()+ "/file/" + fileName;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
         InputStream inputStream = new ByteArrayInputStream(response.getBody());
@@ -411,6 +414,7 @@ public class ServerUtils {
 
         return renamedFile;
     }
+
     public void deleteFile(String fileName) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -422,7 +426,8 @@ public class ServerUtils {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         // Send the request to the server
-        String url = getServer() + "secure/" + store.accessStore().getUsername() + "/file/" + fileName;
+        String url = getServer() + "secure/" + store.accessStore().getUsername() +
+                store.accessStore().getPassword()+ "/file/" + fileName;
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
 
         // Check the response status code and print the response body
@@ -434,6 +439,7 @@ public class ServerUtils {
     }
 
     // END OF FILE RELATED FUNCTIONS
+
     public void forceRefresh(String key) {
         internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
                         store.accessStore().getPassword() + "/boards/force_refresh/" + key,

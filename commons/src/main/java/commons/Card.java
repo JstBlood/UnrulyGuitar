@@ -77,13 +77,6 @@ public class Card {
     }
     public void setFile(String file){this.file=file;}
 
-    public String getFile() {
-        return file;
-    }
-
-    public String getId() {
-        return String.valueOf(id);
-    }
 
     public void removeTag(Tag tag) {
         Iterator<Tag> it = tags.iterator();

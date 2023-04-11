@@ -16,13 +16,21 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.MalformedURLException;
 
 public class MediaPlayerCtrl {
 
     @FXML
     private Button playButton;
+    @FXML
+    private Button saveButton;
+    @FXML
+    private Button openButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button backButton;
 
     @FXML
     private Slider timeSlider;
@@ -51,26 +59,25 @@ public class MediaPlayerCtrl {
     }
     public void initialize(Card c) throws IOException {
         this.card=c;
+        setColors();
         // Disable buttons until a media file is loaded
+
         playButton.setDisable(true);
         playButton.setVisible(false);
         timeSlider.setDisable(true);
         timeSlider.setVisible(false);
-        mediaView.fitWidthProperty().bind(anchorPane.widthProperty());
-        mediaView.fitHeightProperty().bind(anchorPane.heightProperty());
-        imageView.fitWidthProperty().bind(anchorPane.widthProperty());
-        imageView.fitHeightProperty().bind(anchorPane.heightProperty());
-        if(card.getFile()!=null)
+
+        if(card.file!=null)
         {
-            if(!card.getFile().equals("nope"))
+            if(!card.file.equals("nope"))
             {
-                this.file=server.getFile(card.getFile());
+                this.file=server.getFile(card.file);
                 openFile(file);
             }
         } else card.setFile("nope");
     }
     @FXML
-    private void handleOpenFile() {
+    private void handleOpenFile() throws MalformedURLException {
         // Create a file chooser dialog and set the initial directory
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -82,57 +89,136 @@ public class MediaPlayerCtrl {
         Stage stage = (Stage) mediaView.getScene().getWindow();
         openFile(fileChooser.showOpenDialog(stage));
     }
-    private void openFile(File file){
+    private void openFile(File file) throws MalformedURLException {
         if (file != null) {
             this.file=file;
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            }
             // Check if the selected file is a media file or an image
             String filename = file.getName();
             String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
             if (extension.equals("jpg") || extension.equals("png")) {
                 // Display the selected image in the image view
                 disableVideo();
+
                 imageView.setImage(new Image(file.toURI().toString()));
+
+                imageSetup();
             } else {
                 // Create a media player and set it to the media view
                 disableImage();
-                Media media = new Media(file.toURI().toString());
+
+                Media media = new Media(file.toURI().toURL().toString());
                 mediaPlayer = new MediaPlayer(media);
+
                 mediaView.setMediaPlayer(mediaPlayer);
+
+                videoSetup();
                 // Bind the time slider to the media player's current time
                 timeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
                     if (timeSlider.isValueChanging()) {mediaPlayer.seek(Duration.seconds(newValue.doubleValue()));}
                 });
+
                 mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
                     if (!timeSlider.isValueChanging()) {timeSlider.setValue(newValue.toSeconds());}
                 });
+
                 mediaPlayer.setOnReady(() -> timeSlider.setMax(mediaPlayer.getMedia().getDuration().toSeconds()));
             }
         }
     }
+    private void setColors() {
+        if(card.colors == null) {
+            anchorPane.setStyle("-fx-background-color: " +
+                    card.parentCardList.parentBoard.defaultPreset.background + ";");
+        }
+        else {
+            anchorPane.setStyle("-fx-background-color: " + card.colors.background + ";");
+        }
+    }
+    private void videoSetup() {
+        AnchorPane.setTopAnchor(mediaView, 40.0);
+        AnchorPane.setBottomAnchor(mediaView, 0.0);
+
+        mediaView.setFitHeight(anchorPane.getHeight() - 135.0);
+        mediaView.setFitWidth(anchorPane.getWidth());
+        anchorPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            // Update the imageView's fitWidth and position when the width changes
+            mediaView.setFitWidth(newValue.doubleValue());
+        });
+
+        anchorPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            // Update the imageView's fitHeight and position when the height changes
+            mediaView.setFitHeight(newValue.doubleValue() - 135.0);
+        });
+    }
+
+    private void imageSetup() {
+        AnchorPane.setTopAnchor(imageView, 40.0);
+        AnchorPane.setBottomAnchor(imageView, 0.0);
+
+        // Add a listener to the AnchorPane's width and height properties
+        anchorPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            // Update the imageView's fitWidth and position when the width changes
+            imageView.setFitWidth(newValue.doubleValue());
+        });
+
+        anchorPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            // Update the imageView's fitHeight and position when the height changes
+            imageView.setFitHeight(newValue.doubleValue() - 100.0);
+        });
+    }
+
     @FXML
     private void save() throws IOException {
         if(this.file!=null)
-            if(!card.getFile().equals(file.getName()))
-            {
-                String newFileName = card.getId() + file.getName().substring(file.getName().lastIndexOf("."));
-                // Rename the file
-                file.renameTo(new File(file.getParent(), newFileName));
-                card.setFile(file.getName());
-                server.uploadFile(file);
+            if (!card.file.equals(file.getName())) {
+                if (!card.file.equals("nope")) {
+                    server.deleteFile(card.file);
+                }
+                String fileName=card.id+file.getName().substring(file.getName().lastIndexOf("."));
+                card.setFile(fileName);
+                server.updateCard(card.id, "file", card.file);
+                server.uploadFile(copyFile(fileName));
             }
+    }
+    private File copyFile(String name) throws IOException {
+        File newFile = new File(name);
+
+        // Copy the contents of the original file to the new file
+        InputStream in = new FileInputStream(file);
+        OutputStream out = new FileOutputStream(newFile);
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = in.read(buffer)) > 0) {
+            out.write(buffer, 0, length);
+        }
+        in.close();
+        out.close();
+        return newFile;
     }
     @FXML
     private void delete(){
-        disableVideo();
-        imageView.setVisible(false);
-        card.setFile("nope");
-        server.deleteFile(file.getName());
+        if(this.file!=null)
+        {
+            disableVideo();
+            imageView.setVisible(false);
+            if(!card.file.equals("nope"))
+            {
+                card.setFile("nope");
+                server.updateCard(card.id, "file", card.file);
+                server.deleteFile(file.getName());
+            }
+        }
     }
     private void disableImage(){
         mediaView.setVisible(true);
         imageView.setVisible(false);
         playButton.setVisible(true);playButton.setDisable(false);
         timeSlider.setVisible(true);timeSlider.setDisable(false);
+        timeSlider.setValue(timeSlider.getMin());
     }
     private void disableVideo(){
         pause();

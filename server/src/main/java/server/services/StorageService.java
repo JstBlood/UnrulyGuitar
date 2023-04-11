@@ -2,6 +2,9 @@ package server.services;
 
 import commons.FileData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import server.database.StorageRepository;
@@ -17,25 +20,31 @@ public class StorageService {
     @Autowired
     private StorageRepository repository;
 
-    public String uploadFile(MultipartFile file) throws IOException {
+
+    public HttpStatus uploadFile(MultipartFile file) throws IOException {
         repository.save(new FileData(file.getOriginalFilename(),
                 file.getContentType(), compressFile(file.getBytes())));
-        return "File uploaded succesfully: "+ file.getOriginalFilename();
+        return HttpStatus.CREATED;
     }
-    public byte[] outputFile(String fileName){
+
+    public ResponseEntity<byte[]> outputFile(String fileName){
         Optional<FileData> dbFileData = repository.findByName(fileName);
-        byte[] file=decompressFile(dbFileData.get().getFileData());
-        return file;
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf(getType(fileName)))
+                .body(decompressFile(dbFileData.get().getFileData()));
+
     }
-    public String deleteFile(String fileName) {
+
+    public HttpStatus deleteFile(String fileName) {
         Optional<FileData> dbFileData = repository.findByName(fileName);
         if (dbFileData.isPresent()) {
             repository.delete(dbFileData.get());
-            return "File deleted successfully: " + fileName;
+            return HttpStatus.OK;
         } else {
-            return "File not found: " + fileName;
+            return HttpStatus.BAD_REQUEST;
         }
     }
+
     public String getType(String fileName){
         Optional<FileData> dbFileData = repository.findByName(fileName);
         if (dbFileData.isPresent()) {
@@ -44,6 +53,7 @@ public class StorageService {
             return "File not found: " + fileName;
         }
     }
+
     public static byte[] compressFile(byte[] data) {
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);
@@ -62,6 +72,7 @@ public class StorageService {
         }
         return outputStream.toByteArray();
     }
+
     public static byte[] decompressFile(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);

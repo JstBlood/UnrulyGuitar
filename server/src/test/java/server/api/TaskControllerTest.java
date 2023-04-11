@@ -1,10 +1,5 @@
 package server.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.*;
-
-import java.util.Random;
-
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -13,15 +8,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import server.ConfigTest;
-import server.database.*;
-import server.services.BoardsService;
-import server.services.RepositoryBasedAuthService;
-import server.services.SocketRefreshService;
-import server.services.TaskService;
+import server.database.TestBoardsRepository;
+import server.database.TestColorPresetRepository;
+import server.database.TestTaskRepository;
+import server.database.TestUserRepository;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -80,7 +76,7 @@ public class TaskControllerTest {
     @Test
     public void databaseIsUsedDelete() {
         repo.save(SOME_TASK);
-        var actual = sut.delete(SOME_CARD.id, "", "");
+        var actual = sut.delete(SOME_TASK.id, "", "");
 
         Assertions.assertTrue(repo.getCalled().contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -110,7 +106,7 @@ public class TaskControllerTest {
     @Test
     public void updateTitle() {
         repo.save(SOME_TASK);
-        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+        var actual = sut.updateTitle(SOME_TASK.id, "newTitle", "", "");
 
         Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
@@ -119,7 +115,7 @@ public class TaskControllerTest {
     @Test
     public void cannotUpdateEmptyValue() {
         repo.save(SOME_TASK);
-        var actual = sut.updateTitle(SOME_CARD.id,  "", "", "");
+        var actual = sut.updateTitle(SOME_TASK.id,  "", "", "");
         Assertions.assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 

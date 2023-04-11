@@ -1,8 +1,5 @@
 package server.services;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import commons.Card;
 import commons.CardList;
 import commons.Tag;
@@ -13,6 +10,9 @@ import server.database.CardListRepository;
 import server.database.CardRepository;
 import server.database.ColorPresetRepository;
 import server.database.TagRepository;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class CardService implements StandardEntityService<Card, Long> {
@@ -119,6 +119,22 @@ public class CardService implements StandardEntityService<Card, Long> {
         }
 
         card.title = newValueString;
+
+        return flush(card);
+    }
+
+    public HttpStatus updateFile(Long id, Object newValue, String username, String password) {
+        if (!prepare(id, username, password).equals(HttpStatus.OK))
+            return prepare(id, username, password);
+
+        Card card = cardRepo.findById(id).get();
+        String newValueString = String.valueOf(newValue).trim();
+
+        if(newValueString.isEmpty()) {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        card.file = newValueString;
 
         return flush(card);
     }

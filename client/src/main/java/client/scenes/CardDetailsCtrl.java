@@ -309,9 +309,6 @@ public class CardDetailsCtrl {
             back();
         }
     }
-    public void updateFile(){
-
-    }
     public void cancelCard() {
         back();
     }
