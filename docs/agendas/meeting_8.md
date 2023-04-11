@@ -45,6 +45,7 @@ and the HUE and hear what the TA thinks about it.
 ---
 
 - ***DEADLINE THIS EVENING 23:59!***
+- Media branch discussion
 - Move logic to server side?
 - Help with dependency injection for tests
 - Questions about the Oral Examination
