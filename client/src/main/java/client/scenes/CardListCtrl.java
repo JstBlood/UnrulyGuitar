@@ -213,11 +213,11 @@ public class CardListCtrl implements Initializable {
     }
 
     public void propagate(CardList newState) {
-        title.setStyle("-fx-text-fill: " + newState.parentBoard.cardListColors.foreground + ";");
-        mainContainer.setStyle("-fx-background-color: " + newState.parentBoard.cardListColors.background + ";");
         if(!newState.title.equals(title.getText())) {
             title.setText(newState.title);
         }
+        title.setStyle("-fx-text-fill: " + newState.parentBoard.cardListColors.foreground + ";");
+        mainContainer.setStyle("-fx-background-color: " + newState.parentBoard.cardListColors.background + ";");
 
         cardList = newState;
 

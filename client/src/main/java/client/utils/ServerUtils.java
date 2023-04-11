@@ -17,6 +17,7 @@ package client.utils;
 
 import client.scenes.MainCtrl;
 import commons.*;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -103,11 +104,16 @@ public class ServerUtils {
 
     private void internalDeleteRequest(String path) {
         try {
-            ClientBuilder.newClient(new ClientConfig())
+            var status = ClientBuilder.newClient(new ClientConfig())
                     .target(getServer()).path(path)
                     .request(APPLICATION_JSON)
                     .accept(APPLICATION_JSON)
-                    .delete();
+                    .delete().getStatus();
+
+            if(status == 403)
+                throw new ForbiddenException();
+            else if(status == 424)
+                throw new BadRequestException();
         } catch (ForbiddenException e) {
             UIUtils.showError("You cannot edit this board since its password protected and you have not" +
                     " entered a correct password.");
@@ -126,6 +132,12 @@ public class ServerUtils {
                     " entered a correct password.");
             return null;
         }
+    }
+
+    public void shutdown() {
+        internalGetRequest("secure/" + store.accessStore().getUsername() + "/" +
+                        store.accessStore().getPassword() + "/shutdown",
+                new GenericType<>() {});
     }
 
     // BOARD RELATED FUNCTIONS
@@ -462,7 +474,11 @@ public class ServerUtils {
     }
 
     public <T> void deregister() {
-        if(this.session != null)
-            session.disconnect();
+    	try {
+            if(this.session != null)
+                session.disconnect();
+        } catch (Exception e) {
+
+        }
     }
 }

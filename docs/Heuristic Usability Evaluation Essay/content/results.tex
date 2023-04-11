@@ -2,9 +2,11 @@
 \section{Results}
 
 Following the meeting with the other group for the Heuristic Usability Evaluation, we have asked each of their members to fill out a form based of questions on different heuristics regarding our application prototype. All the filled-out forms have been considered while making the following list. The different problems have been categorized and ordered/prioritized in terms of severity – from urgently needed to "can wait".
+
 \subsection{System}
+
 \begin{itemize}
-    \item Multiple instances of error pop-ups, that the user might not know the origin and/or meaning of
+    \item Multiple instances of error pop-ups, that the user might not know the origin and/or meaning of, would affect the "Match between system and the real world" heuristic.
     \begin{itemize}
         \item 400 HTTP error during list creation with an Empty title field
         \item DeploymentException error when entering an invalid hostname
@@ -18,8 +20,9 @@ Following the meeting with the other group for the Heuristic Usability Evaluatio
 \end{itemize}
 
 \subsection{Client}
+
 \begin{itemize}
-    \item A couple of functionalities not working as intended:
+    \item A couple of functionalities not working as intended, affecting "Error prevention":
     \begin{itemize}
         \item Editing the Board name
         \item Board settings page
@@ -32,7 +35,8 @@ Following the meeting with the other group for the Heuristic Usability Evaluatio
             \item Non-existent locations can be entered
         \end{itemize}
     \end{itemize}
-        \item Usability:
+    
+    \item The following issues affect the "User control and Freedom" heuristic:
     \begin{itemize}
         \item No cancel button when adding a card
         \item It is not clear whether I’m logged in as an admin or not
@@ -48,8 +52,9 @@ Following the meeting with the other group for the Heuristic Usability Evaluatio
 \end{itemize}
 
 \subsection{Visual}
+Visual issues affect the "Aesthetic and minimalist design" heuristic.
 \begin{itemize}
-    \item Overall not satisfied with visual aspect of the application:
+    \item Overall not satisfied with the visual aspect of the application:
     \begin{itemize}
         \item Very specific theme and bright colors that give out a blurry feeling
         \item Some buttons, like the back button on the Board View screen, are hard to spot
@@ -68,4 +73,13 @@ Following the meeting with the other group for the Heuristic Usability Evaluatio
     \end{itemize}
 \end{itemize}
 
-After thorough analysis and testing in a timely manner, we have concluded to opt for the following changes within our application:
+With these issues, we can create the following prioritization matrix based on their impact on the application and the frequency they appear in.
+
+ \begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.65]{images/Matrix.pdf}
+    \caption{Prioritization matrix}
+    \label{fig:my_label}
+\end{figure}
+
+After thorough analysis, testing in a timely manner and, use of the previously mentioned matrix, we have concluded to opt for the following changes within our application:

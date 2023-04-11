@@ -31,9 +31,13 @@ public class CardDetailsCtrl {
     @FXML
     private TextArea description;
     @FXML
+    private Label rolabel;
+    @FXML
     private ChoiceBox<String> presetChoice;
     @FXML
     private VBox subtaskContainer;
+    @FXML
+    private Button submit;
 
     /**
      * This controller shows the details of a card.
@@ -94,13 +98,6 @@ public class CardDetailsCtrl {
                 mainCtrl.showBoardOverview();
             });
         });
-
-        server.registerForMessages("/topic/board/" + card.parentCardList.parentBoard.key + "/deletion", Board.class,
-            q -> {
-                Platform.runLater(() -> {
-                    mainCtrl.showBoards();
-                });
-            });
     }
 
 
@@ -211,6 +208,7 @@ public class CardDetailsCtrl {
             r.setOnKeyPressed(e -> {
                 if(e.getCode().equals(KeyCode.ENTER) && r.getStyle().equals("-fx-text-fill: red;")) {
                     r.setStyle("-fx-text-fill: #131313;");
+                    run.run();
                 }
             } );
         }
@@ -218,6 +216,7 @@ public class CardDetailsCtrl {
         r.focusedProperty().addListener((o, oldV, newV) -> {
             if (!newV && r.getStyle().equals("-fx-text-fill: red;")) {
                 r.setStyle("-fx-text-fill: #131313;");
+                run.run();
             }
         });
     }
@@ -228,6 +227,7 @@ public class CardDetailsCtrl {
     private void updateTitle() {
         title.setStyle("-fx-text-fill: #131313;");
         server.updateCard(card.id, "title", title.getText());
+        System.out.println("updating!");
     }
 
     /**
@@ -258,6 +258,15 @@ public class CardDetailsCtrl {
         relink(newState);
         card = newState;
 
+        if(!mainCtrl.accessStore().isAdmin()
+                && newState.parentCardList.parentBoard.isPasswordProtected
+                && mainCtrl.accessStore().getPassword() == null) {
+            rolabel.setVisible(true);
+            submit.setDisable(true);
+        } else {
+            rolabel.setVisible(false);
+            submit.setDisable(false);
+        }
         try {
             presetChoice.getItems().clear();
             presetChoice.getItems().add("[Default]");
@@ -291,11 +300,14 @@ public class CardDetailsCtrl {
      */
     public void submitCard() {
         // go back to the overview
-        updateDescription();
-        updateTitle();
-        updatePreset();
-        updatePreset();
-        back();
+        try {
+            updatePreset();
+            updatePreset();
+        } catch (Exception e) {
+
+        } finally {
+            back();
+        }
     }
     public void updateFile(){
 
