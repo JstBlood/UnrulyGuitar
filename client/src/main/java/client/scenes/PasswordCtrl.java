@@ -107,7 +107,7 @@ public class PasswordCtrl implements Initializable{
         }
 
         if(!mainCtrl.getCurrentBoard().isPasswordProtected) {
-            mainCtrl.accessStore().setPassword(password.getText());
+            mainCtrl.setPassword(password.getText());
             server.changePass(mainCtrl.getCurrentBoard().key, password.getText());
             return;
         }
@@ -115,13 +115,13 @@ public class PasswordCtrl implements Initializable{
         if(mainCtrl.accessStore().getPassword() == null) {
             try {
                 server.validate(mainCtrl.getCurrentBoard().key, password.getText());
-                mainCtrl.accessStore().setPassword(password.getText());
+                mainCtrl.setPassword(password.getText());
             } catch (Exception e) {
-                mainCtrl.accessStore().removePassword();
+                mainCtrl.removePassword();
                 UIUtils.showError("Invalid password");
             }
         } else {
-            mainCtrl.accessStore().removePassword();
+            mainCtrl.removePassword();
         }
 
         server.forceRefresh(mainCtrl.getCurrentBoard().key);
@@ -133,12 +133,11 @@ public class PasswordCtrl implements Initializable{
         try {
             server.changePass(mainCtrl.getCurrentBoard().key, newPass);
         } catch (Exception e) {
-            mainCtrl.accessStore().removePassword();
+            mainCtrl.removePassword();
             UIUtils.showError("Invalid password");
         }
 
-        if(!mainCtrl.accessStore().isAdmin())
-            mainCtrl.accessStore().setPassword(newPass);
+        mainCtrl.setPassword(newPass);
     }
 
     @FXML
@@ -150,8 +149,7 @@ public class PasswordCtrl implements Initializable{
             UIUtils.showError("Invalid password");
         }
 
-        if(!mainCtrl.accessStore().isAdmin())
-            mainCtrl.accessStore().removePassword();
+        mainCtrl.removePassword();
     }
 
     @FXML

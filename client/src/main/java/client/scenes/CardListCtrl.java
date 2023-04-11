@@ -15,10 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.Glow;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 
 /**
@@ -129,6 +126,8 @@ public class CardListCtrl implements Initializable {
 
         cardsContainer.getChildren().clear();
 
+        List<CardCtrl> controllers = new ArrayList<>();
+
         for(Card c : cardList.cards) {
             FXMLLoader cardLoader = new FXMLLoader(getClass().getResource("/client/scenes/Card.fxml"));
             cardLoader.setControllerFactory(g -> new CardCtrl(this.server, this.mainCtrl, c, cardsContainer));
@@ -137,7 +136,7 @@ public class CardListCtrl implements Initializable {
                 CardCtrl cardCtrl = cardLoader.getController();
 
                 cardNode.setUserData(c);
-                prepareCardNode(cardNode, cardCtrl);
+                controllers.add(cardCtrl);
 
                 cardsContainer.getChildren().add(cardNode);
 
@@ -146,11 +145,41 @@ public class CardListCtrl implements Initializable {
                 throw new RuntimeException(e);
             }
         }
+
+        for(int i = 0; i < controllers.size(); i++) {
+            handleNodeAddition(controllers, i);
+
+        }
     }
 
-    public void prepareCardNode(Node cardNode, CardCtrl cardCtrl) {
+    private void handleNodeAddition(List<CardCtrl> controllers, int i) {
+        if(i == controllers.size() - 1 && i == 0) {
+            prepareCardNode(cardsContainer.getChildren().get(i)
+                    , controllers.get(i),
+                    null,
+                    null);
+        } else if(i == controllers.size() - 1) {
+            prepareCardNode(cardsContainer.getChildren().get(i)
+                    , controllers.get(i),
+                    cardsContainer.getChildren().get(i -1),
+                    null);
+        } else if(i == 0) {
+            prepareCardNode(cardsContainer.getChildren().get(i)
+                    , controllers.get(i),
+                    null,
+                    cardsContainer.getChildren().get(i +1));
+        } else {
+            prepareCardNode(cardsContainer.getChildren().get(i)
+                    , controllers.get(i),
+                    cardsContainer.getChildren().get(i -1),
+                    cardsContainer.getChildren().get(i +1)
+            );
+        }
+    }
+
+    public void prepareCardNode(Node cardNode, CardCtrl cardCtrl, Node prev, Node next) {
         prepareCardFocus(cardNode);
-        prepareCardKeyEvents(cardNode, cardCtrl);
+        prepareCardKeyEvents(cardNode, cardCtrl, prev, next);
     }
 
     public void prepareCardFocus(Node cardNode) {
@@ -174,7 +203,7 @@ public class CardListCtrl implements Initializable {
         });
     }
 
-    public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl) {
+    public void prepareCardKeyEvents(Node cardNode, CardCtrl cardCtrl, Node prevN, Node nextN) {
         cardNode.setOnKeyPressed(e -> {
             if (cardNode.isFocused()) {
                 Card card = (Card) cardNode.getUserData();
@@ -186,30 +215,42 @@ public class CardListCtrl implements Initializable {
                     Card next = cardList.cards.get(card.index + 1);
                     server.updateCard(card.id, "swap", next.id);
                 } else {
-                    switch(e.getCode()) {
-                        case E:
-                            cardCtrl.setEditableTitle();
-                            e.consume();
-                            break;
-                        case BACK_SPACE:
-                            server.deleteCard(card.id);
-                            break;
-                        case DELETE:
-                            server.deleteCard(card.id);
-                            break;
-                        case ENTER:
-                            mainCtrl.showCardDetails(card);
-                            break;
-                        case T:
-                            mainCtrl.showTagsPopup(card);
-                            break;
-                        case C:
-                            //TODO: create popup for color selection
-                            break;
-                    }
+                    handleKeyCode(cardCtrl, prevN, nextN, e, card);
                 }
             }
         });
+    }
+
+    private void handleKeyCode(CardCtrl cardCtrl, Node prevN, Node nextN, KeyEvent e, Card card) {
+        switch(e.getCode()) {
+            case E:
+                cardCtrl.setEditableTitle();
+                e.consume();
+                break;
+            case BACK_SPACE:
+                server.deleteCard(card.id);
+                break;
+            case DELETE:
+                server.deleteCard(card.id);
+                break;
+            case ENTER:
+                mainCtrl.showCardDetails(card);
+                break;
+            case T:
+                mainCtrl.showTagsPopup(card);
+                break;
+            case C:
+                mainCtrl.showBoardSettings();
+                break;
+            case UP:
+                if(prevN != null)
+                    prevN.requestFocus();
+                break;
+            case DOWN:
+                if(nextN != null)
+                    nextN.requestFocus();
+                break;
+        }
     }
 
     public void propagate(CardList newState) {
