@@ -37,7 +37,7 @@ public class AdminBoardCtrl implements Initializable{
 
     @FXML
     public void delete() {
-        server.deleteBoard(bid.getText());
+        server.deleteBoard(b.key);
         mainCtrl.showBoards();
     }
 }

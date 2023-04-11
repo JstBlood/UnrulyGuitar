@@ -53,3 +53,8 @@ out/
 
 ### Passwords ###
 *.bin
+
+
+client/*.jpg
+client/*.png
+client/*.mp4
