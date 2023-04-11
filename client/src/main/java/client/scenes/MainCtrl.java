@@ -15,6 +15,11 @@
  */
 package client.scenes;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+
 import client.shared.CredentialsStore;
 import commons.Board;
 import commons.Card;
@@ -30,6 +35,7 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public class MainCtrl {
+    private final String passwordFile = "passwords.bin";
     private Stage primaryStage;
 
     private Scene logon;
@@ -61,6 +67,8 @@ public class MainCtrl {
     private Scene tagsPopup;
 
     private CredentialsStore cStore;
+
+    private HashMap<String, String> passwordStore = new HashMap<>();
 
     private HashSet<Long> usedPresets = new HashSet<>();
 
@@ -117,12 +125,83 @@ public class MainCtrl {
         primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass()
                 .getResourceAsStream("/client/images/unruly_guitar_icon.png"))));
 
+        try {
+            readPasswords();
+        } catch (Exception e) {
+            System.out.println("No password file found, continuing..." + e.getMessage());
+        }
+
         prepareHelp();
         prepareBoardOverview();
         prepareCardDetails();
 
         showLogon();
         primaryStage.show();
+    }
+
+    public void flushPasswords() throws IOException {
+        FileOutputStream f = null;
+        ObjectOutputStream o = null;
+
+        try {
+            f = new FileOutputStream(passwordFile);
+            o = new ObjectOutputStream(f);
+
+            o.writeObject(this.passwordStore);
+        } catch (Exception e) {
+            System.out.println("Failed to write passwords file: " + e.getMessage());
+        } finally {
+            if(o != null)
+                o.close();
+            if(f != null)
+                f.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readPasswords() throws IOException {
+        FileInputStream f = null;
+        ObjectInputStream o = null;
+
+        try {
+            f = new FileInputStream(passwordFile);
+            o = new ObjectInputStream(f);
+
+            this.passwordStore = (HashMap<String, String>) o.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if(o != null)
+                o.close();
+            if(f != null)
+                f.close();
+        }
+    }
+
+    public void setPassword(String password) {
+        if(accessStore().isAdmin())
+            return;
+
+        accessStore().setPassword(password);
+        this.passwordStore.put(getCurrentBoard().key, password);
+        silenceFilesystemErrors();
+    }
+
+    public void silenceFilesystemErrors() {
+        try {
+            flushPasswords();
+        } catch (Exception e) {
+            System.out.println("Writing password file failed...");
+        }
+    }
+
+    public void removePassword() {
+        if(accessStore().isAdmin())
+            return;
+
+        accessStore().removePassword();
+        this.passwordStore.remove(getCurrentBoard().key);
+        silenceFilesystemErrors();
     }
 
     public HashSet<Long> accessUsedPresets() {
@@ -148,6 +227,13 @@ public class MainCtrl {
     }
 
     public void showBoardOverview() {
+        if(!accessStore().isAdmin() && passwordStore.containsKey(getCurrentBoard().key)) {
+            accessStore().setPassword(
+                    passwordStore.get(getCurrentBoard().key));
+        } else if(!accessStore().isAdmin()) {
+            accessStore().removePassword();
+        }
+
         primaryStage.setTitle("Current board");
         primaryStage.setScene(boardOverview);
     }

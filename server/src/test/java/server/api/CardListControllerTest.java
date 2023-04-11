@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import server.ConfigTest;
@@ -33,7 +32,7 @@ import server.database.TestBoardsRepository;
 import server.database.TestCardListRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestUserRepository;
-import server.services.*;
+import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)

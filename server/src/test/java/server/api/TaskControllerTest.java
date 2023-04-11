@@ -1,5 +1,8 @@
 package server.api;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.HttpStatus.*;
+
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -18,6 +21,8 @@ import server.database.TestUserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
+import server.database.*;
+import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -38,6 +43,8 @@ public class TaskControllerTest {
     private TestBoardsRepository bRepo;
     @Autowired
     private TestColorPresetRepository colorRepo;
+    @Autowired
+    private TestAuthService auth;
 
     @BeforeEach
     public void setup() {
@@ -45,11 +52,23 @@ public class TaskControllerTest {
         uRepo.clean();
         colorRepo.clean();
         bRepo.clean();
+        auth.setNoFail();
     }
 
     @Test
     public void cannotAddNullTask() {
         var actual = sut.add(null, "", "");
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotAddNullTTitle() {
+        var temp = SOME_TASK.title;
+
+        SOME_TASK.title = null;
+        var actual = sut.add(SOME_TASK, "", "");
+
+        SOME_TASK.title = temp;
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 
@@ -68,6 +87,14 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void cannotAddNoPassword() {
+        auth.setFail();
+        var actual = sut.add(SOME_TASK, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
+    }
+
+    @Test
     public void cannotDeleteNonexistentTask() {
         var actual = sut.delete(-1, "", "");
         assertEquals(NOT_FOUND, actual.getStatusCode());
@@ -80,6 +107,15 @@ public class TaskControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("deleteById"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotDeleteNoPassword() {
+        auth.setFail();
+        repo.save(SOME_TASK);
+        var actual = sut.delete(SOME_CARD.id, "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test
@@ -110,6 +146,15 @@ public class TaskControllerTest {
 
         Assertions.assertTrue(repo.getCalled().contains("saveAndFlush"));
         Assertions.assertEquals(OK, actual.getStatusCode());
+    }
+
+    @Test
+    public void cannotUpdateTaskNoPassword() {
+        auth.setFail();
+        repo.save(SOME_TASK);
+        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+
+        Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
 
     @Test

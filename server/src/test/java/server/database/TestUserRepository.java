@@ -50,6 +50,7 @@ public class TestUserRepository implements UserRepository {
     public void clean() {
         joinedBoards.clear();
         calledMethods.clear();
+        users.clear();
     }
 
     @Override
@@ -84,7 +85,7 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public <S extends User> S saveAndFlush(S entity) {
-        // TODO Auto-generated method stub
+        call("saveAndFlush");
         return null;
     }
 
@@ -238,6 +239,6 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public User findByUsername(String username) {
-        return null;
+        return users.stream().filter(x -> x.username == username).findFirst().orElse(null);
     }
 }

@@ -18,6 +18,8 @@ public class TestTagRepository implements TagRepository {
     private final List<Tag> tagList = new ArrayList<>();
     private final List<String> calledMethods = new ArrayList<>();
 
+    private boolean failDeletion = false;
+
     private void call(String name) {
         calledMethods.add(name);
     }
@@ -38,7 +40,14 @@ public class TestTagRepository implements TagRepository {
     public void clean() {
         tagList.clear();
         calledMethods.clear();
+        failDeletion = false;
     }
+
+    public void setFail() {
+        failDeletion = true;
+    }
+
+
     @Override
     public List<Tag> findAll() {
         return null;
@@ -66,12 +75,15 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public void deleteById(Long aLong) {
+        if(failDeletion)
+            throw new RuntimeException("test");
 
+        call("deleteById");
     }
 
     @Override
     public void delete(Tag entity) {
-
+        call("delete");
     }
 
     @Override
