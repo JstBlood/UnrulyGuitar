@@ -64,20 +64,36 @@ public class Card {
     @SuppressWarnings("unused")
     protected Card() {}
 
+    /**
+     * method for adding a task to a card
+     * @param newTask
+     */
     public void addTask(Task newTask) {
         tasks.add(newTask);
     }
 
+    /**
+     * method for setting a description of a card
+     * @param description new description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * method for setting the title of a card
+     * @param title new title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
     public void setFile(String file){this.file=file;}
 
 
+    /**
+     * method for removing a tag on a card
+     * @param tag
+     */
     public void removeTag(Tag tag) {
         Iterator<Tag> it = tags.iterator();
         while(it.hasNext()) {
@@ -88,7 +104,11 @@ public class Card {
             }
         }
     }
-
+    /**
+     * equals method for cards
+     * @param obj object to compare
+     * @return boolean true/false
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -98,7 +118,10 @@ public class Card {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    /**
+     * to string method for cards
+     * @return string representation of the card
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);

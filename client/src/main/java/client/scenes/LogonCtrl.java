@@ -68,6 +68,9 @@ public class LogonCtrl {
         admin.setDisable(!adminChk.isSelected());
     }
 
+    /**
+     * tries to log a user in
+     */
     public void tryLogon() {
         if(username.getText().equals("")) {
             UIUtils.showError("You need to provide a username");
@@ -126,6 +129,9 @@ public class LogonCtrl {
 
     }
 
+    /**
+     * shows a useful help screen
+     */
     @FXML
     public void showHelp() {
         mainCtrl.showHelpScreen("logon");

@@ -68,22 +68,46 @@ public class Board {
         this.title = title;
     }
 
+    /**
+     * method for adding a new list to the board
+     * @param newCardList
+     */
     public void addCard(CardList newCardList) {
         cardLists.add(newCardList);
     }
 
+    /**
+     * method for adding a new User to a board
+     * @param newUser
+     */
     public void addUser(User newUser) {
         users.add(newUser);
     }
 
+    /**
+     * method for adding a tag to a board
+     * @param newTag
+     */
     public void addTag(Tag newTag) {
         tags.add(newTag);
     }
 
+    /**
+     * returns the default colour of the foreground
+     * @return string hexadecimal value of default colour
+     */
     public static String getDefaultForeground() { return "#1a4d1a"; }
-
+    /**
+     * returns the default colour of the background
+     * @return string hexadecimal value of default colour
+     */
     public static String getDefaultBackground() { return "#adaaaa"; }
 
+    /**
+     * equals method for boards
+     * @param obj object to compare
+     * @return boolean true/false
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -94,6 +118,10 @@ public class Board {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    /**
+     * to string method for boards
+     * @return string representation of the board
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);

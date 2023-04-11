@@ -41,7 +41,11 @@ public class Tag {
         this.name = name;
         this.parentBoard = parentBoard;
     }
-
+    /**
+     * equals method for tags
+     * @param obj object to compare
+     * @return boolean true/false
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -51,7 +55,10 @@ public class Tag {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    /**
+     * to string method for tags
+     * @return string representation of the tag
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
