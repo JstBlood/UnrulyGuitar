@@ -164,7 +164,7 @@ public class CardCtrl implements Initializable {
             var node = (VBox) e.getGestureSource();
             var sourceID = ((Card) node.getUserData()).id;
 
-            if (sourceID != card.id) {
+            if (!Objects.equals(sourceID, card.id)) {
                 server.updateCard(sourceID, "dragAndDrop", card.id);
                 server.forceRefresh(card.parentCardList.parentBoard.key);
             }

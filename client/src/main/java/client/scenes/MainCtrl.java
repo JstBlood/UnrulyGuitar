@@ -30,17 +30,11 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Objects;
-
 public class MainCtrl {
     private final String passwordFile = "passwords.bin";
     private Stage primaryStage;
 
     private Scene logon;
-
-    private int silence = 0;
 
     private BoardsCtrl boardsCtrl;
     private Scene boards;

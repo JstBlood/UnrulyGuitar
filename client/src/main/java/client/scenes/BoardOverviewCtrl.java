@@ -27,7 +27,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -40,7 +39,6 @@ public class BoardOverviewCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private Board board;
-    private AddCardListCtrl addCardListCtrl;
 
     @FXML
     private TextField title;
@@ -49,12 +47,7 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private GridPane listsGrid;
     @FXML
-    private HBox section;
-    @FXML
-    private GridPane rightBar;
-    @FXML
     private GridPane rooter;
-
     @FXML
     private ImageView lock;
 
@@ -215,14 +208,13 @@ public class BoardOverviewCtrl implements Initializable {
             else
                 lock.setImage(new Image(getClass()
                         .getResource("/client/images/keys.png").toURI().toString()));
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
     }
 
     /**
      * Merge the changes of the new state to our current state, by adding and removing new CardLists.
-     * @throws IOException
+     * @throws IOException from the load method of the FXML loader
      */
     private void updateCardLists() throws IOException {
         while(children.size() != board.cardLists.size()) {
@@ -240,7 +232,7 @@ public class BoardOverviewCtrl implements Initializable {
                 listsGrid.add(cardListNode, children.size(), 0);
                 listsGrid.getColumnConstraints().add(new ColumnConstraints());
                 children.add(cardListLoader.getController());
-            } else if (children.size() > board.cardLists.size()) {
+            } else {
                 listsGrid.getChildren().remove(children.size() - 1);
                 listsGrid.getColumnConstraints().remove(children.size() - 1);
                 children.remove(children.size() - 1);

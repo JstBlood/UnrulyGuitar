@@ -84,7 +84,7 @@ public class BoardSettingsCtrl {
                     new TagCtrl(this.server, this.mainCtrl, tag)
             );
 
-            Node newTagNode = null;
+            Node newTagNode;
             try {
                 newTagNode = tagLoader.load();
                 TagCtrl tagCtrl = tagLoader.getController();
@@ -111,7 +111,7 @@ public class BoardSettingsCtrl {
                     new ColorPresetCtrl(this.server, this.mainCtrl, preset, board.key)
             );
 
-            Node newPreset = null;
+            Node newPreset;
             try {
                 newPreset = presetLoader.load();
             } catch (IOException e) {

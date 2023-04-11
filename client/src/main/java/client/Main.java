@@ -15,28 +15,25 @@
  */
 package client;
 
+import static com.google.inject.Guice.createInjector;
+
 import client.scenes.*;
 import client.shared.CredentialsStore;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import static com.google.inject.Guice.createInjector;
-
 public class Main extends Application {
 
     private static final Injector INJECTOR = createInjector(new UnrulyModule());
     private static final UnrulyFXML FXML = new UnrulyFXML(INJECTOR);
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    public static void main(String[] args) {
         launch();
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         var logon = FXML.load(LogonCtrl.class, "client", "scenes", "Logon.fxml");
         var boards = FXML.load(BoardsCtrl.class, "client", "scenes", "Boards.fxml");
         var boardOverview = FXML.load(BoardOverviewCtrl.class, "client",
@@ -75,7 +72,6 @@ public class Main extends Application {
             try {
                 boardOverview.getKey().stop();
             } catch (RuntimeException ignored) {
-                System.out.println("closed");
             }
         });
     }

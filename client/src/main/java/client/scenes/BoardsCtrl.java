@@ -56,8 +56,7 @@ public class BoardsCtrl {
         mainCtrl.showLogon();
         try {
             server.shutdown();
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
     }
 
@@ -69,10 +68,7 @@ public class BoardsCtrl {
             });
         });
 
-        if(mainCtrl.accessStore().isAdmin())
-            shutdown.setVisible(true);
-        else
-            shutdown.setVisible(false);
+        shutdown.setVisible(mainCtrl.accessStore().isAdmin());
 
         relist();
     }
@@ -128,7 +124,6 @@ public class BoardsCtrl {
     }
 
     public void create() {
-        Random rng = new Random();
         StringBuilder sb = new StringBuilder();
 
         for(int j = 0; j < 3; j++) {
