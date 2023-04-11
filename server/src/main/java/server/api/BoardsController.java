@@ -34,6 +34,13 @@ public class BoardsController {
         this.service = service;
     }
 
+    /**
+     * server method for adding boards to the database
+     * @param board board to add
+     * @param username of the adder
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PostMapping("/add")
     public ResponseEntity<Board> add(@RequestBody Board board,
                                      @PathVariable String username,
@@ -46,6 +53,14 @@ public class BoardsController {
         return ResponseEntity.ok(service.getBoard(board.key));
     }
 
+    /**
+     * adds a preset (colour) to the board
+     * @param preset new colour preset
+     * @param username of the adder
+     * @param key of the board
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PostMapping("/{key}/addColorPreset")
     public ResponseEntity<?> addPreset(@RequestBody ColorPreset preset,
                                      @PathVariable String username, @PathVariable String key,
@@ -53,6 +68,13 @@ public class BoardsController {
         return ResponseEntity.status(service.addColorPreset(key, preset, username, password)).build();
     }
 
+    /**
+     * joins a user to a board
+     * @param key of the board
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PostMapping("/join/{key}")
     public ResponseEntity<Board> join(@PathVariable String key,
                                       @PathVariable String username,
@@ -72,6 +94,14 @@ public class BoardsController {
         return ResponseEntity.status(service.validate(key, username, password)).build();
     }
 
+    /**
+     * changes the password of a board
+     * @param key of the board
+     * @param username of the user
+     * @param newValue new password
+     * @param password old password
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/password")
     public ResponseEntity<?> changePass(@PathVariable String key,
                                       @PathVariable String username,@RequestBody String newValue,
@@ -79,6 +109,13 @@ public class BoardsController {
         return ResponseEntity.status(service.changePass(key, newValue, username, password)).build();
     }
 
+    /**
+     * removes the password from a board
+     * @param key of the board
+     * @param username of the user
+     * @param password old password of the board
+     * @return ResponseEntity status
+     */
     @DeleteMapping("/{key}/password")
     public ResponseEntity<?> removePass(@PathVariable String key,
                                         @PathVariable String username,
@@ -86,6 +123,13 @@ public class BoardsController {
         return ResponseEntity.status(service.removePass(key, username, password)).build();
     }
 
+    /**
+     * leaves a user from a board
+     * @param key of the board
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PostMapping("/leave/{key}")
     public ResponseEntity<?> leave(@PathVariable String key,
                                    @PathVariable String username,
@@ -93,6 +137,14 @@ public class BoardsController {
         return ResponseEntity.status(service.leave(key, username, password)).build();
     }
 
+    /**
+     * updates foreground colour
+     * @param key of the board
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/foreground")
     public ResponseEntity<?> updateFore(@PathVariable String key,
                                     @RequestBody String newValue, @PathVariable String username,
@@ -100,6 +152,14 @@ public class BoardsController {
         return ResponseEntity.status(service.updateForeground(key, newValue, username, password)).build();
     }
 
+    /**
+     * Updates the background colour
+     * @param key of the board
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/background")
     public ResponseEntity<?> updateBack(@PathVariable String key,
                                         @RequestBody String newValue, @PathVariable String username,
@@ -107,6 +167,14 @@ public class BoardsController {
         return ResponseEntity.status(service.updateBackground(key, newValue, username, password)).build();
     }
 
+    /**
+     * updates the list foreground colour
+     * @param key of the board
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/list/foreground")
     public ResponseEntity<?> updateForeList(@PathVariable String key,
                                         @RequestBody String newValue, @PathVariable String username,
@@ -114,6 +182,14 @@ public class BoardsController {
         return ResponseEntity.status(service.updateForegroundList(key, newValue, username, password)).build();
     }
 
+    /**
+     * updates background colour of lists
+     * @param key of the board
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/list/background")
     public ResponseEntity<?> updateBackList(@PathVariable String key,
                                         @RequestBody String newValue, @PathVariable String username,
@@ -121,6 +197,15 @@ public class BoardsController {
         return ResponseEntity.status(service.updateBackgroundList(key, newValue, username, password)).build();
     }
 
+    /**
+     * updates the preset for foreground colour
+     * @param key of the board
+     * @param id of the preset
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/preset/{id}/foreground")
     public ResponseEntity<?> updateForePreset(@PathVariable String key, @PathVariable Long id,
                                             @RequestBody String newValue, @PathVariable String username,
@@ -128,6 +213,15 @@ public class BoardsController {
         return ResponseEntity.status(service.updateForegroundPreset(key, id, newValue, username, password)).build();
     }
 
+    /**
+     * updates background colour preset
+     * @param key of the board
+     * @param id of the preset
+     * @param newValue new colour value
+     * @param username of the user
+     * @param password of the board
+     * @return ResponseEntity status
+     */
     @PutMapping("/{key}/preset/{id}/background")
     public ResponseEntity<?> updateBackPreset(@PathVariable String key, @PathVariable Long id,
                                               @RequestBody String newValue, @PathVariable String username,

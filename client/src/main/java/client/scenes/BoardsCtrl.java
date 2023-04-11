@@ -51,6 +51,9 @@ public class BoardsCtrl {
         this.rand = rand;
     }
 
+    /**
+     * shuts down the server
+     */
     @FXML
     public void shutdown() {
         mainCtrl.showLogon();
@@ -93,6 +96,11 @@ public class BoardsCtrl {
         }
     }
 
+    /**
+     * adds a board to a list of previously joined boards
+     * @param board the board to add
+     * @param isAdmin boolean whether user is admin
+     */
     private void addToPreviousList(Board board, boolean isAdmin) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/scenes/" +
@@ -106,6 +114,9 @@ public class BoardsCtrl {
         }
     }
 
+    /**
+     * allows a user to join a board
+     */
     public void join() {
         if(UIUtils.isNullOrEmpty(key.getText())) {
             UIUtils.showError("The board key must not be empty");
@@ -127,6 +138,9 @@ public class BoardsCtrl {
         mainCtrl.showBoardOverview();
     }
 
+    /**
+     * creates a new board for the user
+     */
     public void create() {
         Random rng = new Random();
         StringBuilder sb = new StringBuilder();

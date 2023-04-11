@@ -67,6 +67,9 @@ public class CardCtrl implements Initializable {
             mainCtrl.accessUsedPresets().add(card.colors.id);
     }
 
+    /**
+     * checks whether a user wants to open card details or drag and drop a card, then executes the option
+     */
     private void prepareDragAndDrop() {
         this.cardBox.setUserData(card);
 
@@ -156,6 +159,10 @@ public class CardCtrl implements Initializable {
         progressBar.setProgress((double)counter/(double)card.tasks.size());
     }
 
+    /**
+     * 'drops'the card
+     * @param e
+     */
     private void handleDrop(DragEvent e) {
         Dragboard db = e.getDragboard();
         boolean success = false;
@@ -205,6 +212,9 @@ public class CardCtrl implements Initializable {
         showTags();
     }
 
+    /**
+     * shows the tags of a card
+     */
     public void showTags() {
         tagContainer.getChildren().clear();
 
@@ -223,6 +233,9 @@ public class CardCtrl implements Initializable {
         }
     }
 
+    /**
+     * sets the colour of cards to default of the board
+     */
     private void setColors() {
         if(card.colors == null) {
             title.setStyle("-fx-text-fill: " + card.parentCardList.parentBoard.defaultPreset.foreground + ";");
@@ -236,6 +249,9 @@ public class CardCtrl implements Initializable {
         }
     }
 
+    /**
+     * updates the title of a card
+     */
     public void updateTitle() {
         title.setEditable(false);
         title.setFocusTraversable(false);

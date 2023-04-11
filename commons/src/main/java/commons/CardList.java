@@ -47,14 +47,25 @@ public class CardList {
         this.parentBoard = parentBoard;
     }
 
+    /**
+     * method for adding cards to a list
+     * @param newCard card to add
+     */
     public void addCard(Card newCard) {
         cards.add(newCard);
     }
-
+    /**
+     * method for removing cards from a list
+     * @param cardToRemove card to remove
+     */
     public void removeCard(Card cardToRemove) {
         cards.remove(cardToRemove);
     }
-
+    /**
+     * equals method for cardLists
+     * @param obj object to compare
+     * @return boolean true/false
+     */
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -64,7 +75,10 @@ public class CardList {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    /**
+     * to string method for cardLists
+     * @return string representation of the list
+     */
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);

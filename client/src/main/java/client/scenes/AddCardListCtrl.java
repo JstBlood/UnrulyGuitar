@@ -36,6 +36,9 @@ public class AddCardListCtrl implements Initializable{
         this.title.addEventHandler(KeyEvent.KEY_PRESSED, this::keyPressed);
     }
 
+    /**
+     * Method to check whether a new cardList has a valid new name
+     */
     public void ok() {
 
         if (this.title.getText().trim().equals("")) {
@@ -53,6 +56,10 @@ public class AddCardListCtrl implements Initializable{
         }
     }
 
+    /**
+     * getter for cardList
+     * @return the cardList
+     */
     private CardList getCardList() {
         return new CardList(title.getText(), mainCtrl.getCurrentBoard());
     }
@@ -62,10 +69,17 @@ public class AddCardListCtrl implements Initializable{
         mainCtrl.showBoardOverview();
     }
 
+    /**
+     * clears fields
+     */
     private void clearFields() {
         title.clear();
     }
 
+    /**
+     * method for shortcuts "enter" and "escape" when used on a cardlist.
+     * @param e
+     */
     public void keyPressed(KeyEvent e) {
         switch (e.getCode()) {
             case ENTER:
