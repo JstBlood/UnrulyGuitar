@@ -1,8 +1,5 @@
 package server.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.*;
-
 import commons.Board;
 import commons.Card;
 import commons.CardList;
@@ -18,11 +15,10 @@ import server.database.TestBoardsRepository;
 import server.database.TestColorPresetRepository;
 import server.database.TestTaskRepository;
 import server.database.TestUserRepository;
+import server.helpers.TestAuthService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
-import server.database.*;
-import server.helpers.TestAuthService;
 
 @SpringBootTest
 @Import(ConfigTest.class)
@@ -113,7 +109,7 @@ public class TaskControllerTest {
     public void cannotDeleteNoPassword() {
         auth.setFail();
         repo.save(SOME_TASK);
-        var actual = sut.delete(SOME_CARD.id, "", "");
+        var actual = sut.delete(SOME_TASK.id, "", "");
 
         Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
@@ -152,7 +148,7 @@ public class TaskControllerTest {
     public void cannotUpdateTaskNoPassword() {
         auth.setFail();
         repo.save(SOME_TASK);
-        var actual = sut.updateTitle(SOME_CARD.id, "newTitle", "", "");
+        var actual = sut.updateTitle(SOME_TASK.id, "newTitle", "", "");
 
         Assertions.assertEquals(FORBIDDEN, actual.getStatusCode());
     }
