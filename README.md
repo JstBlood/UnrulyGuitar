@@ -1,13 +1,14 @@
 ## Description of project
 
-The program is a task organizer that allows users to create and manage tasks using a visual interface. Users can create boards for different projects or categories, 
+This JavaFX program is a task organizer that allows users to create and manage tasks using a visual interface. Users can create boards for different projects or categories, 
 and each board can contain multiple lists of tasks. Within each list, users can 
-create individual cards for specific tasks. Cards can themselves include details such and subtasks.
+also create individual cards for specific tasks. Cards can themselves include details such as subtasks.
 It also allows users to assign labels or tags to tasks, making it easy to filter 
 and search for specific tasks.
+Cards can also be dragged and dropped from list to list or within their own for a better organization.
 
 The program's interface is designed to be intuitive and user-friendly, with drag-and-drop functionality that makes it
-easy to move tasks between lists. Users can also customize the program's appearance and layout to suit their 
+easy to move tasks between lists. Users can customize the program's appearance and layout to suit their 
 preferences.
  
 ## Group members
@@ -16,7 +17,7 @@ preferences.
 | Profile Picture | Name | Email |
 |---|---|---|
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Mikołaj Gazeel | m.j.gazeel@student.tudelft.nl |
-| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Madeline | m.e.sebastian@student.tudelft.nl |
+| ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Madeline Sebastian | m.e.sebastian@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Berzins Matiss | M.Berzins-1@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Dragutoiu Vlad-Ioan | V.Dragutoiu-1@student.tudelft.nl |
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Michael Frota Fokkens | M.L.daRochaFrotaFokkens@student.tudelft.nl |
